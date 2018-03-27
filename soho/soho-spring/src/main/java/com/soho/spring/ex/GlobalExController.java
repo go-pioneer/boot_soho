@@ -20,7 +20,6 @@ import java.util.Map;
 @RequestMapping("/error")
 public class GlobalExController {
 
-    @Value("${system.errorPage}")
     private String errorPage;
 
     @RequestMapping("/errorPage")

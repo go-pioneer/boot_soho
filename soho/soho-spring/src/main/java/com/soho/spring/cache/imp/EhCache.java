@@ -4,10 +4,10 @@ import com.soho.spring.cache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import java.util.Collection;
-import java.util.Set;
-
-public class EhCache implements Cache {
+/**
+ * @author shadow
+ */
+public class EhCache extends AbstractCache implements Cache {
 
     private static CacheManager cacheManager = null;
 
@@ -16,84 +16,36 @@ public class EhCache implements Cache {
     }
 
     @Override
-    public <V> V get(Object key) {
-        try {
-            Element element = getCache().get(key);
-            return (V) element.getObjectValue();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public <V> V doGet(Object key) throws Exception {
+        Element element = getEhCache().get(key);
+        if (element == null || element.getObjectValue() == null) {
             return null;
         }
+        return (V) element.getObjectValue();
     }
 
     @Override
-    public <V> boolean put(Object key, V value, int exp) {
-        try {
-            Element element = new Element(key, value);
-            element.setTimeToLive(exp);
-            getCache().put(element);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public <V> boolean doPut(Object key, V value, int exp) throws Exception {
+        Element element = new Element(key, value);
+        element.setTimeToLive(exp);
+        getEhCache().put(element);
+        return true;
     }
 
     @Override
-    public <V> boolean put(Object key, V value) {
-        try {
-            Element element = new Element(key, value);
-            element.setTimeToLive(0);
-            getCache().put(element);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public <V> boolean doPut(Object key, V value) throws Exception {
+        Element element = new Element(key, value);
+        getEhCache().put(element);
+        return true;
     }
 
     @Override
-    public boolean remove(Object key) {
-        try {
-            cacheManager.getCache("data").remove(key);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public <V> boolean doRemove(Object key) throws Exception {
+        getEhCache().remove(key);
+        return true;
     }
 
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public long size() {
-        return 0;
-    }
-
-    @Override
-    public Set<Object> keys() {
-        return null;
-    }
-
-    @Override
-    public <V> Collection<V> values() {
-        return null;
-    }
-
-    @Override
-    public Object getInstance() {
-        return null;
-    }
-
-    @Override
-    public Class<?> getInstanceClassType() {
-        return null;
-    }
-
-    private net.sf.ehcache.Cache getCache() {
+    private net.sf.ehcache.Cache getEhCache() {
         return cacheManager.getCache("cache");
     }
 

@@ -1,7 +1,6 @@
 package com.soho.spring.shiro.cache;
 
 import com.soho.spring.cache.CacheManager;
-import com.soho.spring.consts.ProjectInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ public class ShiroDataCache<K, V> implements Cache<Object, V> {
 
     @Autowired(required = false)
     private CacheManager cacheManager;
-    @Autowired(required = false)
-    private ProjectInfo projectInfo;
 
     public void clear() throws CacheException {
         getCache().clear();
@@ -63,7 +60,7 @@ public class ShiroDataCache<K, V> implements Cache<Object, V> {
     }
 
     private String getCacheKey() {
-        return projectInfo.getCode() + CacheManager.SHIRO_DATA_CACHE;
+        return CacheManager.SHIRO_DATA_CACHE;
     }
 
     public CacheManager getCacheManager() {

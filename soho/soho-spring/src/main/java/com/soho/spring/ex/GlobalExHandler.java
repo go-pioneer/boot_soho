@@ -2,7 +2,6 @@ package com.soho.spring.ex;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.utils.HttpUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +16,6 @@ import java.net.URLEncoder;
 @ControllerAdvice
 public class GlobalExHandler {
 
-    @Value("${system.restApi}")
     private String restApi;
 
     @ExceptionHandler(value = Exception.class)

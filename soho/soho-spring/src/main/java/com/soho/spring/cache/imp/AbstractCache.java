@@ -1,0 +1,98 @@
+package com.soho.spring.cache.imp;
+
+import com.soho.spring.cache.Cache;
+import com.soho.spring.model.ConfigData;
+import com.soho.spring.utils.SpringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.Set;
+
+/**
+ * @author shadow
+ */
+public abstract class AbstractCache implements Cache {
+
+    @Autowired(required = false)
+    private ConfigData config;
+
+    public <V> V get(Object key) {
+        try {
+            return doGet(getCacheKey(key));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public <V> boolean put(Object key, V value, int exp) {
+        try {
+            return doPut(getCacheKey(key), value, exp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public <V> boolean put(Object key, V value) {
+        try {
+            return doPut(getCacheKey(key), value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean remove(Object key) {
+        try {
+            return doRemove(getCacheKey(key));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public abstract <V> V doGet(Object key) throws Exception;
+
+    public abstract <V> boolean doPut(Object key, V value, int exp) throws Exception;
+
+    public abstract <V> boolean doPut(Object key, V value) throws Exception;
+
+    public abstract <V> boolean doRemove(Object key) throws Exception;
+
+    @Override
+    public long size() {
+        return 0;
+    }
+
+    @Override
+    public Set<Object> keys() {
+        return null;
+    }
+
+    public void clear() {
+    }
+
+    @Override
+    public <V> Collection<V> values() {
+        return null;
+    }
+
+    @Override
+    public Object getInstance() {
+        return null;
+    }
+
+    @Override
+    public Class<?> getInstanceClassType() {
+        return null;
+    }
+
+    private String getCacheKey(Object key) {
+        if (config == null) {
+            config = SpringUtils.getBean(ConfigData.class);
+        }
+        return config.getProjectCode() + key;
+    }
+
+}

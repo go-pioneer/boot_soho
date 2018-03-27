@@ -1,8 +1,12 @@
-package com.soho.spring.druid;
+package com.soho.spring.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
+import com.soho.mybatis.interceptor.PageInterceptor;
+import com.soho.mybatis.interceptor.PageableInterceptor;
+import com.soho.spring.model.ConfigData;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -26,9 +30,9 @@ import java.sql.SQLException;
  * @author shadow
  */
 @Configuration
-public class DruidConfig {
+public class DruidConfiguration {
 
-    private Logger logger = LoggerFactory.getLogger(DruidConfig.class);
+    private Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -64,6 +68,25 @@ public class DruidConfig {
     private String logSlowSql;
     @Value("${mybatis.locations}")
     private String locations;
+
+    @Value("${default.projectCode}")
+    private String projectCode;
+    @Value("${default.apiPrefix}")
+    private String apiPrefix;
+    @Value("${default.failureUrl}")
+    private String failureUrl;
+    @Value("${default.redirectUrl}")
+    private String redirectUrl;
+
+    @Bean
+    public ConfigData initConfigData() {
+        ConfigData config = new ConfigData();
+        config.setProjectCode(projectCode);
+        config.setFailureUrl(failureUrl);
+        config.setRedirectUrl(redirectUrl);
+        config.setApiPrefix(apiPrefix != null ? apiPrefix.split(",") : new String[]{});
+        return config;
+    }
 
     @Bean
     public ServletRegistrationBean druidServlet() {
@@ -129,6 +152,7 @@ public class DruidConfig {
             }
         }
         bean.setMapperLocations(resources);
+        bean.setPlugins(new Interceptor[]{new PageInterceptor()});
         return bean.getObject();
     }
 

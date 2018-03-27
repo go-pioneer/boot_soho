@@ -3,7 +3,7 @@ package com.soho.spring.extend;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.soho.spring.utils.HttpUtils;
+import com.soho.spring.model.RetData;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author shadow
@@ -81,11 +80,8 @@ public class FastjsonMessageConver extends AbstractHttpMessageConverter<Object> 
         } else {
             data = JSON.parse(text);
         }
-        Map<String, Object> map = new HashMap<>(3);
-        map.put("code", HttpUtils.OK_STATUS);
-        map.put("msg", HttpUtils.OK_MESSAGE);
-        map.put("data", data);
-        text = JSON.toJSONString(map);
+        RetData<Object> retData = new RetData<>(RetData.OK_STATUS, RetData.OK_MESSAGE, data);
+        text = JSON.toJSONString(retData);
         byte[] bytes = text.getBytes(this.charset);
         out.write(bytes);
     }

@@ -4,7 +4,6 @@ import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
-import com.soho.spring.consts.ProjectInfo;
 import com.soho.spring.extend.DecipherPropertyPlaceholderConfigurer;
 import com.soho.spring.extend.FastjsonMessageConver;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -51,16 +50,6 @@ public class Application {
         cacheMap.put(CacheManager.SHIRO_DATA_CACHE, cache);
         simpleCacheManager.setCacheMap(cacheMap);
         return simpleCacheManager;
-    }
-
-    @Bean
-    public ProjectInfo initProjectInfo() {
-        ProjectInfo projectInfo = new ProjectInfo();
-        projectInfo.setName("测试项目");
-        projectInfo.setCode("000001");
-        projectInfo.setAuthor("shadow");
-        projectInfo.setCreate("2018/03/03");
-        return projectInfo;
     }
 
     public static void main(String[] args) {

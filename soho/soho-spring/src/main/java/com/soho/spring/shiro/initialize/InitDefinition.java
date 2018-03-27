@@ -1,4 +1,4 @@
-package com.soho.spring.shiro.init;
+package com.soho.spring.shiro.initialize;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
