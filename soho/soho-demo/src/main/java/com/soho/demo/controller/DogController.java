@@ -60,7 +60,7 @@ public class DogController {
     @RequestMapping("/findAll")
     public Object findAll() throws BizErrorEx {
         dogService.test(new ReqData());
-        return dogService.findAll();
+        return dogService.findByCnd(new SQLCnd().eq("id", 1).limit(1, 3));
     }
 
 }

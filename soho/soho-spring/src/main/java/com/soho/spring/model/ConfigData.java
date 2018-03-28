@@ -6,10 +6,19 @@ package com.soho.spring.model;
  */
 public class ConfigData {
 
+    private String database;
     private String projectCode;
     private String failureUrl;
     private String redirectUrl;
     private String[] apiPrefix;
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
 
     public String getProjectCode() {
         return projectCode;
@@ -42,5 +51,4 @@ public class ConfigData {
     public void setApiPrefix(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
     }
-
 }

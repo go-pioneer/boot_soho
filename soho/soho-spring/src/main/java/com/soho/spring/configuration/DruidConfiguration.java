@@ -3,8 +3,9 @@ package com.soho.spring.configuration;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
-import com.soho.mybatis.interceptor.PageInterceptor;
-import com.soho.mybatis.interceptor.PageableInterceptor;
+import com.soho.mybatis.database.selector.DBSelector;
+import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
+import com.soho.mybatis.interceptor.imp.PageableInterceptor;
 import com.soho.spring.model.ConfigData;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -69,6 +70,8 @@ public class DruidConfiguration {
     @Value("${mybatis.locations}")
     private String locations;
 
+    @Value("${default.database}")
+    private String database;
     @Value("${default.projectCode}")
     private String projectCode;
     @Value("${default.apiPrefix}")
@@ -81,6 +84,7 @@ public class DruidConfiguration {
     @Bean
     public ConfigData initConfigData() {
         ConfigData config = new ConfigData();
+        config.setDatabase(database);
         config.setProjectCode(projectCode);
         config.setFailureUrl(failureUrl);
         config.setRedirectUrl(redirectUrl);
@@ -152,7 +156,8 @@ public class DruidConfiguration {
             }
         }
         bean.setMapperLocations(resources);
-        bean.setPlugins(new Interceptor[]{new PageInterceptor()});
+        DBSelector dbSelector = new SimpleDBSelector(database);
+        bean.setPlugins(new Interceptor[]{new PageableInterceptor(dbSelector)});
         return bean.getObject();
     }
 

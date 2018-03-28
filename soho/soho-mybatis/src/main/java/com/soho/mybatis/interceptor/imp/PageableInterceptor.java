@@ -1,6 +1,7 @@
-package com.soho.mybatis.interceptor;
+package com.soho.mybatis.interceptor.imp;
 
 import com.soho.mybatis.database.selector.DBSelector;
+import com.soho.mybatis.interceptor.MybatisInterceptor;
 import com.soho.mybatis.pageable.Pagination;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
@@ -8,7 +9,6 @@ import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
@@ -17,34 +17,26 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Properties;
 
 /**
  * 分页拦截器
  *
  * @author shadow
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class})})
+@Intercepts({
+        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PageableInterceptor extends MybatisInterceptor {
 
     private DBSelector dbSelector;
 
-    public DBSelector getDbSelector() {
-        return dbSelector;
-    }
-
-    public void setDbSelector(DBSelector dbSelector) {
+    public PageableInterceptor(DBSelector dbSelector) {
         this.dbSelector = dbSelector;
     }
 
-
-    /* (non-Javadoc)
-     * 拦截器要执行的方法
-     */
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
-        MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
-        // MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+        MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.DEFAULT_OBJECT_FACTORY,
+                SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
         BoundSql boundSql = statementHandler.getBoundSql();
         Object obj = boundSql.getParameterObject();
         if (obj instanceof Cnd) {
@@ -96,20 +88,5 @@ public class PageableInterceptor extends MybatisInterceptor {
     private String getPageSql(Pagination<?> page, String sql) {
         return dbSelector.getDialect().getLimitString(sql, page.getPageNo(), page.getPageSize());
     }
-
-    /* (non-Javadoc)
-     * 拦截器需要拦截的对象
-     */
-    public Object plugin(Object target) {
-        return Plugin.wrap(target, this);
-    }
-
-    /* (non-Javadoc)
-     * 设置初始化的属性值
-     */
-    public void setProperties(Properties properties) {
-
-    }
-
 
 }
