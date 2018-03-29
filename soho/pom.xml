@@ -20,9 +20,10 @@
     </properties>
 
     <modules>
+		<module>soho-demo</module>
         <module>soho-mybatis</module>
         <module>soho-spring</module>
-        <module>soho-demo</module>
+		<module>soho-zookeeper</module>
     </modules>
 
     <build>
