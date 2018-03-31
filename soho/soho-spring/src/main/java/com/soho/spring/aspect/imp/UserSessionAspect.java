@@ -1,26 +1,18 @@
-package com.soho.aspect;
+package com.soho.spring.aspect.imp;
 
+import com.soho.spring.aspect.InvokeAspect;
 import com.soho.spring.model.ReqData;
 import com.soho.spring.shiro.utils.SessionUtils;
 import org.apache.shiro.session.Session;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.aspectj.lang.ProceedingJoinPoint;
 
-@Aspect
-@Component
-@Order(5)
-public class UseSessionAspect {
+/**
+ * @author shadow
+ */
+public class UserSessionAspect implements InvokeAspect {
 
-    @Pointcut("execution(public * com.soho.*.service..*.*(..))")
-    public void pointcutMethod() {
-    }
-
-    @Before("pointcutMethod()")
-    public void doBefore(JoinPoint joinPoint) {
+    @Override
+    public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] objects = joinPoint.getArgs();
         if (objects != null && objects.length > 0) {
             Object[] newobjects = new Object[objects.length];
@@ -44,13 +36,6 @@ public class UseSessionAspect {
                 }
             }
         }
-
+        return joinPoint.proceed();
     }
-
-
-    // @AfterReturning("pointcutMethod()")
-    public void doAfter(JoinPoint joinPoint) {
-
-    }
-
 }

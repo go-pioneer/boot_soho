@@ -8,12 +8,17 @@
     </parent>
     <groupId>com.soho</groupId>
     <artifactId>soho-demo</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.soho</groupId>
             <artifactId>soho-spring</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-zookeeper</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

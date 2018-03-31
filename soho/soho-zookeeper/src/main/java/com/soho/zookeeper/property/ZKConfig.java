@@ -1,4 +1,4 @@
-package com.soho.zookeeper;
+package com.soho.zookeeper.property;
 
 /**
  * ZooKeeper配置链接属性对象信息
