@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.soho</groupId>
+        <artifactId>soho</artifactId>
+        <version>3.0.0</version>
+    </parent>
+    <groupId>com.soho</groupId>
+    <artifactId>soho-oauth2</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <oauth.version>0.31</oauth.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-spring</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- oauth2 -->
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+            <version>${oauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+            <version>${oauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <version>${oauth.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

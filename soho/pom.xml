@@ -24,6 +24,7 @@
         <module>soho-mybatis</module>
         <module>soho-spring</module>
 		<module>soho-zookeeper</module>
+		<module>soho-oauth2</module>
     </modules>
 
     <build>
