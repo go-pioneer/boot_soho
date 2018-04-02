@@ -3,6 +3,7 @@ package com.soho.spring.cache.imp;
 import com.soho.spring.cache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import org.springframework.util.StringUtils;
 
 /**
  * @author shadow
@@ -10,9 +11,21 @@ import net.sf.ehcache.Element;
 public class EhCache extends AbstractCache implements Cache {
 
     private static CacheManager cacheManager = null;
+    private String cacheName = "soho";
+    private String xmlPath = "/ehcache.xml";
 
     public EhCache() {
-        cacheManager = CacheManager.create(getClass().getResource("/ehcache.xml"));
+        this(null, null);
+    }
+
+    public EhCache(String xmlPath, String cacheName) {
+        if (!StringUtils.isEmpty(cacheName)) {
+            this.cacheName = cacheName;
+        }
+        if (!StringUtils.isEmpty(xmlPath)) {
+            this.xmlPath = xmlPath;
+        }
+        cacheManager = CacheManager.create(getClass().getResource(this.xmlPath));
     }
 
     @Override
@@ -46,7 +59,7 @@ public class EhCache extends AbstractCache implements Cache {
     }
 
     private net.sf.ehcache.Cache getEhCache() {
-        return cacheManager.getCache("cache");
+        return cacheManager.getCache(this.cacheName);
     }
 
 }

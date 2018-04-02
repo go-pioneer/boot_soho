@@ -7,8 +7,12 @@
         <version>3.0.0</version>
     </parent>
     <groupId>com.soho</groupId>
-    <artifactId>soho-demo</artifactId>
-    <packaging>war</packaging>
+    <artifactId>soho-cache</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <xmemcached.version>2.0.0</xmemcached.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -16,15 +20,17 @@
             <artifactId>soho-spring</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.xmemcached/xmemcached -->
         <dependency>
-            <groupId>com.soho</groupId>
-            <artifactId>soho-zookeeper</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.soho</groupId>
-            <artifactId>soho-cache</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>com.googlecode.xmemcached</groupId>
+            <artifactId>xmemcached</artifactId>
+            <version>${xmemcached.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

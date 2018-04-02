@@ -46,6 +46,7 @@ public class ZkApplication {
     public CacheManager initCacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         Cache cache = new EhCache();
+//        Cache cache = new XMemcachedCache("39.108.64.191:12213");
         Map<String, Cache> cacheMap = new HashMap<>();
         cacheMap.put(CacheManager.SHIRO_DATA_CACHE, cache);
         cacheManager.setCacheMap(cacheMap);
