@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * MyBatisDAO CRUD封装实现类
@@ -262,6 +263,30 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
         List<T> list = findOnlyByCnd(cnd, clazz);
         if (!list.isEmpty()) {
             return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Map<String, Object>> findMapByCnd(Cnd cnd) throws MybatisDAOEx {
+        validateNullObject(cnd);
+        try {
+            List<Map<String, Object>> result = getSqlSession().selectList(sqlId(OPT.FINDMAP), cnd);
+            if (result == null) {
+                result = new ArrayList<>();
+            }
+            return result;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+        }
+    }
+
+    @Override
+    public Map<String, Object> findOneMapByCnd(Cnd cnd) throws MybatisDAOEx {
+        List<Map<String, Object>> mapList = findMapByCnd(cnd);
+        if (!mapList.isEmpty()) {
+            return mapList.get(0);
         }
         return null;
     }

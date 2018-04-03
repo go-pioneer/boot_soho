@@ -6,6 +6,7 @@ import com.soho.mybatis.pageable.Pagination;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * MyBatis-CRUD接口
@@ -175,5 +176,23 @@ public interface MyBatisDAO<E extends IDEntity<ID>, ID> {
      * @throws MybatisDAOEx
      */
     public <T> T findOnlyOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
+
+    /**
+     * 获取复杂数据对象集合
+     *
+     * @param cnd
+     * @return List<Map<String, Object>>
+     * @throws MybatisDAOEx
+     */
+    public List<Map<String, Object>> findMapByCnd(Cnd cnd) throws MybatisDAOEx;
+
+    /**
+     * 获取单个复杂数据对象集合
+     *
+     * @param cnd
+     * @return Map<String, Object>
+     * @throws MybatisDAOEx
+     */
+    public Map<String, Object> findOneMapByCnd(Cnd cnd) throws MybatisDAOEx;
 
 }
