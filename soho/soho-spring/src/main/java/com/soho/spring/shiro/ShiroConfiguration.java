@@ -8,7 +8,6 @@ import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -66,15 +65,10 @@ public class ShiroConfiguration {
         List<Realm> realms = shiroInitializeService.initRealms();
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
-        securityManager.setSessionManager(initSessionManager());
-        return securityManager;
-    }
-
-    @Bean
-    public SessionManager initSessionManager() {
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
         defaultWebSessionManager.setSessionDAO(new EnterpriseCacheSessionDAO());
-        return defaultWebSessionManager;
+        securityManager.setSessionManager(defaultWebSessionManager);
+        return securityManager;
     }
 
 }
