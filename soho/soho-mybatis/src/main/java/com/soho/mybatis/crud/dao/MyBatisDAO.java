@@ -178,7 +178,7 @@ public interface MyBatisDAO<E extends IDEntity<ID>, ID> {
     public <T> T findOnlyOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
 
     /**
-     * 获取复杂数据对象集合
+     * 获取多个MAP数据
      *
      * @param cnd
      * @return List<Map<String, Object>>
@@ -187,12 +187,30 @@ public interface MyBatisDAO<E extends IDEntity<ID>, ID> {
     public List<Map<String, Object>> findMapByCnd(Cnd cnd) throws MybatisDAOEx;
 
     /**
-     * 获取单个复杂数据对象集合
+     * 获取多个MAP数据
+     *
+     * @param cnd
+     * @return List<E>
+     * @throws MybatisDAOEx
+     */
+    public <T> List<T> findMapByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
+
+    /**
+     * 获取单个MAP数据
      *
      * @param cnd
      * @return Map<String, Object>
      * @throws MybatisDAOEx
      */
-    public Map<String, Object> findOneMapByCnd(Cnd cnd) throws MybatisDAOEx;
+    public Map<String, Object> findMapOneByCnd(Cnd cnd) throws MybatisDAOEx;
+
+    /**
+     * 获取单个MAP数据
+     *
+     * @param cnd
+     * @return E
+     * @throws MybatisDAOEx
+     */
+    public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
 
 }

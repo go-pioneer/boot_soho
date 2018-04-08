@@ -7,6 +7,7 @@ import com.soho.mybatis.pageable.Pagination;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * MyBatis-CRUD接口
@@ -160,5 +161,41 @@ public interface BaseService<E extends IDEntity<ID>, ID> {
      * @throws BizErrorEx
      */
     public Pagination<E> pagingByCnd(Cnd cnd) throws BizErrorEx;
+
+    /**
+     * 获取多个MAP数据
+     *
+     * @param cnd
+     * @return List<Map<String, Object>>
+     * @throws BizErrorEx
+     */
+    public List<Map<String, Object>> findMapByCnd(Cnd cnd) throws BizErrorEx;
+
+    /**
+     * 获取多个MAP数据
+     *
+     * @param cnd
+     * @return List<T>
+     * @throws BizErrorEx
+     */
+    public <T> List<T> findMapByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx;
+
+    /**
+     * 获取单个MAP数据
+     *
+     * @param cnd
+     * @return Map<String, Object>
+     * @throws BizErrorEx
+     */
+    public Map<String, Object> findMapOneByCnd(Cnd cnd) throws BizErrorEx;
+
+    /**
+     * 获取单个MAP数据
+     *
+     * @param cnd
+     * @return T
+     * @throws BizErrorEx
+     */
+    public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx;
 
 }

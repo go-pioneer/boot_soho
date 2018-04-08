@@ -10,6 +10,7 @@ import com.soho.mybatis.pageable.Pagination;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseServiceImp<E extends IDEntity<ID>, ID> implements BaseService<E, ID> {
 
@@ -144,6 +145,38 @@ public abstract class BaseServiceImp<E extends IDEntity<ID>, ID> implements Base
     public Pagination<E> pagingByCnd(Cnd cnd) throws BizErrorEx {
         try {
             return getMybatisDAO().pagingByCnd(cnd);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
+    public List<Map<String, Object>> findMapByCnd(Cnd cnd) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findMapByCnd(cnd);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
+    public <T> List<T> findMapByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findMapByCnd(cnd, clazz);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
+    public Map<String, Object> findMapOneByCnd(Cnd cnd) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findMapOneByCnd(cnd);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
+    public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findMapOneByCnd(cnd, clazz);
         } catch (MybatisDAOEx e) {
             throw new BizErrorEx(e);
         }

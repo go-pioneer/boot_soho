@@ -283,10 +283,28 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
     }
 
     @Override
-    public Map<String, Object> findOneMapByCnd(Cnd cnd) throws MybatisDAOEx {
-        List<Map<String, Object>> mapList = findMapByCnd(cnd);
-        if (!mapList.isEmpty()) {
-            return mapList.get(0);
+    public <T> List<T> findMapByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
+        List<Map<String, Object>> list = findMapByCnd(cnd);
+        if (!list.isEmpty()) {
+            return JSONArray.parseArray(JSONObject.toJSONString(list), clazz);
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Map<String, Object> findMapOneByCnd(Cnd cnd) throws MybatisDAOEx {
+        List<Map<String, Object>> list = findMapByCnd(cnd);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
+        List<T> list = findMapByCnd(cnd, clazz);
+        if (!list.isEmpty()) {
+            return list.get(0);
         }
         return null;
     }

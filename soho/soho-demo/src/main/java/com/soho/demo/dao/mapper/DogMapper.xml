@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.soho.demo.dao.DogDAO">
-    
+
     <resultMap id="BaseResultMap" type="com.soho.demo.domain.Dog">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -11,11 +11,11 @@
         <result column="utime" jdbcType="BIGINT" property="utime" />
         <result column="state" jdbcType="INTEGER" property="state" />
     </resultMap>
-    
+
     <sql id="Base_Column_List">
         id, name, age, sex, ctime, utime, state
     </sql>
-    
+
     <insert id="insert" parameterType="com.soho.demo.domain.Dog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
@@ -62,7 +62,7 @@
             </if>
         </trim>
     </insert>
-    
+
     <update id="update" parameterType="com.soho.demo.domain.Dog">
         update dog
         <set>
@@ -87,30 +87,30 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    
+
     <delete id="delete" parameterType="java.lang.Long">
         delete from dog
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    
+
     <select id="countByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.lang.Integer">
-        select count(1) 
+        select count(1)
         from dog
         <include refid="Global.Where_Clause" />
     </select>
-    
+
     <select id="findByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultMap="BaseResultMap">
-        select 
+        select
         <include refid="Global.Field_Clause" />
         from dog
         <include refid="Global.Where_Clause" />
     </select>
-    
+
     <delete id="deleteByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
         delete from dog
         <include refid="Global.Where_Clause" />
     </delete>
-    
+
     <update id="updateByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
         update dog
         <set>
@@ -135,4 +135,8 @@
         </set>
         <include refid="Global.Where_Clause" />
     </update>
+
+    <select id="findMapByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.util.Map">
+        <include refid="Global.Where_Clause_Complex" />
+    </select>
 </mapper>

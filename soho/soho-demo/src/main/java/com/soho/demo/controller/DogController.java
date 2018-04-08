@@ -3,6 +3,7 @@ package com.soho.demo.controller;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
+import com.soho.mybatis.sqlcode.condition.imp.QSQLCnd;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.spring.model.ReqData;
 import org.apache.shiro.SecurityUtils;
@@ -59,8 +60,9 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findAll")
     public Object findAll() throws BizErrorEx {
+         Dog dog = dogService.findMapOneByCnd(new SQLCnd(), Dog.class);
         dogService.test(new ReqData());
-        return dogService.findByCnd(new SQLCnd().eq("id", 1).limit(1, 3));
+        return dogService.findByCnd(new QSQLCnd().eq("id", 2));
     }
 
 }

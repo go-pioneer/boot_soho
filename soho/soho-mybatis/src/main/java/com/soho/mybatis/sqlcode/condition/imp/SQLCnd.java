@@ -13,50 +13,50 @@ import java.util.*;
 
 public class SQLCnd implements Cnd {
 
-    private List<Condition<?>> conditions = new ArrayList<Condition<?>>();
+    private List<Condition<?>> conditions = new ArrayList<>();
     private List<String> fields = new ArrayList<>();
     private String onlyField = "";
-    private List<String> distincts = new ArrayList<String>();
-    private List<String> groupbys = new ArrayList<String>();
-    private List<Condition<?>> orderbys = new ArrayList<Condition<?>>();
-    private Map<String, Object> updateObj = new HashMap<String, Object>();
+    private List<String> distincts = new ArrayList<>();
+    private List<String> groupbys = new ArrayList<>();
+    private List<Condition<?>> orderbys = new ArrayList<>();
+    private Map<String, Object> updateObj = new HashMap<>();
     private Map<String, Object> other = new HashMap<>();
 
     private Pagination<Object> pagination;
 
     @Override
     public Cnd eq(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.EQ, key, value));
+        conditions.add(new Condition<>(OPT.EQ, key, value));
         return this;
     }
 
     @Override
     public Cnd noteq(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.NOT_EQ, key, value));
+        conditions.add(new Condition<>(OPT.NOT_EQ, key, value));
         return this;
     }
 
     @Override
     public Cnd lt(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.LT, key, value));
+        conditions.add(new Condition<>(OPT.LT, key, value));
         return this;
     }
 
     @Override
     public Cnd lte(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.LTE, key, value));
+        conditions.add(new Condition<>(OPT.LTE, key, value));
         return this;
     }
 
     @Override
     public Cnd gt(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.GT, key, value));
+        conditions.add(new Condition<>(OPT.GT, key, value));
         return this;
     }
 
     @Override
     public Cnd gte(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.GTE, key, value));
+        conditions.add(new Condition<>(OPT.GTE, key, value));
         return this;
     }
 
@@ -74,22 +74,22 @@ public class SQLCnd implements Cnd {
 
     @Override
     public Cnd between(String key, Object value1, Object value2) {
-        conditions.add(new Condition<Object>(OPT.BETWEEN, key, Arrays.asList(value1, value2)));
+        conditions.add(new Condition<>(OPT.BETWEEN, key, Arrays.asList(value1, value2)));
         return this;
     }
 
     @Override
     public Cnd notbetween(String key, Object value1, Object value2) {
-        conditions.add(new Condition<Object>(OPT.NOT_BETWEEN, key, Arrays.asList(value1, value2)));
+        conditions.add(new Condition<>(OPT.NOT_BETWEEN, key, Arrays.asList(value1, value2)));
         return this;
     }
 
     @Override
     public Cnd in(String key, Object... values) {
         if (values.length == 1 && values[0] instanceof List<?>) {
-            conditions.add(new Condition<Object>(OPT.IN, key, (List<Object>) values[0]));
+            conditions.add(new Condition<>(OPT.IN, key, (List<Object>) values[0]));
         } else {
-            conditions.add(new Condition<Object>(OPT.IN, key, Arrays.asList(values)));
+            conditions.add(new Condition<>(OPT.IN, key, Arrays.asList(values)));
         }
         return this;
     }
@@ -97,7 +97,7 @@ public class SQLCnd implements Cnd {
     @Override
     public Cnd in(String key, Object values) {
         if (values instanceof List<?>) {
-            conditions.add(new Condition<Object>(OPT.IN, key, (List<Object>) values));
+            conditions.add(new Condition<>(OPT.IN, key, (List<Object>) values));
         }
         return this;
     }
@@ -105,9 +105,9 @@ public class SQLCnd implements Cnd {
     @Override
     public Cnd notin(String key, Object... values) {
         if (values.length == 1 && values[0] instanceof List<?>) {
-            conditions.add(new Condition<Object>(OPT.NOT_IN, key, (List<Object>) values[0]));
+            conditions.add(new Condition<>(OPT.NOT_IN, key, (List<Object>) values[0]));
         } else {
-            conditions.add(new Condition<Object>(OPT.NOT_IN, key, Arrays.asList(values)));
+            conditions.add(new Condition<>(OPT.NOT_IN, key, Arrays.asList(values)));
         }
         return this;
     }
@@ -115,30 +115,30 @@ public class SQLCnd implements Cnd {
     @Override
     public Cnd notin(String key, Object values) {
         if (values instanceof List<?>) {
-            conditions.add(new Condition<Object>(OPT.NOT_IN, key, (List<Object>) values));
+            conditions.add(new Condition<>(OPT.NOT_IN, key, (List<Object>) values));
         }
         return this;
     }
 
     @Override
     public Cnd like(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.LIKE, key, value));
+        conditions.add(new Condition<>(OPT.LIKE, key, value));
         return this;
     }
 
     @Override
     public Cnd notlike(String key, Object value) {
-        conditions.add(new Condition<Object>(OPT.NOT_LIKE, key, value));
+        conditions.add(new Condition<>(OPT.NOT_LIKE, key, value));
         return this;
     }
 
     @Override
     public Cnd or(Cnd... cnds) {
-        List<Object> values = new LinkedList<Object>();
+        List<Object> values = new LinkedList<>();
         for (Cnd cnd : cnds) {
             values.add(cnd.getConditions());
         }
-        conditions.add(new Condition<Object>(OPT.OR, "", values));
+        conditions.add(new Condition<>(OPT.OR, "", values));
         return this;
     }
 
@@ -150,7 +150,7 @@ public class SQLCnd implements Cnd {
         if (pageSize == null || pageSize < 1 || pageSize > 1000) {
             pageSize = 10;
         }
-        pagination = new SimplePagination<Object>(pageNo, pageSize);
+        pagination = new SimplePagination<>(pageNo, pageSize);
         return this;
     }
 

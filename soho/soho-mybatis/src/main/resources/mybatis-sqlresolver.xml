@@ -128,6 +128,7 @@
 			</foreach>
 		</if>
 	</sql>
+
 	<sql id="Field_Clause">
 		<choose>
 			<when test="(fields != null and fields.size > 0) or (distincts != null and distincts.size > 0)">
@@ -148,5 +149,133 @@
 				<include refid="Base_Column_List" />
 			</otherwise>
 		</choose>
+	</sql>
+
+	<sql id="Where_Clause_Complex">
+		<!-- WARNING - @全局SQL -->
+		<if test="conditions != null and conditions.size > 0">
+			<foreach open="WHERE" close="" separator="AND" collection="conditions" item="item">
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isNull(item.logic)">
+					${item.key} ${item.logic} ${item.value}
+				</if>
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isDefault(item.logic)">
+					${item.key} ${item.logic} #{item.value}
+				</if>
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isBetween(item.logic)">
+					(
+					${item.key} ${item.logic}
+					<foreach separator="AND" collection="item.values" item="child_item_btw">
+						#{child_item_btw}
+					</foreach>
+					)
+				</if>
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isIn(item.logic)">
+					${item.key} ${item.logic}
+					<foreach open="(" close=")" separator="," collection="item.values" item="child_item_in">
+						#{child_item_in}
+					</foreach>
+				</if>
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isLike(item.logic)">
+					${item.key} like CONCAT('%',#{item.value},'%' )
+				</if>
+				<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isOr(item.logic)">
+					<foreach open="(" close=")" separator="OR" collection="item.values" item="child_item_1">
+						<foreach open="(" close=")" separator="AND" collection="child_item_1" item="child_item_11">
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isNull(child_item_11.logic)">
+								${child_item_11.key} ${child_item_11.logic} ${child_item_11.value}
+							</if>
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isDefault(child_item_11.logic)">
+								${child_item_11.key} ${child_item_11.logic} #{child_item_11.value}
+							</if>
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isBetween(child_item_11.logic)">
+								(
+								${child_item_11.key} ${child_item_11.logic}
+								<foreach separator="AND" collection="child_item_11.values" item="child_item_btw_1">
+									#{child_item_btw_1}
+								</foreach>
+								)
+							</if>
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isIn(child_item_11.logic)">
+								${child_item_11.key} ${child_item_11.logic}
+								<foreach open="(" close=")" separator="," collection="child_item_11.values" item="child_item_in_1">
+									#{child_item_in_1}
+								</foreach>
+							</if>
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isLike(child_item_11.logic)">
+								${child_item_11.key} ${child_item_11.logic} #{child_item_11.value}
+							</if>
+							<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isOr(child_item_11.logic)">
+								<foreach open="(" close=")" separator="OR" collection="child_item_11.values" item="child_item_2">
+									<foreach open="(" close=")" separator="AND" collection="child_item_2" item="child_item_22">
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isNull(child_item_22.logic)">
+											${child_item_22.key} ${child_item_22.logic} ${child_item_22.value}
+										</if>
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isDefault(child_item_22.logic)">
+											${child_item_22.key} ${child_item_22.logic} #{child_item_22.value}
+										</if>
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isBetween(child_item_22.logic)">
+											(
+											${child_item_22.key} ${child_item_22.logic}
+											<foreach separator="AND" collection="child_item_22.values" item="child_item_btw_2">
+												#{child_item_btw_2}
+											</foreach>
+											)
+										</if>
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isIn(child_item_22.logic)">
+											${child_item_22.key} ${child_item_22.logic}
+											<foreach open="(" close=")" separator="," collection="child_item_22.values" item="child_item_in_2">
+												#{child_item_in_2}
+											</foreach>
+										</if>
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isLike(child_item_22.logic)">
+											${child_item_22.key} ${child_item_22.logic} #{child_item_22.value}
+										</if>
+										<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isOr(child_item_22.logic)">
+											<foreach open="(" close=")" separator="OR" collection="child_item_22.values" item="child_item_3">
+												<foreach open="(" close=")" separator="AND" collection="child_item_3" item="child_item_33">
+													<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isNull(child_item_33.logic)">
+														${child_item_33.key} ${child_item_33.logic} ${child_item_33.value}
+													</if>
+													<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isDefault(child_item_33.logic)">
+														${child_item_33.key} ${child_item_33.logic} #{child_item_33.value}
+													</if>
+													<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isBetween(child_item_33.logic)">
+														(
+														${child_item_33.key} ${child_item_33.logic}
+														<foreach separator="AND" collection="child_item_33.values" item="child_item_btw_3">
+															#{child_item_btw_3}
+														</foreach>
+														)
+													</if>
+													<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isIn(child_item_33.logic)">
+														${child_item_33.key} ${child_item_33.logic}
+														<foreach open="(" close=")" separator="," collection="child_item_33.values" item="child_item_in_3">
+															#{child_item_in_3}
+														</foreach>
+													</if>
+													<if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isLike(child_item_33.logic)">
+														${child_item_33.key} ${child_item_33.logic} #{child_item_33.value}
+													</if>
+												</foreach>
+											</foreach>
+										</if>
+									</foreach>
+								</foreach>
+							</if>
+						</foreach>
+					</foreach>
+				</if>
+			</foreach>
+		</if>
+		<if test="groupbys != null and groupbys.size > 0">
+			<foreach open="GROUP BY" close="" separator="," collection="groupbys" item="groupby">
+				${groupby}
+			</foreach>
+		</if>
+		<if test="orderbys != null and orderbys.size > 0">
+			<foreach open="ORDER BY" close="" separator="," collection="orderbys" item="orderby">
+				${orderby.key} ${orderby.value}
+			</foreach>
+		</if>
 	</sql>
 </mapper>
