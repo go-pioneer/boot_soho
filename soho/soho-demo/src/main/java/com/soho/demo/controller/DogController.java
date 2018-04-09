@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -60,15 +61,16 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findAll")
     public Object findAll() throws BizErrorEx {
-        return dogService
+        List list = dogService
                 .findMapByCnd(new SQLCnd().fields("a.id", "a.name")
                         .from("dog a")
                         .join(new Join(MODE.LEFT, "color b").on("a.id", "b.id").on("a.id", 1))
                         .join(new Join(MODE.LEFT, "color c").on("a.id", "c.id"))
                         .join(new Join(MODE.INNER, "color d").on("a.id", "d.id"))
                         .eq("a.id", 2));
+//        System.out.println(list);
         // dogService.test(new ReqData());
-        // return dogService.findByCnd(new SQLCnd().eq("id", 2));
+        return dogService.findByCnd(new SQLCnd().eq("id", 2));
     }
 
 }

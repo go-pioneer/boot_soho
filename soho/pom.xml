@@ -16,15 +16,16 @@
         <druid.version>1.1.0</druid.version>
         <log4j.version>1.2.17</log4j.version>
         <shiro.spring.version>1.4.0</shiro.spring.version>
+        <servlet.version>3.1.0</servlet.version>
     </properties>
 
     <modules>
-		<module>soho-demo</module>
+        <module>soho-demo</module>
         <module>soho-mybatis</module>
         <module>soho-spring</module>
-		<module>soho-zookeeper</module>
-		<module>soho-oauth2</module>
-		<module>soho-cache</module>
+        <module>soho-zookeeper</module>
+        <module>soho-oauth2</module>
+        <module>soho-cache</module>
     </modules>
 
     <build>
@@ -75,6 +76,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 移除嵌入式tomcat插件 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Spring Boot Aop 依赖 -->
         <dependency>
@@ -131,6 +139,13 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
             <version>${shiro.spring.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
