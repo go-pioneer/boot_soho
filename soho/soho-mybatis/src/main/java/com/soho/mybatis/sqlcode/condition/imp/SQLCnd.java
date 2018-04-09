@@ -8,19 +8,23 @@ import com.soho.mybatis.sqlcode.aconst.OPT;
 import com.soho.mybatis.sqlcode.aconst.SortBy;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 import com.soho.mybatis.sqlcode.domain.Condition;
+import com.soho.mybatis.sqlcode.domain.Join;
 
 import java.util.*;
 
 public class SQLCnd implements Cnd {
 
-    private List<Condition<?>> conditions = new ArrayList<>();
-    private List<String> fields = new ArrayList<>();
-    private String onlyField = "";
-    private List<String> distincts = new ArrayList<>();
-    private List<String> groupbys = new ArrayList<>();
-    private List<Condition<?>> orderbys = new ArrayList<>();
-    private Map<String, Object> updateObj = new HashMap<>();
-    private Map<String, Object> other = new HashMap<>();
+    protected List<Condition<?>> conditions = new ArrayList<>();
+    protected List<String> fields = new ArrayList<>();
+    protected String onlyField = "";
+    protected List<String> distincts = new ArrayList<>();
+    protected List<String> groupbys = new ArrayList<>();
+    protected List<Condition<?>> orderbys = new ArrayList<>();
+    protected Map<String, Object> updateObj = new HashMap<>();
+    protected Map<String, Object> other = new HashMap<>();
+
+    protected String fromJoinTable;
+    protected List<Join> joins = new ArrayList<>();
 
     private Pagination<Object> pagination;
 
@@ -233,8 +237,21 @@ public class SQLCnd implements Cnd {
         return this;
     }
 
+    @Override
     public String getOnlyField() {
         return onlyField;
+    }
+
+    @Override
+    public Cnd from(String table) {
+        this.fromJoinTable = table;
+        return this;
+    }
+
+    @Override
+    public Cnd join(Join join) {
+        joins.add(join);
+        return this;
     }
 
     @Override
@@ -248,6 +265,7 @@ public class SQLCnd implements Cnd {
             orderbys.addAll(sqlCnd.orderbys);
             updateObj.putAll(sqlCnd.updateObj);
             other.putAll(sqlCnd.other);
+            fromJoinTable = sqlCnd.fromJoinTable;
             if (sqlCnd.pagination != null) {
                 pagination = new SimplePagination<>();
                 pagination.setPageNumber(sqlCnd.pagination.getPageNumber());

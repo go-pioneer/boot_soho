@@ -1,5 +1,6 @@
 package com.soho.mybatis.sqlcode.utils;
 
+import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.sqlcode.aconst.OPT;
 
 public class LogicUtils {
@@ -66,6 +67,27 @@ public class LogicUtils {
         }
         String val = opt.toString();
         if (val.equals(OPT.OR.toString())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isLeftJoin(Object mode) {
+        if (MODE.LEFT.equals(mode)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isRightJoin(Object mode) {
+        if (MODE.RIGHT.equals(mode)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isInnerJoin(Object mode) {
+        if (MODE.INNER.equals(mode)) {
             return true;
         }
         return false;

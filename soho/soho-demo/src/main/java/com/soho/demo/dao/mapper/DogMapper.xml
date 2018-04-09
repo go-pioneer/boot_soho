@@ -137,6 +137,9 @@
     </update>
 
     <select id="findMapByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.util.Map">
+        select
+        <include refid="Global.Field_Clause" />
+        from
         <include refid="Global.Where_Clause_Complex" />
     </select>
 </mapper>

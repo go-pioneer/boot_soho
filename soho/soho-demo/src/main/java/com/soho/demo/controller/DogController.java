@@ -2,10 +2,10 @@ package com.soho.demo.controller;
 
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
+import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.mybatis.sqlcode.condition.imp.QSQLCnd;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.spring.model.ReqData;
+import com.soho.mybatis.sqlcode.domain.Join;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +60,15 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findAll")
     public Object findAll() throws BizErrorEx {
-         Dog dog = dogService.findMapOneByCnd(new SQLCnd(), Dog.class);
-        dogService.test(new ReqData());
-        return dogService.findByCnd(new QSQLCnd().eq("id", 2));
+        return dogService
+                .findMapByCnd(new SQLCnd().fields("a.id", "a.name")
+                        .from("dog a")
+                        .join(new Join(MODE.LEFT, "color b").on("a.id", "b.id").on("a.id", 1))
+                        .join(new Join(MODE.LEFT, "color c").on("a.id", "c.id"))
+                        .join(new Join(MODE.INNER, "color d").on("a.id", "d.id"))
+                        .eq("a.id", 2));
+        // dogService.test(new ReqData());
+        // return dogService.findByCnd(new SQLCnd().eq("id", 2));
     }
 
 }

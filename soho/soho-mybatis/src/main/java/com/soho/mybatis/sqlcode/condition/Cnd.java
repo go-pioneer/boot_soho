@@ -1,8 +1,11 @@
 package com.soho.mybatis.sqlcode.condition;
 
+import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.pageable.Pagination;
+import com.soho.mybatis.sqlcode.aconst.OPT;
 import com.soho.mybatis.sqlcode.aconst.SortBy;
 import com.soho.mybatis.sqlcode.domain.Condition;
+import com.soho.mybatis.sqlcode.domain.Join;
 
 import java.util.List;
 
@@ -67,6 +70,10 @@ public interface Cnd {
     public void setPagination(Pagination<Object> pagination);
 
     public String getOnlyField();
+
+    public Cnd from(String table);
+
+    public Cnd join(Join join);
 
     public Cnd copy(Cnd cnd);
 
