@@ -6,7 +6,8 @@ import com.soho.spring.utils.HttpUtils;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -19,28 +20,41 @@ import java.util.HashMap;
  *
  * @author shadow
  */
-public class SimpleKickoutSessionFilter extends FormAuthenticationFilter {
+public class SimpleKickOutSessionFilter extends AccessControlFilter {
 
     private String[] apiPrefix;
     private CacheManager cacheManager;
 
-    public SimpleKickoutSessionFilter() {
+    public SimpleKickOutSessionFilter() {
     }
 
-    public SimpleKickoutSessionFilter(String[] apiPrefix, CacheManager cacheManager) {
+    public SimpleKickOutSessionFilter(String[] apiPrefix, CacheManager cacheManager) {
         this.apiPrefix = apiPrefix;
         this.cacheManager = cacheManager;
+    }
+
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        // 获取用户对象上下文
+        Subject subject = getSubject(httpRequest, httpResponse);
+        // 判断用户对象是否已进行认证以及是否存在登录主体
+        if (subject.isAuthenticated() && subject.getPrincipal() != null) {
+            Cache cache = cacheManager.getCache(null);
+            Object cacheValue = cache.get(SessionUtils.ONLINE + subject.getPrincipal());
+            // 判断登录主体绑定的会话ID是否一致,如不一致则返回跳入失败函数处理
+            if (cacheValue != null && !cacheValue.equals(subject.getSession().getId().toString())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        Subject subject = getSubject(request, response);
-        Cache cache = cacheManager.getCache(null);
-        Object cacheValue = cache.get(SessionUtils.ONLINE + subject.getPrincipal());
-        if (cacheValue == null || cacheValue.equals(subject.getSession().getId().toString())) {
-            return true;
-        }
+        Subject subject = getSubject(httpRequest, httpResponse);
         try {
             subject.logout();
         } catch (Exception e) {
@@ -50,7 +64,7 @@ public class SimpleKickoutSessionFilter extends FormAuthenticationFilter {
             RetData<Object> retData = new RetData<>("000003", "您的会话已被踢下线", new HashMap());
             HttpUtils.responseJsonData(httpResponse, retData);
         } else {
-            saveRequestAndRedirectToLogin(request, response);
+            WebUtils.issueRedirect(request, response, getLoginUrl());
         }
         return false;
     }

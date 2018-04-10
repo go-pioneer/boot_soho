@@ -35,36 +35,37 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
     }
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        Subject subject = getSubject(request, response);
-
-        if (subject.getPrincipal() == null) {
+        // 获取用户对象上下文
+        Subject subject = getSubject(httpRequest, httpResponse);
+        // 没有登录状态,返回会话未登录或已超时状态
+        if (!subject.isAuthenticated() || subject.getPrincipal() == null) {
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
                 RetData<Object> retData = new RetData<>("000001", "您尚未登录或会话已超时", new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
-                saveRequestAndRedirectToLogin(request, response);
+                saveRequestAndRedirectToLogin(httpRequest, httpResponse);
             }
         } else {
+            // 已有登录状态,则返回没有权限访问状态
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
                 RetData<Object> retData = new RetData<>("000002", "您没有足够的权限访问", new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
+                // 读取无权限回调地址
                 String unauthorizedUrl = getUnauthorizedUrl();
                 if (subject.isAuthenticated()) {
                     if (StringUtils.hasText(unauthorizedUrl)) {
-                        WebUtils.issueRedirect(request, response, unauthorizedUrl);
+                        WebUtils.issueRedirect(httpRequest, httpResponse, unauthorizedUrl);
                     } else {
-                        WebUtils.toHttp(response).sendError(401);
+                        WebUtils.toHttp(httpResponse).sendError(401);
                     }
                 } else {
                     if (StringUtils.hasText(redirectUrl)) {
-                        WebUtils.issueRedirect(request, response, redirectUrl);
+                        WebUtils.issueRedirect(httpRequest, httpResponse, redirectUrl);
                     } else {
-                        WebUtils.toHttp(response).sendError(404);
+                        WebUtils.toHttp(httpResponse).sendError(404);
                     }
                 }
             }
@@ -72,17 +73,14 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
         return false;
     }
 
-    public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-            throws IOException {
-
+    public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         Subject subject = getSubject(request, response);
         String[] rolesArray = (String[]) mappedValue;
-
+        // 系统角色集合为空则不进行校验
         if (rolesArray == null || rolesArray.length == 0) {
-            // no roles specified, so nothing to check - allow access.
             return true;
         }
-
+        // 系统存在校验,则匹对用户对象所拥有角色集合
         Set<String> roles = CollectionUtils.asSet(rolesArray);
         for (String role : roles) {
             if (subject.hasRole(role)) {

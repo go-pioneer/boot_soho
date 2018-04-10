@@ -2,6 +2,7 @@ package com.soho.spring.shiro.filter;
 
 import com.soho.spring.model.RetData;
 import com.soho.spring.utils.HttpUtils;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 
 import javax.servlet.ServletRequest;
@@ -24,6 +25,11 @@ public class SimpleFormAuthenticationFilter extends FormAuthenticationFilter {
 
     public SimpleFormAuthenticationFilter(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
+    }
+
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object object) {
+        Subject subject = this.getSubject(request, response);
+        return subject.isAuthenticated();
     }
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {

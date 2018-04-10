@@ -2,7 +2,7 @@ package com.soho.spring.shiro;
 
 import com.soho.spring.model.ConfigData;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
-import com.soho.spring.shiro.filter.SimpleKickoutSessionFilter;
+import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
 import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
@@ -56,8 +56,8 @@ public class ShiroConfiguration {
         if (!map.containsKey("role")) {
             map.put("role", new SimpleRoleAuthorizationFilter(configData.getApiPrefix(), configData.getRedirectUrl()));
         }
-        if (!map.containsKey("role")) {
-            map.put("kickout", new SimpleKickoutSessionFilter(configData.getApiPrefix(), cacheManager));
+        if (!map.containsKey("kickout")) {
+            map.put("kickout", new SimpleKickOutSessionFilter(configData.getApiPrefix(), cacheManager));
         }
         shiroFilterFactoryBean.setFilters(map);
         return shiroFilterFactoryBean;

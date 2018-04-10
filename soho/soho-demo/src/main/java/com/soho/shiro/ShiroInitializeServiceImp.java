@@ -25,8 +25,7 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         definition.setSuccessUrl("/dog/findOne");
         definition.setUnauthorizedUrl("/403");
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        filterChainDefinitionMap.put("/dog/findOne", "authc,role[user]");
-        filterChainDefinitionMap.put("/dog/findOne", "authc,kickout");
+        filterChainDefinitionMap.put("/dog/findOne", "kickout,role[user]");
         definition.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return definition;
     }

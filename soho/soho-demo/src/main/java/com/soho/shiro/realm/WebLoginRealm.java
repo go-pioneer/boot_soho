@@ -3,6 +3,7 @@ package com.soho.shiro.realm;
 import com.soho.spring.shiro.utils.SessionUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -13,7 +14,9 @@ public class WebLoginRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        return null;
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.addRole("user");
+        return authorizationInfo;
     }
 
     @Override
@@ -23,6 +26,7 @@ public class WebLoginRealm extends AuthorizingRealm {
         map.put("id", 1);
         map.put("username", token.getUsername());
         SessionUtils.setUser(map);
+        SessionUtils.setOnlineUserId(token.getPrincipal(), SessionUtils.getSession().getId().toString());
         return new SimpleAuthenticationInfo(token.getUsername(), token.getCredentials(), getName());
     }
 
