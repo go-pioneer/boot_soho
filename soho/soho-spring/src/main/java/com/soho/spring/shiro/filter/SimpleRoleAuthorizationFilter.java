@@ -50,7 +50,7 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
             }
         } else {
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
-                RetData<Object> retData = new RetData<Object>("000002", "您没有足够的权限访问", new HashMap());
+                RetData<Object> retData = new RetData<>("000002", "您没有足够的权限访问", new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
                 String unauthorizedUrl = getUnauthorizedUrl();

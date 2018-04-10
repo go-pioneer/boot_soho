@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Global">
+    <!-- 单表查询SQL -->
     <sql id="Where_Clause">
-        <!-- WARNING - @全局SQL -->
         <if test="conditions != null and conditions.size > 0">
             <foreach open="WHERE" close="" separator="AND" collection="conditions" item="item">
                 <if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isNull(item.logic)">
@@ -141,9 +141,8 @@
             </foreach>
         </if>
     </sql>
-
+    <!-- 多表连接查询SQL(包含left,right,inner方式) -->
     <sql id="Where_Clause_Complex">
-        <!-- WARNING - @全局SQL -->
         ${fromJoinTable}
         <foreach open="" close="" separator="" collection="joins" item="item">
             <if test="@com.soho.mybatis.sqlcode.utils.LogicUtils@isLeftJoin(item.mode)">
@@ -162,7 +161,7 @@
         </foreach>
         <include refid="Global.Where_Clause"/>
     </sql>
-
+    <!-- 查询并返回对象字段集合或自定义字段 -->
     <sql id="Field_Clause">
         <choose>
             <when test="(fields != null and fields.size > 0) or (distincts != null and distincts.size > 0)">
@@ -184,5 +183,4 @@
             </otherwise>
         </choose>
     </sql>
-
 </mapper>

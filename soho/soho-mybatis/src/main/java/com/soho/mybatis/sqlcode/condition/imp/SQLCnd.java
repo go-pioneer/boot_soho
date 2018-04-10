@@ -266,6 +266,7 @@ public class SQLCnd implements Cnd {
             updateObj.putAll(sqlCnd.updateObj);
             other.putAll(sqlCnd.other);
             fromJoinTable = sqlCnd.fromJoinTable;
+            joins = sqlCnd.joins;
             if (sqlCnd.pagination != null) {
                 pagination = new SimplePagination<>();
                 pagination.setPageNumber(sqlCnd.pagination.getPageNumber());
