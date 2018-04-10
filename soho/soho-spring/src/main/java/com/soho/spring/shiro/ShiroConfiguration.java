@@ -57,7 +57,7 @@ public class ShiroConfiguration {
             map.put("role", new SimpleRoleAuthorizationFilter(configData.getApiPrefix(), configData.getRedirectUrl()));
         }
         if (!map.containsKey("kickout")) {
-            map.put("kickout", new SimpleKickOutSessionFilter(configData.getApiPrefix(), cacheManager));
+            map.put("kickout", new SimpleKickOutSessionFilter(configData.getApiPrefix()));
         }
         shiroFilterFactoryBean.setFilters(map);
         return shiroFilterFactoryBean;

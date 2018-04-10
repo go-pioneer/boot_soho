@@ -31,8 +31,9 @@ public class SessionUtils {
         return null;
     }
 
-    public static void setUser(Object user) {
+    public static void setUser(Object user, Object principal) {
         getSession().setAttribute(USER, user);
+        setOnlineUserId(principal, getSession().getId().toString());
     }
 
     public static void setOnlineUserId(Object userId, Object sessionId) {
@@ -44,6 +45,21 @@ public class SessionUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Object getOnlineUserId(Object userId) {
+        try {
+            Cache cache = SpringUtils.getBean(CacheManager.class).getCache(null);
+            if (cache != null) {
+                Object cacheValue = cache.get(ONLINE + userId);
+                if (cacheValue != null) {
+                    return cacheValue;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void setAttribute(Object key, Object value) {

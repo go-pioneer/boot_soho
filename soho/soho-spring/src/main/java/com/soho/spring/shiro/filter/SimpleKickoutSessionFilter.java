@@ -3,8 +3,6 @@ package com.soho.spring.shiro.filter;
 import com.soho.spring.model.RetData;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.HttpUtils;
-import org.apache.shiro.cache.Cache;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -23,14 +21,12 @@ import java.util.HashMap;
 public class SimpleKickOutSessionFilter extends AccessControlFilter {
 
     private String[] apiPrefix;
-    private CacheManager cacheManager;
 
     public SimpleKickOutSessionFilter() {
     }
 
-    public SimpleKickOutSessionFilter(String[] apiPrefix, CacheManager cacheManager) {
+    public SimpleKickOutSessionFilter(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
-        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -41,10 +37,9 @@ public class SimpleKickOutSessionFilter extends AccessControlFilter {
         Subject subject = getSubject(httpRequest, httpResponse);
         // 判断用户对象是否已进行认证以及是否存在登录主体
         if (subject.isAuthenticated() && subject.getPrincipal() != null) {
-            Cache cache = cacheManager.getCache(null);
-            Object cacheValue = cache.get(SessionUtils.ONLINE + subject.getPrincipal());
+            Object sessionId = SessionUtils.getOnlineUserId(subject.getPrincipal());
             // 判断登录主体绑定的会话ID是否一致,如不一致则返回跳入失败函数处理
-            if (cacheValue != null && !cacheValue.equals(subject.getSession().getId().toString())) {
+            if (sessionId != null && !sessionId.equals(subject.getSession().getId().toString())) {
                 return false;
             }
         }

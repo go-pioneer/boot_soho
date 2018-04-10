@@ -25,8 +25,7 @@ public class WebLoginRealm extends AuthorizingRealm {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1);
         map.put("username", token.getUsername());
-        SessionUtils.setUser(map);
-        SessionUtils.setOnlineUserId(token.getPrincipal(), SessionUtils.getSession().getId().toString());
+        SessionUtils.setUser(map, token.getPrincipal());
         return new SimpleAuthenticationInfo(token.getUsername(), token.getCredentials(), getName());
     }
 
