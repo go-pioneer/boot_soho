@@ -2,6 +2,7 @@ package com.soho.shiro;
 
 import com.soho.shiro.realm.WebLoginRealm;
 import com.soho.spring.shiro.initialize.InitDefinition;
+import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import org.apache.shiro.realm.Realm;
 import org.springframework.stereotype.Component;
@@ -24,9 +25,10 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         definition.setLoginUrl("/dog/login");
         definition.setSuccessUrl("/dog/findOne");
         definition.setUnauthorizedUrl("/403");
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        filterChainDefinitionMap.put("/dog/findOne", "kickout,role[user]");
-        definition.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        List<RuleChain> ruleChains = new ArrayList<>();
+        ruleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
+        ruleChains.add(new RuleChain("/dog/findAll", "kickout,role[user]"));
+        definition.setRuleChains(ruleChains);
         return definition;
     }
 

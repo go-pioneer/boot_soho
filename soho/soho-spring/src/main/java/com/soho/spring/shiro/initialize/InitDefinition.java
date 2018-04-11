@@ -1,7 +1,7 @@
 package com.soho.spring.shiro.initialize;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shadow
@@ -11,14 +11,14 @@ public class InitDefinition {
     private String loginUrl = "/login";
     private String successUrl = "/index";
     private String unauthorizedUrl = "/unauthorized";
-    private Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+    private List<RuleChain> ruleChains = new ArrayList<>();
 
     public InitDefinition() {
 
     }
 
-    public InitDefinition(Map<String, String> filterChainDefinitionMap) {
-        this.filterChainDefinitionMap = filterChainDefinitionMap;
+    public InitDefinition(List<RuleChain> ruleChains) {
+        this.ruleChains = ruleChains;
     }
 
     public String getLoginUrl() {
@@ -45,11 +45,12 @@ public class InitDefinition {
         this.unauthorizedUrl = unauthorizedUrl;
     }
 
-    public Map<String, String> getFilterChainDefinitionMap() {
-        return filterChainDefinitionMap;
+    public List<RuleChain> getRuleChains() {
+        return ruleChains;
     }
 
-    public void setFilterChainDefinitionMap(Map<String, String> filterChainDefinitionMap) {
-        this.filterChainDefinitionMap = filterChainDefinitionMap;
+    public void setRuleChains(List<RuleChain> ruleChains) {
+        this.ruleChains = ruleChains;
     }
+
 }

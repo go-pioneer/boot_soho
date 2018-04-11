@@ -5,6 +5,7 @@ import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
 import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
 import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
 import com.soho.spring.shiro.initialize.InitDefinition;
+import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +50,11 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setLoginUrl(definition.getLoginUrl());
         shiroFilterFactoryBean.setSuccessUrl(definition.getSuccessUrl());
         shiroFilterFactoryBean.setUnauthorizedUrl(definition.getUnauthorizedUrl());
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(definition.getFilterChainDefinitionMap());
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+        for (RuleChain ruleChain : definition.getRuleChains()) {
+            filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
+        }
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         Map<String, Filter> map = shiroInitializeService.initFilters();
         if (!map.containsKey("authc")) {
             map.put("authc", new SimpleFormAuthenticationFilter(configData.getApiPrefix()));
