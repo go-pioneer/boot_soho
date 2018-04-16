@@ -1,4 +1,4 @@
-package com.soho.spring.exception;
+package com.soho.spring.mvc.handler;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.ConfigData;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by shadow on 2017/4/27.
+ * @author shadow
  */
 @Component
 public class BizExceptionHandler implements HandlerExceptionResolver {

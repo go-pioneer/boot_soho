@@ -1,5 +1,8 @@
 package com.soho.spring.shiro.initialize;
 
+/**
+ * @author shadow
+ */
 public class RuleChain {
 
     private String url;

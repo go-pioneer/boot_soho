@@ -26,7 +26,8 @@ public class DogController {
 
     @ResponseBody
     @RequestMapping("/login")
-    public Object login() throws BizErrorEx {
+    public Object login(String username, String password) throws BizErrorEx {
+        System.out.println(username + "----" + password);
         UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
         SecurityUtils.getSubject().login(token);
         Map<String, String> map = new HashMap<>();
