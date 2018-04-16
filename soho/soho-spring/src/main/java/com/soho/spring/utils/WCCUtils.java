@@ -31,13 +31,14 @@ public class WCCUtils {
         return match(pattern + '\0', content + '\0', 0, 0);
     }
 
-    public static void ruleChainComparator(List<RuleChain> chains) {
+    public static List<RuleChain> ruleChainComparator(List<RuleChain> chains) {
         Collections.sort(chains, new Comparator<RuleChain>() {
             @Override
             public int compare(RuleChain o1, RuleChain o2) {
                 return test(o1.getUrl(), o2.getUrl()) ? 1 : -1;
             }
         });
+        return chains;
     }
 
     public static void main(String[] args) {

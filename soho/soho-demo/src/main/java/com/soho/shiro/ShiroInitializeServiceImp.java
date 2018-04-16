@@ -4,6 +4,7 @@ import com.soho.shiro.realm.WebLoginRealm;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
+import com.soho.spring.utils.WCCUtils;
 import org.apache.shiro.realm.Realm;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         List<RuleChain> ruleChains = new ArrayList<>();
         ruleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
         ruleChains.add(new RuleChain("/dog/findAll", "kickout,role[user]"));
-        definition.setRuleChains(ruleChains);
+        definition.setRuleChains(WCCUtils.ruleChainComparator(ruleChains));
         return definition;
     }
 
