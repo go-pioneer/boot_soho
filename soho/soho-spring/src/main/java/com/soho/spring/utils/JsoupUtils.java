@@ -42,14 +42,25 @@ public class JsoupUtils {
                 "<br>";
         System.out.println("合计字符串长度: " + s.length());
         long l1 = System.currentTimeMillis();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             long l2 = System.currentTimeMillis();
-            String content = JsoupUtils.safety(s);
-            // System.out.println(content);
+            s = XSSUtils.strip(s);
+            System.out.println(s);
+            s = XSSUtils.unstrip(s);
+            System.out.println(s);
+            //System.out.println(s);
+            // String content = JsoupUtils.safety(s);
+            // String content = XSSUtils.strip(s);
+             // System.out.println(content);
             System.out.println(((System.currentTimeMillis() - l2)) + "毫秒");
         }
         // System.out.println(content);
         System.out.println("最终合计耗时:" + ((System.currentTimeMillis() - l1)) + "毫秒");
+        String s1 = "";
+        for(int i=0; i<51;i++){
+            s1+="&username"+i+"=1";
+        }
+        System.out.println(s1);
     }
 
 }

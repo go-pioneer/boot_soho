@@ -8,9 +8,11 @@ import java.util.Map;
 public class HttpRequestWrapper extends HttpServletRequestWrapper {
 
     private Map<String, String[]> params = new HashMap<>();
+    private HttpServletRequest request;
 
     public HttpRequestWrapper(HttpServletRequest request) {
         super(request);
+        this.request = request;
     }
 
     @Override
@@ -37,6 +39,10 @@ public class HttpRequestWrapper extends HttpServletRequestWrapper {
             }
         }
         return this;
+    }
+
+    public HttpServletRequest getOriginalRequest() {
+        return this.request;
     }
 
 }

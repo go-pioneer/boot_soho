@@ -6,6 +6,7 @@ import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
+import com.soho.spring.utils.XSSUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class DogController {
         SecurityUtils.getSubject().login(token);
         Map<String, String> map = new HashMap<>();
         map.put("sessionId", SecurityUtils.getSubject().getSession().getId().toString());
+        map.put("xss", XSSUtils.strip("<a>test&><"));
         SecurityUtils.getSubject().getSession().getAttribute("test");
         return map;
     }

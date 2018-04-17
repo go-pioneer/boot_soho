@@ -10,6 +10,7 @@ public class ConfigData {
     private String projectCode;
     private String failureUrl;
     private String redirectUrl;
+    private String jsoupPrefix;
     private String[] apiPrefix;
 
     public String getDatabase() {
@@ -44,6 +45,14 @@ public class ConfigData {
         this.redirectUrl = redirectUrl;
     }
 
+    public String getJsoupPrefix() {
+        return jsoupPrefix;
+    }
+
+    public void setJsoupPrefix(String jsoupPrefix) {
+        this.jsoupPrefix = jsoupPrefix;
+    }
+
     public String[] getApiPrefix() {
         return apiPrefix;
     }
@@ -51,4 +60,5 @@ public class ConfigData {
     public void setApiPrefix(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
     }
+
 }

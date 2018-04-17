@@ -1,7 +1,9 @@
 package com.soho.spring.configuration;
 
+import com.soho.spring.model.ConfigData;
 import com.soho.spring.mvc.filter.SafetyFilter;
 import com.soho.spring.mvc.interceptor.RequestInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class MvcWebConfig implements WebMvcConfigurer {
+
+    @Autowired(required = false)
+    private ConfigData configData;
 
     @Bean
     public RequestInterceptor getSecurityInterceptor() {
@@ -34,10 +39,10 @@ public class MvcWebConfig implements WebMvcConfigurer {
     public FilterRegistrationBean testFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new SafetyFilter());
-        registration.addUrlPatterns("/*");//设置过滤路径，/*所有路径
-        // registration.addInitParameter("name", "alue");//添加默认参数
-        registration.setName("SafetyFilter");//设置拦截器名称
-        registration.setOrder(1);//设置优先级
+        registration.setName("SafetyFilter"); // 设置拦截器名称
+        registration.addInitParameter("jsoupPrefix", configData.getJsoupPrefix()); // 添加默认参数
+        registration.addUrlPatterns("/*"); // 设置过滤路径，/*所有路径
+        registration.setOrder(1); // 设置优先级
         return registration;
     }
 

@@ -76,6 +76,8 @@ public class DruidConfiguration {
     private String projectCode;
     @Value("${default.apiPrefix}")
     private String apiPrefix;
+    @Value("${default.jsoupPrefix}")
+    private String jsoupPrefix;
     @Value("${default.failureUrl}")
     private String failureUrl;
     @Value("${default.redirectUrl}")
@@ -88,6 +90,7 @@ public class DruidConfiguration {
         config.setProjectCode(projectCode);
         config.setFailureUrl(failureUrl);
         config.setRedirectUrl(redirectUrl);
+        config.setJsoupPrefix(jsoupPrefix != null ? jsoupPrefix : "");
         config.setApiPrefix(apiPrefix != null ? apiPrefix.split(",") : new String[]{});
         return config;
     }
