@@ -7,6 +7,14 @@ import java.util.regex.Pattern;
  */
 public class XSSUtils {
 
+    // 获取字符串转义后真实长度
+    public static int getStringLen(String object) {
+        if (object == null || "".equals(object)) {
+            return 0;
+        }
+        return unstrip(object).length();
+    }
+
     public static String unstrip(String object) {
         return object.replaceAll("&gt;", ">")
                 .replaceAll("&lt;", "<")

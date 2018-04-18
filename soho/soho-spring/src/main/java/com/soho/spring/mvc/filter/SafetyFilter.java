@@ -60,7 +60,7 @@ public class SafetyFilter implements Filter {
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             String key = entry.getKey();
             String[] values = entry.getValue();
-            if (key == null || key == "" || key.length() > max_field_len) {
+            if (key == null || "".equals(key) || key.length() > max_field_len) {
                 continue;
             }
             if (!jsoupPrefix.isEmpty()) {
@@ -76,7 +76,7 @@ public class SafetyFilter implements Filter {
             }
             for (String value : values) {
                 if (value != null && value.length() > max_value_len) {
-                    value = value.substring(0, max_value_len);
+                    continue;
                 }
                 if (isJsoup) {
                     wrapper.addParameter(key, JsoupUtils.safety(value));
