@@ -13,6 +13,8 @@ public class ConfigData {
     private String jsoupPrefix;
     private String[] apiPrefix;
 
+    private String encrypty_key = "wD$w9^gc6v2%v/GT";
+
     public String getDatabase() {
         return database;
     }
@@ -59,6 +61,14 @@ public class ConfigData {
 
     public void setApiPrefix(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
+    }
+
+    public String getEncrypty_key() {
+        return encrypty_key;
+    }
+
+    public void setEncrypty_key(String encrypty_key) {
+        this.encrypty_key = encrypty_key;
     }
 
 }

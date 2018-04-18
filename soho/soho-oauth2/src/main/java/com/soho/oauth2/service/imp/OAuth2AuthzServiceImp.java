@@ -9,7 +9,7 @@ import com.soho.oauth2.service.OAuth2AuthzService;
 import com.soho.oauth2.service.OAuth2TokenService;
 import com.soho.spring.model.RetData;
 import com.soho.spring.shiro.utils.SessionUtils;
-import com.soho.spring.utils.MD5Util;
+import com.soho.spring.utils.MD5Utils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -140,7 +140,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
         client.setResponse_type(oAuthAuthzRequest.getResponseType());
         client.setRedirect_uri(redirect_uri);
         client.setState(oAuthAuthzRequest.getState());
-        String pbk = MD5Util.MD5PBK(client.getClient_id() + System.currentTimeMillis()).toLowerCase();
+        String pbk = MD5Utils.MD5PBK(client.getClient_id() + System.currentTimeMillis()).toLowerCase();
         SessionUtils.setAttribute("client_pbk", pbk);
         ModelAndView view = new ModelAndView(oAuth2TokenService.getOAuth2LoginView());
         view.addObject("client", client);

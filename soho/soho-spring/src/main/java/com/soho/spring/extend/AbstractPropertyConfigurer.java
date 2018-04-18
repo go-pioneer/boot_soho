@@ -32,7 +32,7 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
             for (String decodeKey : decodeKeys) {
                 String data = properties.getProperty(decodeKey);
                 if (!StringUtils.isEmpty(data)) {
-                    properties.put(decodeKey, AESUtils.decode(data));
+                    properties.put(decodeKey, AESUtils.decrypt(data));
                 }
             }
         }

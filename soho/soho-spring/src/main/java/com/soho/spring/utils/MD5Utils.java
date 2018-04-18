@@ -5,11 +5,11 @@ import java.security.MessageDigest;
 /**
  * @author shadow
  */
-public class MD5Util {
+public class MD5Utils {
 
     private final static String MD5_KEY = "*w$MH^$4eZK&6!JV";
 
-    public final static String MD5(String s, String salt) {
+    public final static String encrypt(String s, String salt) {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         try {
             if (salt != null) {
@@ -38,16 +38,16 @@ public class MD5Util {
         }
     }
 
-    public static String MD5(String s) {
-        return MD5(s, null);
+    public static String encrypt(String s) {
+        return encrypt(s, null);
     }
 
     public final static String MD5PBK(String s) {
-        return MD5(s, MD5_KEY);
+        return encrypt(s, MD5_KEY);
     }
 
     public static void main(String[] args) {
-        System.out.println(MD5("123456test"));
+        System.out.println(encrypt("123456test"));
     }
 
 }

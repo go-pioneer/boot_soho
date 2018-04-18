@@ -12,12 +12,12 @@ public class AESUtils {
 
     private final static String AES_KEY = "wD$w9^gc6v2%v/GT";
 
-    public static String decode(String data) {
-        return decrypt(data);
+    public static String decrypt(String data) {
+        return decrypt(data, AES_KEY);
     }
 
-    public static String encode(String data) {
-        return encrypt(data);
+    public static String encrypt(String data) {
+        return encrypt(data, AES_KEY);
     }
 
     /**
@@ -26,9 +26,9 @@ public class AESUtils {
      * @param data
      * @return String
      */
-    public static String decrypt(String data) {
+    public static String decrypt(String data, String key) {
         try {
-            byte[] raw = AES_KEY.getBytes("ASCII");
+            byte[] raw = key.getBytes("ASCII");
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec);
@@ -48,9 +48,9 @@ public class AESUtils {
      * @param data
      * @return String
      */
-    public static String encrypt(String data) {
+    public static String encrypt(String data, String key) {
         try {
-            byte[] raw = AES_KEY.getBytes("ASCII");
+            byte[] raw = key.getBytes("ASCII");
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
@@ -104,9 +104,9 @@ public class AESUtils {
     }
 
     public static void main(String[] args) {
-        String s = AESUtils.encode("root");
+        String s = AESUtils.encrypt("root");
         System.out.println("加密后:" + s);
-        System.out.println("解密后:" + AESUtils.decode(s));
+        System.out.println("解密后:" + AESUtils.decrypt(s));
     }
 
 }
