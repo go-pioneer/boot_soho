@@ -18,17 +18,17 @@ public class EncryptServiceImp implements EncryptService {
 
     @Override
     public String md5(String object) {
-        return MD5Utils.encrypt(object, config.getEncrypty_key());
+        return MD5Utils.encrypt(object, AESUtils.decrypt(config.getEncrypty_key()));
     }
 
     @Override
     public String aes_e(String object) {
-        return AESUtils.encrypt(object, config.getEncrypty_key());
+        return AESUtils.encrypt(object, AESUtils.decrypt(config.getEncrypty_key()));
     }
 
     @Override
     public String aes_d(String object) {
-        return AESUtils.decrypt(object, config.getEncrypty_key());
+        return AESUtils.decrypt(object, AESUtils.decrypt(config.getEncrypty_key()));
     }
 
 }

@@ -9,8 +9,8 @@ import java.util.Properties;
  */
 public class DefaultPropertyConfigurer extends AbstractPropertyConfigurer {
 
-    public DefaultPropertyConfigurer(String[] decodeKeys) {
-        super(decodeKeys);
+    public DefaultPropertyConfigurer(String filePath, String[] decodeKeys) {
+        super(filePath, decodeKeys);
     }
 
     @Override

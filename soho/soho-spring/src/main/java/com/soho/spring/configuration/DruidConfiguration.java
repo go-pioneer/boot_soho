@@ -82,6 +82,8 @@ public class DruidConfiguration {
     private String failureUrl;
     @Value("${default.redirectUrl}")
     private String redirectUrl;
+    @Value("${default.encrypty_key}")
+    private String encrpyt_key;
 
     @Bean
     public ConfigData initConfigData() {
@@ -92,6 +94,7 @@ public class DruidConfiguration {
         config.setRedirectUrl(redirectUrl);
         config.setJsoupPrefix(jsoupPrefix != null ? jsoupPrefix : "");
         config.setApiPrefix(apiPrefix != null ? apiPrefix.split(",") : new String[]{});
+        config.setEncrypty_key(encrpyt_key);
         return config;
     }
 

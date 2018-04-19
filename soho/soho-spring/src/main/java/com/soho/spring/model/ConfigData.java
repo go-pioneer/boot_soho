@@ -13,7 +13,7 @@ public class ConfigData {
     private String jsoupPrefix;
     private String[] apiPrefix;
 
-    private String encrypty_key = "wD$w9^gc6v2%v/GT";
+    private String encrypty_key = "&OGFpY/6xoV`@P1Z";
 
     public String getDatabase() {
         return database;

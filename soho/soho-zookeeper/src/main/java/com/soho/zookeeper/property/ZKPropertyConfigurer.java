@@ -1,6 +1,8 @@
 package com.soho.zookeeper.property;
 
 import com.soho.spring.extend.AbstractPropertyConfigurer;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.Properties;
 
@@ -19,8 +21,8 @@ public class ZKPropertyConfigurer extends AbstractPropertyConfigurer {
     private final static String ENABLE = "zookeeper.enable";
     private final static String TIME_OUT = "zookeeper.timeout";
 
-    public ZKPropertyConfigurer(String[] decodeKeys) {
-        super(decodeKeys);
+    public ZKPropertyConfigurer(String filePath, String[] decodeKeys) {
+        super(filePath, decodeKeys);
     }
 
     @Override

@@ -8,8 +8,6 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,26 +21,10 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
         return builder.sources(getClass());
     }
 
-    public PropertyPlaceholderConfigurer initDefaultPropertyPlaceholderConfigurer() {
-        String[] decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
-        PropertyPlaceholderConfigurer placeholderConfigurer = new DefaultPropertyConfigurer(decodeKeys);
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource resource = resolver.getResource("classpath:application.properties");
-        placeholderConfigurer.setLocation(resource);
-        return placeholderConfigurer;
-    }
-
-    public PropertyPlaceholderConfigurer initZookeeperPropertyPlaceholderConfigurer() {
-        String[] decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
-        PropertyPlaceholderConfigurer placeholderConfigurer = new DefaultPropertyConfigurer(decodeKeys);
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource resource = resolver.getResource("classpath:application.properties");
-        placeholderConfigurer.setLocation(resource);
-        return placeholderConfigurer;
-    }
-
     public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer() {
-        return initDefaultPropertyPlaceholderConfigurer();
+        String filePath = "classpath:application.properties";
+        String[] decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
+        return new DefaultPropertyConfigurer(filePath, decodeKeys);
     }
 
     public HttpMessageConverters initFastjsonHttpMessageConverter() {
