@@ -2,14 +2,15 @@ package com.soho.spring.mvc.filter;
 
 import com.soho.spring.mvc.wrapper.HttpRequestWrapper;
 import com.soho.spring.utils.JsoupUtils;
-import com.soho.spring.utils.WCCUtils;
-import com.soho.spring.utils.XSSUtils;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class SafetyFilter implements Filter {
     private final static int max_field_len = 25; // 最大参数名长度
     private final static int max_querystring_len = 1000; // 最大GET参数名长度
     private final static int max_value_len = 25000; // 最大参数值长度
-    private Map<String, String[]> jsoupPrefix = new HashMap<>(); // 富文本过滤,指定请求方法路径,参数名
+    private Map<String, List<String>> jsoupPrefix = new HashMap<>(); // 富文本过滤,指定请求方法路径,参数名
 
     @Override
     public void destroy() {
@@ -60,28 +61,21 @@ public class SafetyFilter implements Filter {
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             String key = entry.getKey();
             String[] values = entry.getValue();
-            if (key == null || "".equals(key) || key.length() > max_field_len) {
+            if (StringUtils.isEmpty(key) || key.length() > max_field_len) {
                 continue;
             }
-            if (!jsoupPrefix.isEmpty()) {
-                for (Map.Entry<String, String[]> entry1 : jsoupPrefix.entrySet()) {
-                    if (WCCUtils.test(entry1.getKey(), uri)) {
-                        for (String field : entry1.getValue()) {
-                            if (key.equals(field)) {
-                                isJsoup = true;
-                            }
-                        }
-                    }
-                }
+            List<String> fields = jsoupPrefix.get(uri);
+            if (fields != null && !fields.isEmpty() && fields.contains(entry.getKey())) {
+                isJsoup = true;
             }
             for (String value : values) {
-                if (value != null && value.length() > max_value_len) {
+                if (!StringUtils.isEmpty(value) && value.length() > max_value_len) {
                     continue;
                 }
-                if (isJsoup) {
+                if (!StringUtils.isEmpty(value) && isJsoup) {
                     wrapper.addParameter(key, JsoupUtils.safety(value));
                 } else {
-                    wrapper.addParameter(key, XSSUtils.strip(value));
+                    wrapper.addParameter(key, value);
                 }
             }
         }
@@ -89,7 +83,7 @@ public class SafetyFilter implements Filter {
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        String prefix = config.getInitParameter("jsoupPrefix"); // 拦截数据格式 pattern|field1|field2|field3
+        String prefix = config.getInitParameter("jsoupPrefix"); // 拦截数据格式 url|field1|field2|field3
         prefix = prefix == null ? "" : prefix;
         String[] prefixs = prefix.split(",");
         for (String str : prefixs) {
@@ -98,15 +92,15 @@ public class SafetyFilter implements Filter {
                 continue;
             }
             String uri = null;
-            String[] fields = new String[array.length - 1];
+            List<String> fields = new ArrayList<>(array.length - 1);
             for (int i = 0; i < array.length; i++) {
                 if (i == 0) {
-                    uri = array[i];
+                    uri = array[i].trim();
                 } else {
-                    fields[i - 1] = array[i];
+                    fields.add(array[i].trim());
                 }
             }
-            if (uri != null && !jsoupPrefix.containsKey(uri)) { // Map组合格式 key=pattern values[field1,field2,field3]
+            if (!StringUtils.isEmpty(uri) && !jsoupPrefix.containsKey(uri) || !fields.isEmpty()) { // Map组合格式 key=url values[field1,field2,field3]
                 jsoupPrefix.put(uri, fields);
             }
         }

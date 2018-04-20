@@ -6,6 +6,7 @@ import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
+import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.utils.XSSUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -35,6 +36,11 @@ public class DogController {
         map.put("xss", XSSUtils.strip("<a>test&><"));
         SecurityUtils.getSubject().getSession().getAttribute("test");
         return map;
+    }
+
+    @RequestMapping("/index")
+    public Object index() throws BizErrorEx {
+        return new FastView("/index").add("username", "<a href='#'>我要A标签</a>").done();
     }
 
     @ResponseBody
