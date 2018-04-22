@@ -11,6 +11,14 @@
     <title>测试 - 登录</title>
 </head>
 <body>
-<#escape x as x?html>${username!''}</#escape>
+<form action="/dog/index" method="post">
+${username!''}
+    <br>
+    <input type="text" name="username" value="${username!''}"/>
+    <br>
+    <textarea><@html content="${username!''}"/></textarea>
+    <br>
+    <input type="submit" value="submit"/>
+</form>
 </body>
 </html>

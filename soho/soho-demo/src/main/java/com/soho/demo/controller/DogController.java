@@ -39,8 +39,8 @@ public class DogController {
     }
 
     @RequestMapping("/index")
-    public Object index() throws BizErrorEx {
-        return new FastView("/index").add("username", "<a href='#'>我要A标签</a>").done();
+    public Object index(String username) {
+        return new FastView("/index").add("username", username).done();
     }
 
     @ResponseBody
