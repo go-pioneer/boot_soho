@@ -11,13 +11,23 @@
     <title>测试 - 登录</title>
 </head>
 <body>
-<form action="/dog/index" method="post">
+<form action="/dog/upload" method="post" enctype="multipart/form-data">
 ${username!''}
-    <br>
+    <hr>
     <input type="text" name="username" value="${username!''}"/>
-    <br>
+    <hr>
     <textarea><@html content="${username!''}"/></textarea>
-    <br>
+    <hr>
+    <input type="file" name="file"/>
+    <hr>
+    <input type="file" name="file"/>
+    <hr>
+    <input type="file" name="file"/>
+    <hr>
+    <input type="file" name="file"/>
+    <hr>
+    <input type="file" name="file"/>
+    <hr>
     <input type="submit" value="submit"/>
 </form>
 </body>

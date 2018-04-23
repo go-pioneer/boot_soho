@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,14 @@ public class DogController {
 
     @RequestMapping("/index")
     public Object index(String username) {
+        return new FastView("/index").add("username", username).done();
+    }
+
+    @RequestMapping("/upload")
+    public Object upload(String username, MultipartFile file) {
+        if (file != null) {
+            System.out.println(file.getOriginalFilename());
+        }
         return new FastView("/index").add("username", username).done();
     }
 

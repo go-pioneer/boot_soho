@@ -1,6 +1,8 @@
 package com.soho.spring.configuration;
 
 import com.soho.spring.extend.HtmlTemplateLoader;
+import com.soho.spring.extend.freemarker.GTM8Tag;
+import com.soho.spring.extend.freemarker.HasRoleTag;
 import com.soho.spring.extend.freemarker.HtmlTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +19,18 @@ public class FreeMarkerConfig {
     private freemarker.template.Configuration configuration;
     @Autowired(required = false)
     private HtmlTag htmlTag;
+    @Autowired(required = false)
+    private GTM8Tag gtm8Tag;
+    @Autowired(required = false)
+    private HasRoleTag hasRoleTag;
 
 
     @PostConstruct
     public void setSharedVariable() {
         configuration.setTemplateLoader(new HtmlTemplateLoader(configuration.getTemplateLoader()));
         configuration.setSharedVariable("html", htmlTag);
+        configuration.setSharedVariable("gtm8", gtm8Tag);
+        configuration.setSharedVariable("hasRole", hasRoleTag);
     }
 
 }

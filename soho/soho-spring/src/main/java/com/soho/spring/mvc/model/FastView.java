@@ -11,8 +11,13 @@ public class FastView {
 
     private ModelAndView view;
 
+    public FastView() {
+        view = new ModelAndView();
+    }
+
     public FastView(String path) {
-        view = new ModelAndView(path);
+        this();
+        view.setViewName(path);
     }
 
     public FastView add(String key, Object value) {

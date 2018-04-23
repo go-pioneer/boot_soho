@@ -35,6 +35,8 @@ public class DruidConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
 
+    @Value("${spring.datasource.database}")
+    private String database;
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")
@@ -69,34 +71,6 @@ public class DruidConfiguration {
     private String logSlowSql;
     @Value("${mybatis.locations}")
     private String locations;
-
-    @Value("${default.database}")
-    private String database;
-    @Value("${default.projectCode}")
-    private String projectCode;
-    @Value("${default.apiPrefix}")
-    private String apiPrefix;
-    @Value("${default.jsoupPrefix}")
-    private String jsoupPrefix;
-    @Value("${default.failureUrl}")
-    private String failureUrl;
-    @Value("${default.redirectUrl}")
-    private String redirectUrl;
-    @Value("${default.encrypty_key}")
-    private String encrpyt_key;
-
-    @Bean
-    public ConfigData initConfigData() {
-        ConfigData config = new ConfigData();
-        config.setDatabase(database);
-        config.setProjectCode(projectCode);
-        config.setFailureUrl(failureUrl);
-        config.setRedirectUrl(redirectUrl);
-        config.setJsoupPrefix(jsoupPrefix != null ? jsoupPrefix : "");
-        config.setApiPrefix(apiPrefix != null ? apiPrefix.split(",") : new String[]{});
-        config.setEncrypty_key(encrpyt_key);
-        return config;
-    }
 
     @Bean
     public ServletRegistrationBean druidServlet() {
@@ -178,6 +152,5 @@ public class DruidConfiguration {
     public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
-
 
 }

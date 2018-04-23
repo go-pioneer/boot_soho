@@ -5,22 +5,26 @@ package com.soho.spring.model;
  * @author shadow
  */
 public class ConfigData {
-
-    private String database;
+    // 基本参数
+    private String domain;
     private String projectCode;
     private String failureUrl;
     private String redirectUrl;
     private String jsoupPrefix;
     private String[] apiPrefix;
+    // 上传参数
+    private String savePath;
+    private String maxFileSize;
+    private String maxRequestSize;
+    // 加密参数
+    private String encryptyKey = "&OGFpY/6xoV`@P1Z";
 
-    private String encrypty_key = "&OGFpY/6xoV`@P1Z";
-
-    public String getDatabase() {
-        return database;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setDatabase(String database) {
-        this.database = database;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getProjectCode() {
@@ -63,12 +67,36 @@ public class ConfigData {
         this.apiPrefix = apiPrefix;
     }
 
-    public String getEncrypty_key() {
-        return encrypty_key;
+    public String getSavePath() {
+        return savePath;
     }
 
-    public void setEncrypty_key(String encrypty_key) {
-        this.encrypty_key = encrypty_key;
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
+    }
+
+    public String getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public void setMaxFileSize(String maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public String getMaxRequestSize() {
+        return maxRequestSize;
+    }
+
+    public void setMaxRequestSize(String maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
+    }
+
+    public String getEncryptyKey() {
+        return encryptyKey;
+    }
+
+    public void setEncryptyKey(String encryptyKey) {
+        this.encryptyKey = encryptyKey;
     }
 
 }

@@ -12,19 +12,24 @@ import java.util.TimeZone;
  */
 public class DateUtils {
 
-    public static long GMT8(String s) throws ParseException {
+    public static long GMT8(String s) {
         return GMT8(s, "yyyy-MM-dd HH:mm:ss");
     }
 
-    public static long GMT8(String s, String fmt) throws ParseException {
-        return getDateFormat(fmt).parse(s).getTime();
+    public static long GMT8(String s, String fmt) {
+        try {
+            return getDateFormat(fmt).parse(s).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
-    public static String GMT8_S(long s) throws ParseException {
+    public static String GMT8_S(long s) {
         return GMT8_S(s, "yyyy-MM-dd HH:mm:ss");
     }
 
-    public static String GMT8_S(long s, String fmt) throws ParseException {
+    public static String GMT8_S(long s, String fmt) {
         if (s > 0) {
             return getDateFormat(fmt).format(new Date(s));
         }
@@ -33,26 +38,16 @@ public class DateUtils {
 
     // 获取今日开始日期时间戳
     public static Long getTodayStart() {
-        try {
-            String date = GMT8_S(System.currentTimeMillis(), "yyyy-MM-dd");
-            date = date + " 00:00:00";
-            return GMT8(date, "yyyy-MM-dd hh:mm:ss");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0l;
+        String date = GMT8_S(System.currentTimeMillis(), "yyyy-MM-dd");
+        date = date + " 00:00:00";
+        return GMT8(date, "yyyy-MM-dd hh:mm:ss");
     }
 
     // 获取今日结束日期时间戳
     public static Long getTodayEnd() {
-        try {
-            String date = GMT8_S(System.currentTimeMillis(), "yyyy-MM-dd");
-            date = date + " 23:59:59";
-            return GMT8(date, "yyyy-MM-dd hh:mm:ss");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0l;
+        String date = GMT8_S(System.currentTimeMillis(), "yyyy-MM-dd");
+        date = date + " 23:59:59";
+        return GMT8(date, "yyyy-MM-dd hh:mm:ss");
     }
 
     // 获取几天前或几天后的开始时间戳
@@ -60,12 +55,7 @@ public class DateUtils {
         long time = System.currentTimeMillis() + day * 86400000l;
         String fmt = "yyyy-MM-dd 00:00:00";
         String firstday = getDateFormat(fmt).format(new Date(time));
-        try {
-            return GMT8(firstday, fmt);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0l;
-        }
+        return GMT8(firstday, fmt);
     }
 
     // 获取几天前或几天后的结束时间戳
@@ -74,12 +64,7 @@ public class DateUtils {
         String fmt = "yyyy-MM-dd";
         String lastday = getDateFormat(fmt).format(new Date(time));
         lastday += " 23:59:59";
-        try {
-            return GMT8(lastday, fmt + " HH:mm:ss");
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0l;
-        }
+        return GMT8(lastday, fmt + " HH:mm:ss");
     }
 
     // 获取几天前或几天后的具体间戳
@@ -95,12 +80,7 @@ public class DateUtils {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         String fmt = "yyyy-MM-dd 00:00:00";
         String firstday = getDateFormat(fmt).format(calendar.getTime());
-        try {
-            return GMT8(firstday, fmt);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return GMT8(firstday, fmt);
     }
 
     // 获取前月的最后一天
@@ -111,12 +91,7 @@ public class DateUtils {
         String fmt = "yyyy-MM-dd";
         String lastday = getDateFormat(fmt).format(calendar.getTime());
         lastday += " 23:59:59";
-        try {
-            return GMT8(lastday, fmt + " HH:mm:ss");
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return GMT8(lastday, fmt + " HH:mm:ss");
     }
 
     // 获取当周的第一天
@@ -154,12 +129,8 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        try {
-            System.out.println(GMT8_S(getWeekFirstDay()));
-            System.out.println(GMT8_S(getWeekLastDay()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        System.out.println(GMT8_S(getWeekFirstDay()));
+        System.out.println(GMT8_S(getWeekLastDay()));
     }
 
 }

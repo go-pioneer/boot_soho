@@ -5,11 +5,14 @@ import com.soho.spring.mvc.filter.SafetyFilter;
 import com.soho.spring.mvc.interceptor.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.MultipartConfigElement;
 
 /**
  * @author shadow
@@ -25,11 +28,19 @@ public class MvcWebConfig implements WebMvcConfigurer {
         return new RequestInterceptor();
     }
 
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(configData.getMaxFileSize()); // 设置单个文件大小
+        factory.setMaxRequestSize(configData.getMaxRequestSize()); // 设置总上传数据总大小
+        // factory.setLocation(configData.getUploadPath()); // 设置临时文件上传保存路径
+        return factory.createMultipartConfig();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
         // 排除配置
-        // addInterceptor.excludePathPatterns("/error");
         // addInterceptor.excludePathPatterns("/login**");
         // 拦截配置
         addInterceptor.addPathPatterns("/**");

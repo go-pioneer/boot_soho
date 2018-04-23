@@ -33,7 +33,7 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
     }
 
     public Properties decodeProperties(Properties properties) {
-        String encrypt_key = properties.getProperty("default.encrypty_key");
+        String encrypt_key = properties.getProperty("default.encryptyKey");
         encrypt_key = StringUtils.isEmpty(encrypt_key) ? "" : AESUtils.decrypt(encrypt_key);
         if (!StringUtils.isEmpty(decodeKeys) && decodeKeys.length > 0) {
             for (String decodeKey : decodeKeys) {
