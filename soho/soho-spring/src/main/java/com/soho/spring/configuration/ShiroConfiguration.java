@@ -2,6 +2,7 @@ package com.soho.spring.configuration;
 
 import com.soho.spring.model.ConfigData;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
+import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
 import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;

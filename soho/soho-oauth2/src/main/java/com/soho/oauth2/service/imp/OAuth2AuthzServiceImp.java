@@ -7,6 +7,7 @@ import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2AuthzService;
 import com.soho.oauth2.service.OAuth2TokenService;
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.MD5Utils;
@@ -173,7 +174,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_GRANT);
             }
             // 生成OAuth响应
-            Map<String, Object> map = toBuildJsonMapResponse(RetData.OK_STATUS, "", HttpServletResponse.SC_OK, "");
+            Map<String, Object> map = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
             map.put("access_token", oAuth2Token.getAccess_token());
             map.put("access_pbk", oAuth2TokenService.buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_token()));
             map.put("access_time", oAuth2Token.getAccess_time());
@@ -201,7 +202,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 // 读取OAuth用户信息
                 Map<String, String> user = oAuth2TokenService.getOauthUser(oAuth2Token.getUid());
                 // 生成OAuth响应
-                Map<String, Object> map = toBuildJsonMapResponse(RetData.OK_STATUS, "", HttpServletResponse.SC_OK, "");
+                Map<String, Object> map = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
                 map.putAll(user);
                 return map;
             } catch (BizErrorEx ex) {
@@ -239,7 +240,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             // 根据OAuthResponse生成ResponseEntity
-            return toBuildJsonMapResponse(RetData.OK_STATUS, "", HttpServletResponse.SC_OK, "");
+            return toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
         } catch (OAuthProblemException e) {
             // 构建错误响应
             return toBuildJsonMapResponse(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
@@ -262,7 +263,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             // 根据OAuthResponse生成ResponseEntity
-            return toBuildJsonMapResponse(RetData.OK_STATUS, "", HttpServletResponse.SC_OK, "");
+            return toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
         } catch (OAuthProblemException e) {
             // 构建错误响应
             return toBuildJsonMapResponse(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
@@ -272,7 +273,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     // 输出浏览器数据对象(UTF-8编码)
     private ResponseEntity toBuildUTF8WebResponse(BizErrorEx ex, int errorResponse, String error) throws OAuthSystemException {
         Map<String, Object> map = toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), errorResponse, error);
-        RetData ret = new RetData(RetData.OK_STATUS, RetData.OK_MESSAGE, map);
+        RetData ret = new RetData(RetCode.OK_STATUS, RetCode.OK_MESSAGE, map);
         return new ResponseEntity(JSON.toJSONString(ret), buildHttpUtf8Header(), HttpStatus.valueOf(errorResponse));
     }
 
