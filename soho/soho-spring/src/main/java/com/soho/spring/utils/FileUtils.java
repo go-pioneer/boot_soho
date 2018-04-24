@@ -21,12 +21,12 @@ import java.util.Random;
  */
 public class FileUtils {
 
-    private final static Map<String, String> imgExts = new HashMap<>(3);
+    private final static Map<String, String> fileExt = new HashMap<>(3);
 
     static {
-        imgExts.put(".jpg", "ffd8ff");
-        imgExts.put(".jpeg", "ffd8ffe0");
-        imgExts.put(".png", "89504e47");
+        fileExt.put(".jpg", "ffd8ff");
+        fileExt.put(".jpeg", "ffd8ffe0");
+        fileExt.put(".png", "89504e47");
     }
 
     public static FileData uploadImageByReSize(MultipartFile multipartFile, String userDir, boolean thumbnail) throws BizErrorEx {
@@ -39,7 +39,7 @@ public class FileUtils {
             throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件名称异常");
         }
         String orgFileExt = orgFileName.substring(indexOf).toLowerCase().trim();
-        if (!imgExts.containsKey(orgFileExt)) {
+        if (!fileExt.containsKey(orgFileExt)) {
             throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件只允许JPG|JPEG|PNG格式");
         }
         int number = new Random().nextInt(99999);
@@ -54,12 +54,12 @@ public class FileUtils {
             }
             lastFileName = savePath + newFileName;
             multipartFile.transferTo(new File(lastFileName));
-            if (!checkImageHead(lastFileName, orgFileExt)) {
+            if (!checkFileHead(lastFileName, orgFileExt)) {
                 File file = new File(lastFileName);
                 if (file.exists() && file.isFile()) {
                     file.delete();
-                    throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】内容格式异常,请重新尝试");
                 }
+                throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】内容格式异常,请重新尝试");
             }
             Thumbnails.of(lastFileName).scale(1.0f).toFile(lastFileName);
             FileData fileData = new FileData(savePath, orgFileName, orgFileExt, newFileName, lastFileName);
@@ -77,7 +77,7 @@ public class FileUtils {
         throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件失败,请重新尝试");
     }
 
-    private static boolean checkImageHead(String filePath, String imgExt) {
+    private static boolean checkFileHead(String filePath, String ext) {
         try {
             FileInputStream is = new FileInputStream(filePath);
             byte[] b = new byte[4];
@@ -96,7 +96,7 @@ public class FileUtils {
             }
             String header = stringBuilder.toString().toLowerCase();
             is.close();
-            if (imgExts.get(imgExt).equals(header)) {
+            if (fileExt.get(ext).equals(header)) {
                 return true;
             }
         } catch (Exception e) {
