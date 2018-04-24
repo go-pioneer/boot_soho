@@ -7,8 +7,7 @@ import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
 import com.soho.spring.mvc.model.FastView;
-import com.soho.spring.shiro.utils.SessionUtils;
-import com.soho.spring.utils.ImageUtils;
+import com.soho.spring.utils.FileUtils;
 import com.soho.spring.utils.XSSUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,16 +45,10 @@ public class DogController {
         return new FastView("/index").add("username", username).done();
     }
 
+    @ResponseBody
     @RequestMapping("/upload")
-    public Object upload(String username, MultipartFile file) {
-        String filePath = null;
-        try {
-            filePath = ImageUtils.getImageByReSize(1l, file);
-        } catch (BizErrorEx ex) {
-            ex.printStackTrace();
-        }
-        System.out.println(filePath);
-        return new FastView("/index").add("username", username).done();
+    public Object upload(String username, MultipartFile file) throws BizErrorEx {
+        return FileUtils.uploadImageByReSize(file, "1", true);
     }
 
     @ResponseBody
