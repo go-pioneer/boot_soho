@@ -5,7 +5,6 @@ import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
@@ -25,10 +24,6 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
         String filePath = "classpath:application.properties";
         String[] decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
         return new DefaultPropertyConfigurer(filePath, decodeKeys);
-    }
-
-    public HttpMessageConverters initFastjsonHttpMessageConverter() {
-        return new HttpMessageConverters(new FastjsonMessageConver());
     }
 
     public CacheManager initCacheManager() {
