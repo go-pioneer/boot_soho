@@ -2,6 +2,7 @@ package com.soho.spring.mvc.handler;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.ConfigData;
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.utils.HttpUtils;
@@ -41,9 +42,9 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
             }
             retData = new RetData<>(errorEx.getErrorCode(), msg, callmap);
         } else if (ex instanceof MaxUploadSizeExceededException) {
-            retData = new RetData<>(RetData.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + config.getMaxFileSize() + "】,多文件【" + config.getMaxRequestSize() + "】", callmap);
+            retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + config.getMaxFileSize() + "】,多文件【" + config.getMaxRequestSize() + "】", callmap);
         } else {
-            retData = new RetData<>(RetData.UNKNOWN_STATUS, RetData.UNKNOWN_MESSAGE, callmap);
+            retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }
         if (HttpUtils.isRetJson(request, config.getApiPrefix())) {
             HttpUtils.responseJsonData(response, retData);

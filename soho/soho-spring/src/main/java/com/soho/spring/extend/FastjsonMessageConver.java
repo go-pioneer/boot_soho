@@ -3,8 +3,8 @@ package com.soho.spring.extend;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
-import com.soho.spring.utils.XSSUtils;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -58,14 +58,12 @@ public class FastjsonMessageConver extends AbstractHttpMessageConverter<Object> 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream in = inputMessage.getBody();
         byte[] buf = new byte[1024];
-
         while (true) {
             int len = in.read(buf);
             if (len == -1) {
                 byte[] bytes = baos.toByteArray();
                 return JSON.parseObject(bytes, 0, bytes.length, this.charset.newDecoder(), clazz, new Feature[0]);
             }
-
             if (len > 0) {
                 baos.write(buf, 0, len);
             }
@@ -73,19 +71,27 @@ public class FastjsonMessageConver extends AbstractHttpMessageConverter<Object> 
     }
 
     protected void writeInternal(Object obj, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        OutputStream out = outputMessage.getBody();
-        String text = JSON.toJSONString(obj, this.features);
-        text = XSSUtils.unstrip(text);
-        Object data = null;
-        if (text == null || "".equals(text)) {
-            data = new HashMap();
-        } else {
-            data = JSON.parse(text);
+        OutputStream out = null;
+        try {
+            out = outputMessage.getBody();
+            String text = JSON.toJSONString(obj, this.features);
+            Object data = null;
+            if (text == null || "".equals(text)) {
+                data = new HashMap();
+            } else {
+                data = JSON.parse(text);
+            }
+            RetData<Object> retData = new RetData<>(RetCode.OK_STATUS, RetCode.OK_MESSAGE, data);
+            text = JSON.toJSONString(retData);
+            byte[] bytes = text.getBytes(this.charset);
+            out.write(bytes);
+        } catch (Exception e) {
+            throw new HttpMessageNotWritableException("Could not write JSON: " + e.getMessage(), e);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
-        RetData<Object> retData = new RetData<>(RetData.OK_STATUS, RetData.OK_MESSAGE, data);
-        text = JSON.toJSONString(retData);
-        byte[] bytes = text.getBytes(this.charset);
-        out.write(bytes);
     }
 
 }

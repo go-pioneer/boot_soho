@@ -1,4 +1,4 @@
-package com.soho.spring.shiro;
+package com.soho.spring.configuration;
 
 import com.soho.spring.model.ConfigData;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;

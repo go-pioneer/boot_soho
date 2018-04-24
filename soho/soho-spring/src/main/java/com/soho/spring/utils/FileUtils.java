@@ -3,7 +3,7 @@ package com.soho.spring.utils;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.ConfigData;
 import com.soho.spring.model.FileData;
-import com.soho.spring.model.RetData;
+import com.soho.spring.model.RetCode;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,16 +31,16 @@ public class FileUtils {
 
     public static FileData uploadImageByReSize(MultipartFile multipartFile, String userDir, boolean thumbnail) throws BizErrorEx {
         if (multipartFile == null || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
-            throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件为空");
+            throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件为空");
         }
         String orgFileName = multipartFile.getOriginalFilename();
         int indexOf = orgFileName.lastIndexOf(".");
         if (indexOf == -1) {
-            throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件名称异常");
+            throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件名称异常");
         }
         String orgFileExt = orgFileName.substring(indexOf).toLowerCase().trim();
         if (!fileExt.containsKey(orgFileExt)) {
-            throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件只允许JPG|JPEG|PNG格式");
+            throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件只允许JPG|JPEG|PNG格式");
         }
         int number = new Random().nextInt(99999);
         number = number < 10000 ? number + 10000 : number;
@@ -59,7 +59,7 @@ public class FileUtils {
                 if (file.exists() && file.isFile()) {
                     file.delete();
                 }
-                throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】内容格式异常,请重新尝试");
+                throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】内容格式异常,请重新尝试");
             }
             Thumbnails.of(lastFileName).scale(1.0f).toFile(lastFileName);
             FileData fileData = new FileData(savePath, orgFileName, orgFileExt, newFileName, lastFileName);
@@ -74,7 +74,7 @@ public class FileUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        throw new BizErrorEx(RetData.UPLOAD_ERROR_STATUS, "上传图片文件失败,请重新尝试");
+        throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件失败,请重新尝试");
     }
 
     private static boolean checkFileHead(String filePath, String ext) {

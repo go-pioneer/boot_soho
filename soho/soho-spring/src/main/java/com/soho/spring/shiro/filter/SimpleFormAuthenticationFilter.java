@@ -1,5 +1,6 @@
 package com.soho.spring.shiro.filter;
 
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.utils.HttpUtils;
 import org.apache.shiro.subject.Subject;
@@ -42,7 +43,7 @@ public class SimpleFormAuthenticationFilter extends FormAuthenticationFilter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
-                RetData<Object> retData = new RetData<>("000001", "您尚未登录或会话已超时", new HashMap());
+                RetData<Object> retData = new RetData<>(RetCode.SESSION_NOTEXIST_STATUS, RetCode.SESSION_NOTEXIST_MESSAGE, new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
                 saveRequestAndRedirectToLogin(request, response);

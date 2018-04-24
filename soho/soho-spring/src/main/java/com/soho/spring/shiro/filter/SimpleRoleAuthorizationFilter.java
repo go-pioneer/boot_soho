@@ -1,5 +1,6 @@
 package com.soho.spring.shiro.filter;
 
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.utils.HttpUtils;
 import org.apache.shiro.subject.Subject;
@@ -42,7 +43,7 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
         // 没有登录状态,返回会话未登录或已超时状态
         if (!subject.isAuthenticated() || subject.getPrincipal() == null) {
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
-                RetData<Object> retData = new RetData<>("000001", "您尚未登录或会话已超时", new HashMap());
+                RetData<Object> retData = new RetData<>(RetCode.SESSION_NOTEXIST_STATUS, RetCode.SESSION_NOTEXIST_MESSAGE, new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
                 saveRequestAndRedirectToLogin(httpRequest, httpResponse);
@@ -50,7 +51,7 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
         } else {
             // 已有登录状态,则返回没有权限访问状态
             if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
-                RetData<Object> retData = new RetData<>("000002", "您没有足够的权限访问", new HashMap());
+                RetData<Object> retData = new RetData<>(RetCode.UNAUTHORIZED_STATUS, RetCode.UNAUTHORIZED_MESSAGE, new HashMap());
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
                 // 读取无权限回调地址

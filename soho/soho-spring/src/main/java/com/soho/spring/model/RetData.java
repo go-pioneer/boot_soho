@@ -4,15 +4,6 @@ import java.io.Serializable;
 
 public class RetData<T> implements Serializable {
 
-    public static final String OK_STATUS = "000000";
-    public static final String OK_MESSAGE = "操作成功";
-
-    public static final String UPLOAD_ERROR_STATUS = "999998";
-    public static final String UPLOAD_ERROR_MESSAGE = "上传失败,文件大小超出范围";
-
-    public static final String UNKNOWN_STATUS = "999999";
-    public static final String UNKNOWN_MESSAGE = "操作失败";
-
     public String code;
     public String msg;
     public long ts;

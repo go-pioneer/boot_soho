@@ -1,5 +1,6 @@
 package com.soho.spring.shiro.filter;
 
+import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.HttpUtils;
@@ -56,7 +57,7 @@ public class SimpleKickOutSessionFilter extends AccessControlFilter {
             e.printStackTrace();
         }
         if (HttpUtils.isRetJson(httpRequest, apiPrefix)) {
-            RetData<Object> retData = new RetData<>("000003", "您的会话已被踢下线", new HashMap());
+            RetData<Object> retData = new RetData<>(RetCode.SESSION_KICKOUT_STATUS, RetCode.SESSION_KICKOUT_MESSAGE, new HashMap());
             HttpUtils.responseJsonData(httpResponse, retData);
         } else {
             WebUtils.issueRedirect(request, response, getLoginUrl());
