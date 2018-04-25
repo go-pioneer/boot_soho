@@ -8,6 +8,7 @@ public class OAuth2ErrorCode {
     public static String OAUTH_CLIENT_ERROR = "000110"; // 第三方平台接口异常
     public static String OAUTH_LOGIN_ERROR = "000111"; // 帐号/密码错误
     public static String OAUTH_LOGIN_NULL = "000112"; // 帐号/密码为空
+    public static String OAUTH_TOKEN_PBK_NULL = "000809"; // PBK不能为空
     public static String OAUTH_TOKEN_NULL = "000810"; // TOKEN不能为空
     public static String OAUTH_TOKEN_ILLEGAL = "000811"; // TOKEN不存在
     public static String OAUTH_TOKEN_INVALID = "000812"; // TOKEN无效

@@ -12,16 +12,11 @@ import java.util.Map;
 public interface OAuth2TokenService {
 
     /**
-     * 保存授权码和用户ID的关系
+     * 保存授权对象
      *
-     * @param clientId      授权clientId
-     * @param uid           用户UID
-     * @param username      用户名
-     * @param code          授权码
-     * @param token         授权token
-     * @param refresh_token 刷新token
+     * @param oAuth2Token 授权对象
      */
-    public OAuth2Token addClientToken(String clientId, String uid, String username, String code, String token, String refresh_token) throws BizErrorEx;
+    public OAuth2Token addClientToken(OAuth2Token oAuth2Token) throws BizErrorEx;
 
     /**
      * 校验client_id参数是否正常
@@ -34,26 +29,26 @@ public interface OAuth2TokenService {
     /**
      * 校验client_id参数是否正常
      *
-     * @param clientId
+     * @param client_id
      */
-    public OAuth2Client validClientId(String clientId) throws BizErrorEx;
+    public OAuth2Client validOAuth2Client(String client_id) throws BizErrorEx;
 
     /**
      * 校验client_secret参数是否正常
      *
-     * @param appKey       系统配置密钥
-     * @param clientSecret 用户参数密钥
+     * @param client_secret1 系统配置密钥
+     * @param client_secret2 用户参数密钥
      */
-    public void validClientSecret(String appKey, String clientSecret) throws BizErrorEx;
+    public void validClientSecret(String client_secret1, String client_secret2) throws BizErrorEx;
 
     /**
      * 校验authCode是否有效
      *
-     * @param clientId
+     * @param client_id
      * @param authCode
      * @return OauthClientToken
      */
-    public OAuth2Token getTokenByCode(String clientId, String authCode) throws BizErrorEx;
+    public OAuth2Token getTokenByCode(String client_id, String authCode) throws BizErrorEx;
 
     /**
      * authCode设置已使用
@@ -63,13 +58,13 @@ public interface OAuth2TokenService {
     public OAuth2Token delAuthCode(String access_token) throws BizErrorEx;
 
     /**
-     * 获取clientId对应的回调地址
+     * 获取client_id对应的回调地址
      *
-     * @param clientId
+     * @param client_id
      * @param redirect_uri
      * @return String
      */
-    public String validRredirectUri(String clientId, String redirect_uri) throws BizErrorEx;
+    public String validRredirectUri(String client_id, String redirect_uri) throws BizErrorEx;
 
     /**
      * 校验state参数是否为空
@@ -124,14 +119,14 @@ public interface OAuth2TokenService {
     /**
      * 续期access_token
      *
-     * @param clientId
+     * @param client_id
      * @param refresh_token
      * @param access_token
      * @param access_pbk
      * @return OAuth2Token
      * @throws BizErrorEx
      */
-    public OAuth2Token refreshToken(String clientId, String refresh_token, String access_token, String access_pbk) throws BizErrorEx;
+    public OAuth2Token refreshToken(String client_id, String refresh_token, String access_token, String access_pbk) throws BizErrorEx;
 
     /**
      * 帐号密码登录
@@ -145,11 +140,11 @@ public interface OAuth2TokenService {
     /**
      * 生成二次认证的密钥,防止暴力破解
      *
-     * @param clientId
+     * @param client_id
      * @param access_token
      * @return String
      */
-    public String buildAccessPbk(String clientId, String access_token);
+    public String buildAccessPbk(String client_id, String access_token);
 
     /**
      * OAUTH2登录WebView
