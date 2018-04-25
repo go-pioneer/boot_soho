@@ -9,8 +9,10 @@ import com.soho.oauth2.service.OAuth2AuthzService;
 import com.soho.oauth2.service.OAuth2TokenService;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
+import com.soho.spring.mvc.model.FastMap;
+import com.soho.spring.mvc.model.FastView;
+import com.soho.spring.security.EncryptService;
 import com.soho.spring.shiro.utils.SessionUtils;
-import com.soho.spring.utils.MD5Utils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -38,7 +40,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -49,6 +50,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
 
     @Autowired(required = false)
     private OAuth2TokenService oAuth2TokenService;
+    @Autowired(required = false)
+    private EncryptService encryptService;
+
+    private static final String CLIENT_PBK = "client_pbk";
 
     @Override
     public Object authorize(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException, URISyntaxException {
@@ -72,8 +77,8 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             String password = StringUtils.isEmpty(oAuthAuthzRequest.getParam("password")) ? "" : oAuthAuthzRequest.getParam("password");
             String error = StringUtils.isEmpty(oAuthAuthzRequest.getParam("error")) ? "" : oAuthAuthzRequest.getParam("error");
             // 校验PBK签名
-            Object s_pbk = SessionUtils.getAttribute("client_pbk");
-            String pbk = oAuthAuthzRequest.getParam("client_pbk");
+            Object s_pbk = SessionUtils.getAttribute(CLIENT_PBK);
+            String pbk = oAuthAuthzRequest.getParam(CLIENT_PBK);
             if (StringUtils.isEmpty(s_pbk) || !s_pbk.equals(pbk)) {
                 return toInitLoginView(oAuthAuthzRequest, redirect_uri, username, error);
             }
@@ -127,7 +132,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             buffer.append("&state=").append(oAuthAuthzRequest.getState());
             buffer.append("&error=").append(URLEncoder.encode(error, "UTF-8"));
             buffer.append("&username=").append(username);
-            return new ModelAndView(buffer.toString());
+            return new FastView(buffer.toString()).done();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -141,14 +146,14 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
         client.setResponse_type(oAuthAuthzRequest.getResponseType());
         client.setRedirect_uri(redirect_uri);
         client.setState(oAuthAuthzRequest.getState());
-        String pbk = MD5Utils.MD5PBK(client.getClient_id() + System.currentTimeMillis()).toLowerCase();
-        SessionUtils.setAttribute("client_pbk", pbk);
-        ModelAndView view = new ModelAndView(oAuth2TokenService.getOAuth2LoginView());
-        view.addObject("client", client);
-        view.addObject("username", username);
-        view.addObject("error", error);
-        view.addObject("client_pbk", pbk);
-        return view;
+        String pbk = encryptService.md5(client.getClient_id() + System.currentTimeMillis());
+        SessionUtils.setAttribute(CLIENT_PBK, pbk);
+        return new FastView(oAuth2TokenService.getOAuth2LoginView())
+                .add("client", client)
+                .add("username", username)
+                .add("error", error)
+                .add(CLIENT_PBK, pbk)
+                .done();
     }
 
     @Override
@@ -175,13 +180,14 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             }
             // 生成OAuth响应
             Map<String, Object> map = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
-            map.put("access_token", oAuth2Token.getAccess_token());
-            map.put("access_pbk", oAuth2TokenService.buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_token()));
-            map.put("access_time", oAuth2Token.getAccess_time());
-            map.put("refresh_token", oAuth2Token.getRefresh_token());
-            map.put("refresh_time", oAuth2Token.getRefresh_time());
-            map.put("token_expire", oAuth2Token.getToken_expire());
-            return map;
+            return new FastMap().addAll(map)
+                    .add("access_token", oAuth2Token.getAccess_token())
+                    .add("access_pbk", oAuth2TokenService.buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_token()))
+                    .add("access_time", oAuth2Token.getAccess_time())
+                    .add("refresh_token", oAuth2Token.getRefresh_token())
+                    .add("refresh_time", oAuth2Token.getRefresh_time())
+                    .add("token_expire", oAuth2Token.getToken_expire())
+                    .done();
         } catch (OAuthProblemException e) {
             return toBuildJsonMapResponse(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         }
@@ -279,12 +285,12 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
 
     // 输出异常信息对象(包含http状态,业务状态)
     private Map<String, Object> toBuildJsonMapResponse(String errorCode, String errorMsg, int errorResponse, String error) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("biz_code", errorCode);
-        map.put("biz_error", errorMsg);
-        map.put("http_code", errorResponse);
-        map.put("http_error", error);
-        return map;
+        return new FastMap()
+                .add("biz_code", errorCode)
+                .add("biz_error", errorMsg)
+                .add("http_code", errorResponse)
+                .add("http_error", error)
+                .done();
     }
 
     private HttpHeaders buildHttpUtf8Header() {
