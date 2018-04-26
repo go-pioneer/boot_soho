@@ -72,7 +72,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 oAuth2TokenService.validOAuth2Client(oAuthAuthzRequest.getClientId());
                 oAuth2TokenService.validRredirectUri(oAuthAuthzRequest.getClientId(), redirect_uri);
             } catch (BizErrorEx e) {
-                return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+                return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             OAuth2Token oAuth2Token = null;
             String username = StringUtils.isEmpty(oAuthAuthzRequest.getParam("username")) ? "" : oAuthAuthzRequest.getParam("username");
@@ -86,16 +86,13 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             }
             try {
                 oAuth2TokenService.validJaqState();
-                OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
-                String authorizationCode = oAuthIssuer.authorizationCode();
-                String accessToken = oAuthIssuer.accessToken();
-                String refreshToken = oAuthIssuer.accessToken();
                 Map<String, Object> loginInfo = new FastMap().add("username", username).add("password", password).done();
                 oAuth2Token = oAuth2TokenService.loginByUsername(loginInfo);
+                OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
                 oAuth2Token.setClient_id(oAuthAuthzRequest.getClientId());
-                oAuth2Token.setCode(authorizationCode);
-                oAuth2Token.setAccess_token(accessToken);
-                oAuth2Token.setRefresh_token(refreshToken);
+                oAuth2Token.setCode(oAuthIssuer.authorizationCode());
+                oAuth2Token.setAccess_token(oAuthIssuer.accessToken());
+                oAuth2Token.setRefresh_token(oAuthIssuer.accessToken());
                 oAuth2Token = oAuth2TokenService.addClientToken(oAuth2Token);
                 oAuth2TokenService.delJaqState();
             } catch (BizErrorEx ex) { // WEB方式登录失败时跳转到登陆页面
@@ -117,7 +114,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
         } catch (OAuthProblemException e) { //返回错误消息（如?error=）
             if (StringUtils.isEmpty(redirect_uri)) {
-                return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+                return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             try {
                 final OAuthResponse oAuthResponse = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
@@ -128,62 +125,20 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求失败", HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求失败", HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         } catch (Exception e) {
-            return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         }
-    }
-
-    private Object responseEntityByJson(String code, String errorMsg, int status, String error) throws BizErrorEx {
-        Map<String, Object> map = new FastMap()
-                .add("status", status)
-                .add("error", error)
-                .done();
-        throw new BizErrorEx(code, errorMsg, map);
-    }
-
-    // 登录失败重定向初始化界面
-    private ModelAndView toFailureLoginView(OAuthAuthzRequest oAuthAuthzRequest, String req_uri, String redirect_uri, String username, String error) {
-        try {
-            StringBuffer buffer = new StringBuffer("redirect:").append(req_uri);
-            buffer.append("?client_id=").append(oAuthAuthzRequest.getClientId());
-            buffer.append("&response_type=").append(oAuthAuthzRequest.getResponseType());
-            buffer.append("&redirect_uri=").append(URLEncoder.encode(redirect_uri, "UTF-8"));
-            buffer.append("&state=").append(oAuthAuthzRequest.getState());
-            buffer.append("&error=").append(URLEncoder.encode(error, "UTF-8"));
-            buffer.append("&username=").append(username);
-            return new FastView(buffer.toString()).done();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // 初始化OAUTH2.0登录界面
-    private ModelAndView toInitLoginView(OAuthAuthzRequest oAuthAuthzRequest, String redirect_uri, String username, String error) {
-        OAuth2Client client = new OAuth2Client();
-        client.setClient_id(oAuthAuthzRequest.getClientId());
-        client.setResponse_type(oAuthAuthzRequest.getResponseType());
-        client.setRedirect_uri(redirect_uri);
-        client.setState(oAuthAuthzRequest.getState());
-        String pbk = encryptService.md5(client.getClient_id() + System.currentTimeMillis());
-        SessionUtils.setAttribute(CLIENT_PBK, pbk);
-        return new FastView(oAuth2TokenService.getOAuth2LoginView())
-                .add("client", client)
-                .add("username", username)
-                .add("error", error)
-                .add(CLIENT_PBK, pbk)
-                .done();
     }
 
     @Override
-    public Object access_token(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException {
+    public Object access_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
-            // 构建OAuth请求
-            OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
             OAuth2Token oAuth2Token = null;
             OAuth2Client oAuth2Client = null;
             try {
+                // 构建OAuth请求
+                OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
                 // 检查验证类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
                 oAuth2TokenService.validGrantType(oAuthTokenRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
                 // 检查提交的客户端id是否正确
@@ -195,12 +150,13 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 // 获取授权码并进行认证
                 String code = oAuthTokenRequest.getParam(OAuth.OAUTH_CODE);
                 oAuth2Token = oAuth2TokenService.getAccessTokenByCode(oAuth2Client.getClient_id(), code);
-            } catch (BizErrorEx ex) {
-                return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_GRANT);
+            } catch (BizErrorEx e) {
+                return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_GRANT);
+            } catch (OAuthSystemException e) {
+                return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             // 生成OAuth响应
-            Map<String, Object> map = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
-            return new FastMap().addAll(map)
+            Map<String, Object> map = new FastMap()
                     .add("access_token", oAuth2Token.getAccess_token())
                     .add("access_pbk", oAuth2TokenService.buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_token()))
                     .add("access_time", oAuth2Token.getAccess_time())
@@ -208,8 +164,9 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                     .add("refresh_time", oAuth2Token.getRefresh_time())
                     .add("token_expire", oAuth2Token.getToken_expire())
                     .done();
+            return responseSuccessEntity(map);
         } catch (OAuthProblemException e) {
-            return toBuildJsonMapResponse(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         }
     }
 
@@ -293,6 +250,59 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             // 构建错误响应
             return toBuildJsonMapResponse(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         }
+    }
+
+    // 登录失败重定向初始化界面
+    private ModelAndView toFailureLoginView(OAuthAuthzRequest oAuthAuthzRequest, String req_uri, String redirect_uri, String username, String error) {
+        try {
+            StringBuffer buffer = new StringBuffer("redirect:").append(req_uri);
+            buffer.append("?client_id=").append(oAuthAuthzRequest.getClientId());
+            buffer.append("&response_type=").append(oAuthAuthzRequest.getResponseType());
+            buffer.append("&redirect_uri=").append(URLEncoder.encode(redirect_uri, "UTF-8"));
+            buffer.append("&state=").append(oAuthAuthzRequest.getState());
+            buffer.append("&error=").append(URLEncoder.encode(error, "UTF-8"));
+            buffer.append("&username=").append(username);
+            return new FastView(buffer.toString()).done();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 初始化OAUTH2.0登录界面
+    private ModelAndView toInitLoginView(OAuthAuthzRequest oAuthAuthzRequest, String redirect_uri, String username, String error) {
+        OAuth2Client client = new OAuth2Client();
+        client.setClient_id(oAuthAuthzRequest.getClientId());
+        client.setResponse_type(oAuthAuthzRequest.getResponseType());
+        client.setRedirect_uri(redirect_uri);
+        client.setState(oAuthAuthzRequest.getState());
+        String pbk = encryptService.md5(client.getClient_id() + System.currentTimeMillis());
+        SessionUtils.setAttribute(CLIENT_PBK, pbk);
+        return new FastView(oAuth2TokenService.getOAuth2LoginView())
+                .add("client", client)
+                .add("username", username)
+                .add("error", error)
+                .add(CLIENT_PBK, pbk)
+                .done();
+    }
+
+    // 输出业务成功JSON数据对象
+    private Object responseSuccessEntity(Map<String, Object> entity) throws BizErrorEx {
+        Map<String, Object> map = new FastMap()
+                .add("status", HttpServletResponse.SC_OK)
+                .add("error", "")
+                .addAll(entity)
+                .done();
+        return map;
+    }
+
+    // 输出失败异常JSON数据对象
+    private Object responseFailEntity(String code, String errorMsg, int status, String error) throws BizErrorEx {
+        Map<String, Object> map = new FastMap()
+                .add("status", status)
+                .add("error", error)
+                .done();
+        throw new BizErrorEx(code, errorMsg, map);
     }
 
     // 输出浏览器数据对象(UTF-8编码)

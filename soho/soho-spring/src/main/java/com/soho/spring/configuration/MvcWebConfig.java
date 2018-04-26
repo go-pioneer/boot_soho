@@ -53,7 +53,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
-        // addInterceptor.excludePathPatterns("/login**"); // 排除配置
+        addInterceptor.excludePathPatterns("/static/**"); // 排除配置
         addInterceptor.addPathPatterns("/**"); // 拦截配置
     }
 

@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
+Source Server         : 127.0.0.1
 Source Server Version : 50717
-Source Host           : localhost:3306
+Source Host           : 127.0.0.1:3306
 Source Database       : test_db
 
 Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2018-04-26 17:47:03
+Date: 2018-04-26 23:35:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for color
+-- Table structure for `color`
 -- ----------------------------
 DROP TABLE IF EXISTS `color`;
 CREATE TABLE `color` (
@@ -36,7 +36,7 @@ CREATE TABLE `color` (
 INSERT INTO `color` VALUES ('2', 'test', '1', '1', '0', '0', '1');
 
 -- ----------------------------
--- Table structure for dog
+-- Table structure for `dog`
 -- ----------------------------
 DROP TABLE IF EXISTS `dog`;
 CREATE TABLE `dog` (
@@ -61,7 +61,7 @@ INSERT INTO `dog` VALUES ('7', '??', '5', '1', '1522141124201', '0', '1');
 INSERT INTO `dog` VALUES ('8', '??', '5', '1', '1522142760166', '0', '1');
 
 -- ----------------------------
--- Table structure for oauth_client
+-- Table structure for `oauth_client`
 -- ----------------------------
 DROP TABLE IF EXISTS `oauth_client`;
 CREATE TABLE `oauth_client` (
@@ -84,10 +84,10 @@ CREATE TABLE `oauth_client` (
 -- ----------------------------
 -- Records of oauth_client
 -- ----------------------------
-INSERT INTO `oauth_client` VALUES ('2', 'c522f0c158d4c9d5be2f1032c38a8148', '1', '皮皮公司', '13823912345', '中山', 'http://localhost', null, '0', '0', '1');
+INSERT INTO `oauth_client` VALUES ('2', 'c522f0c158d4c9d5be2f1032c38a8148', 'dedadc9d4d3525033047d12150ab3b065405ab7eb0ac4e9f5a2dcedb1653f3eeb6cf1a742a8dcca814f668cb1ada781f', '皮皮公司', '13823912345', '中山', 'http://localhost', '1', '0', '0', '1');
 
 -- ----------------------------
--- Table structure for oauth_client_token
+-- Table structure for `oauth_client_token`
 -- ----------------------------
 DROP TABLE IF EXISTS `oauth_client_token`;
 CREATE TABLE `oauth_client_token` (
@@ -114,14 +114,17 @@ CREATE TABLE `oauth_client_token` (
   KEY `idx_appid` (`client_id`),
   KEY `idx_uid` (`uid`),
   KEY `idx_token_state` (`token_state`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COMMENT='平台授权TOKEN';
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8 COMMENT='平台授权TOKEN';
 
 -- ----------------------------
 -- Records of oauth_client_token
 -- ----------------------------
+INSERT INTO `oauth_client_token` VALUES ('44', 'c522f0c158d4c9d5be2f1032c38a8148', '7930040530a4744d77504bbbff7e7cb3', '3d6fcd979c02f93599f31ea9494fcca3', '2ef4b1cf34bc701cc0db146aaf9b136f', '1', '1524753942956', '1', '1525962942956', '1524753342956', '61a88f0bb92799fe4b9f117136157612', '1524753342956', '0', '1524753342956', '0', '1');
+INSERT INTO `oauth_client_token` VALUES ('45', 'c522f0c158d4c9d5be2f1032c38a8148', '7930040530a4744d77504bbbff7e7cb3', '99001b1e7fff05dae9bec53536260592', '9297ae241c371255357dfcfb0d2c956d', '1', '1524755852498', '1', '1525964852498', '1524755252498', 'b92185390d3b5138a607a607737c7ecb', '1524755252498', '0', '1524755252498', '0', '1');
+INSERT INTO `oauth_client_token` VALUES ('46', 'c522f0c158d4c9d5be2f1032c38a8148', '7930040530a4744d77504bbbff7e7cb3', '7ed06c27fbdde37256c389a1117dda7b', 'f0758b6196a79283db0dbb82160d7ea2', '1', '1524757521871', '1', '1525966521871', '1524756921871', '73e9846087960a5da51936f23b9b30d0', '1524756921871', '0', '1524756921871', '0', '1');
 
 -- ----------------------------
--- Table structure for oauth_user
+-- Table structure for `oauth_user`
 -- ----------------------------
 DROP TABLE IF EXISTS `oauth_user`;
 CREATE TABLE `oauth_user` (
@@ -135,8 +138,9 @@ CREATE TABLE `oauth_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_uid` (`uid`),
   UNIQUE KEY `idx_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of oauth_user
 -- ----------------------------
+INSERT INTO `oauth_user` VALUES ('6', '7930040530a4744d77504bbbff7e7cb3', 'zhangsan', '7930040530a4744d77504bbbff7e7cb3', '张三', '皮皮公司', '0');

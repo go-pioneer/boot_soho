@@ -16,7 +16,7 @@ public interface OAuth2AuthzService {
     public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 获取access_token
-    public Object access_token(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException;
+    public Object access_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 获取用户信息
     public Object userinfo(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException, URISyntaxException;

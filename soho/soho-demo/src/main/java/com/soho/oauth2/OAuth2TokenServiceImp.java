@@ -50,8 +50,12 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             clientToken.setAccess_token(oAuth2Token.getAccess_token());
             clientToken.setRefresh_token(oAuth2Token.getRefresh_token());
             clientToken.setRefresh_time(oAuth2Token.getAccess_time());
-            clientToken.setCode_expire(clientToken.getAccess_time() + 600000l);
-            clientToken.setToken_expire(clientToken.getAccess_time() + 1209600000l);
+            clientToken.setAccess_time(oAuth2Token.getAccess_time());
+            clientToken.setCode_state(oAuth2Token.getCode_state());
+            clientToken.setToken_state(oAuth2Token.getToken_state());
+            clientToken.setLogout_time(oAuth2Token.getLogout_time());
+            clientToken.setCode_expire(oAuth2Token.getAccess_time() + 600000l);
+            clientToken.setToken_expire(oAuth2Token.getAccess_time() + 1209600000l);
             clientToken.setCtime(System.currentTimeMillis());
             oauthClientTokenDAO.insert(clientToken);
         } catch (MybatisDAOEx ex) {
@@ -152,7 +156,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
                 throw new BizErrorEx(OAuth2ErrorCode.OAUTH_LOGIN_NULL, "登录失败,帐号/密码不能为空");
             }
-            OauthUser user = oauthUserDAO.findOneByCnd(new SQLCnd().eq("state", 1).eq("password", encryptService.md5(password)).eq("username", username));
+            OauthUser user = oauthUserDAO.findOneByCnd(new SQLCnd().eq("password", encryptService.md5(password)).eq("username", username));
             if (user != null) {
                 OAuth2Token oAuth2Token = new OAuth2Token();
                 oAuth2Token.setUid(user.getUid());

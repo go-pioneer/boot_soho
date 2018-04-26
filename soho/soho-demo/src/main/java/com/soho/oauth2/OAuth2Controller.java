@@ -1,12 +1,9 @@
 package com.soho.oauth2;
 
+import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.oauth2.controller.OAuth2AuthzController;
 import com.soho.oauth2.service.OAuth2AuthzService;
-import org.apache.oltu.oauth2.common.error.OAuthError;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,13 +26,13 @@ public class OAuth2Controller extends OAuth2AuthzController {
         return oAuth2AuthzService;
     }
 
-    @RequestMapping(value = {"/oauth2.0/v1.0/authorize"}, method = {RequestMethod.GET})
-    public Object authorize(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = {"/oauth2.0/v1.0/authorize"})
+    public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         return super.authorize(request, response);
     }
 
     @RequestMapping(value = {"/oauth2.0/v1.0/access_token"}, method = {RequestMethod.POST})
-    public Object access_token(HttpServletRequest request, HttpServletResponse response) {
+    public Object access_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         return super.access_token(request, response);
     }
 
