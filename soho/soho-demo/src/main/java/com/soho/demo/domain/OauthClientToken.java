@@ -1,29 +1,63 @@
-package com.soho.oauth2.model;
+package com.soho.demo.domain;
 
-/**
- * Created by shadow on 2017/5/2.
- */
-public class OAuth2Token {
+import com.soho.mybatis.crud.domain.IDEntity;
+
+@SuppressWarnings("serial")
+public class OauthClientToken implements IDEntity<Long> {
+    private Long id;
 
     private String client_id;
-    private String access_token;
-    private String code;
-    private Integer code_state;
-    private Long code_expire;
-    private Integer token_state;
-    private Long token_expire;
-    private Long access_time;
-    private String refresh_token;
-    private Long refresh_time;
-    private Long logout_time;
+
     private String uid;
+
+    private String access_token;
+
+    private String code;
+
+    private Integer code_state;
+
+    private Long code_expire;
+
+    private Integer token_state;
+
+    private Long token_expire;
+
+    private Long access_time;
+
+    private String refresh_token;
+
+    private Long refresh_time;
+
+    private Long logout_time;
+
+    private Long ctime;
+
+    private Long utime;
+
+    private Integer state;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getClient_id() {
         return client_id;
     }
 
     public void setClient_id(String client_id) {
-        this.client_id = client_id;
+        this.client_id = client_id == null ? null : client_id.trim();
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid == null ? null : uid.trim();
     }
 
     public String getAccess_token() {
@@ -31,7 +65,7 @@ public class OAuth2Token {
     }
 
     public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+        this.access_token = access_token == null ? null : access_token.trim();
     }
 
     public String getCode() {
@@ -39,7 +73,7 @@ public class OAuth2Token {
     }
 
     public void setCode(String code) {
-        this.code = code;
+        this.code = code == null ? null : code.trim();
     }
 
     public Integer getCode_state() {
@@ -87,7 +121,7 @@ public class OAuth2Token {
     }
 
     public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+        this.refresh_token = refresh_token == null ? null : refresh_token.trim();
     }
 
     public Long getRefresh_time() {
@@ -106,12 +140,27 @@ public class OAuth2Token {
         this.logout_time = logout_time;
     }
 
-    public String getUid() {
-        return uid;
+    public Long getCtime() {
+        return ctime;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setCtime(Long ctime) {
+        this.ctime = ctime;
     }
 
+    public Long getUtime() {
+        return utime;
+    }
+
+    public void setUtime(Long utime) {
+        this.utime = utime;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 }

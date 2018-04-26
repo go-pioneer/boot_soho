@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soho.demo.dao.OauthUserDAO">
+    
+    <resultMap id="BaseResultMap" type="com.soho.demo.domain.OauthUser">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="uid" jdbcType="VARCHAR" property="uid" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+        <result column="ctime" jdbcType="BIGINT" property="ctime" />
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, uid, username, password, nickname, company, ctime
+    </sql>
+    
+    <insert id="insert" parameterType="com.soho.demo.domain.OauthUser">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oauth_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="company != null">
+                company,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="company != null">
+                #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    
+    <update id="update" parameterType="com.soho.demo.domain.OauthUser">
+        update oauth_user
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="company != null">
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oauth_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    
+    <select id="countByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.lang.Integer">
+        select count(1) 
+        from oauth_user
+        <include refid="Global.Where_Clause" />
+    </select>
+    
+    <select id="findByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultMap="BaseResultMap">
+        select 
+        <include refid="Global.Field_Clause" />
+        from oauth_user
+        <include refid="Global.Where_Clause" />
+    </select>
+    
+    <delete id="deleteByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
+        delete from oauth_user
+        <include refid="Global.Where_Clause" />
+    </delete>
+    
+    <update id="updateByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
+        update oauth_user
+        <set>
+            <if test="updateObj.uid != null">
+                uid = #{updateObj.uid,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.username != null">
+                username = #{updateObj.username,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.password != null">
+                password = #{updateObj.password,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.nickname != null">
+                nickname = #{updateObj.nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.company != null">
+                company = #{updateObj.company,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.ctime != null">
+                ctime = #{updateObj.ctime,jdbcType=BIGINT},
+            </if>
+        </set>
+        <include refid="Global.Where_Clause" />
+    </update>
+    
+    <select id="findMapByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.util.Map">
+        select 
+        <include refid="Global.Field_Clause" />
+        from 
+        <include refid="Global.Where_Clause_Complex" />
+    </select>
+</mapper>

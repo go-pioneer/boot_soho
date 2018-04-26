@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soho.demo.dao.OauthClientTokenDAO">
+    
+    <resultMap id="BaseResultMap" type="com.soho.demo.domain.OauthClientToken">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="client_id" jdbcType="VARCHAR" property="client_id" />
+        <result column="uid" jdbcType="VARCHAR" property="uid" />
+        <result column="access_token" jdbcType="VARCHAR" property="access_token" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="code_state" jdbcType="INTEGER" property="code_state" />
+        <result column="code_expire" jdbcType="BIGINT" property="code_expire" />
+        <result column="token_state" jdbcType="INTEGER" property="token_state" />
+        <result column="token_expire" jdbcType="BIGINT" property="token_expire" />
+        <result column="access_time" jdbcType="BIGINT" property="access_time" />
+        <result column="refresh_token" jdbcType="VARCHAR" property="refresh_token" />
+        <result column="refresh_time" jdbcType="BIGINT" property="refresh_time" />
+        <result column="logout_time" jdbcType="BIGINT" property="logout_time" />
+        <result column="ctime" jdbcType="BIGINT" property="ctime" />
+        <result column="utime" jdbcType="BIGINT" property="utime" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, client_id, uid, access_token, code, code_state, code_expire, token_state, token_expire, 
+        access_time, refresh_token, refresh_time, logout_time, ctime, utime, state
+    </sql>
+    
+    <insert id="insert" parameterType="com.soho.demo.domain.OauthClientToken">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oauth_client_token
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="client_id != null">
+                client_id,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="access_token != null">
+                access_token,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="code_state != null">
+                code_state,
+            </if>
+            <if test="code_expire != null">
+                code_expire,
+            </if>
+            <if test="token_state != null">
+                token_state,
+            </if>
+            <if test="token_expire != null">
+                token_expire,
+            </if>
+            <if test="access_time != null">
+                access_time,
+            </if>
+            <if test="refresh_token != null">
+                refresh_token,
+            </if>
+            <if test="refresh_time != null">
+                refresh_time,
+            </if>
+            <if test="logout_time != null">
+                logout_time,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+            <if test="utime != null">
+                utime,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="client_id != null">
+                #{client_id,jdbcType=VARCHAR},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="access_token != null">
+                #{access_token,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="code_state != null">
+                #{code_state,jdbcType=INTEGER},
+            </if>
+            <if test="code_expire != null">
+                #{code_expire,jdbcType=BIGINT},
+            </if>
+            <if test="token_state != null">
+                #{token_state,jdbcType=INTEGER},
+            </if>
+            <if test="token_expire != null">
+                #{token_expire,jdbcType=BIGINT},
+            </if>
+            <if test="access_time != null">
+                #{access_time,jdbcType=BIGINT},
+            </if>
+            <if test="refresh_token != null">
+                #{refresh_token,jdbcType=VARCHAR},
+            </if>
+            <if test="refresh_time != null">
+                #{refresh_time,jdbcType=BIGINT},
+            </if>
+            <if test="logout_time != null">
+                #{logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=BIGINT},
+            </if>
+            <if test="utime != null">
+                #{utime,jdbcType=BIGINT},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    
+    <update id="update" parameterType="com.soho.demo.domain.OauthClientToken">
+        update oauth_client_token
+        <set>
+            <if test="client_id != null">
+                client_id = #{client_id,jdbcType=VARCHAR},
+            </if>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="access_token != null">
+                access_token = #{access_token,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="code_state != null">
+                code_state = #{code_state,jdbcType=INTEGER},
+            </if>
+            <if test="code_expire != null">
+                code_expire = #{code_expire,jdbcType=BIGINT},
+            </if>
+            <if test="token_state != null">
+                token_state = #{token_state,jdbcType=INTEGER},
+            </if>
+            <if test="token_expire != null">
+                token_expire = #{token_expire,jdbcType=BIGINT},
+            </if>
+            <if test="access_time != null">
+                access_time = #{access_time,jdbcType=BIGINT},
+            </if>
+            <if test="refresh_token != null">
+                refresh_token = #{refresh_token,jdbcType=VARCHAR},
+            </if>
+            <if test="refresh_time != null">
+                refresh_time = #{refresh_time,jdbcType=BIGINT},
+            </if>
+            <if test="logout_time != null">
+                logout_time = #{logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=BIGINT},
+            </if>
+            <if test="utime != null">
+                utime = #{utime,jdbcType=BIGINT},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oauth_client_token
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    
+    <select id="countByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.lang.Integer">
+        select count(1) 
+        from oauth_client_token
+        <include refid="Global.Where_Clause" />
+    </select>
+    
+    <select id="findByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultMap="BaseResultMap">
+        select 
+        <include refid="Global.Field_Clause" />
+        from oauth_client_token
+        <include refid="Global.Where_Clause" />
+    </select>
+    
+    <delete id="deleteByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
+        delete from oauth_client_token
+        <include refid="Global.Where_Clause" />
+    </delete>
+    
+    <update id="updateByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd">
+        update oauth_client_token
+        <set>
+            <if test="updateObj.client_id != null">
+                client_id = #{updateObj.client_id,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.uid != null">
+                uid = #{updateObj.uid,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.access_token != null">
+                access_token = #{updateObj.access_token,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.code != null">
+                code = #{updateObj.code,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.code_state != null">
+                code_state = #{updateObj.code_state,jdbcType=INTEGER},
+            </if>
+            <if test="updateObj.code_expire != null">
+                code_expire = #{updateObj.code_expire,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.token_state != null">
+                token_state = #{updateObj.token_state,jdbcType=INTEGER},
+            </if>
+            <if test="updateObj.token_expire != null">
+                token_expire = #{updateObj.token_expire,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.access_time != null">
+                access_time = #{updateObj.access_time,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.refresh_token != null">
+                refresh_token = #{updateObj.refresh_token,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.refresh_time != null">
+                refresh_time = #{updateObj.refresh_time,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.logout_time != null">
+                logout_time = #{updateObj.logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.ctime != null">
+                ctime = #{updateObj.ctime,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.utime != null">
+                utime = #{updateObj.utime,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.state != null">
+                state = #{updateObj.state,jdbcType=INTEGER},
+            </if>
+        </set>
+        <include refid="Global.Where_Clause" />
+    </update>
+    
+    <select id="findMapByCnd" parameterType="com.soho.mybatis.sqlcode.condition.Cnd" resultType="java.util.Map">
+        select 
+        <include refid="Global.Field_Clause" />
+        from 
+        <include refid="Global.Where_Clause_Complex" />
+    </select>
+</mapper>

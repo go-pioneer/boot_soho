@@ -55,8 +55,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
 
     private static final String CLIENT_PBK = "client_pbk";
 
+    // http://localhost:8011/oauth2.0/v1.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&state=1&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth2.0%2Fcallback
+
     @Override
-    public Object authorize(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException, URISyntaxException {
+    public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         String redirect_uri = null;
         try {
             // 构建OAuth 授权请求
@@ -67,10 +69,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             try {
                 oAuth2TokenService.validState(oAuthAuthzRequest.getState());
                 oAuth2TokenService.validResponseType(oAuthAuthzRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE));
-                oAuth2TokenService.validClientId(oAuthAuthzRequest.getClientId());
+                oAuth2TokenService.validOAuth2Client(oAuthAuthzRequest.getClientId());
                 oAuth2TokenService.validRredirectUri(oAuthAuthzRequest.getClientId(), redirect_uri);
-            } catch (BizErrorEx ex) {
-                return toBuildUTF8WebResponse(ex, HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+            } catch (BizErrorEx e) {
+                return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
             OAuth2Token oAuth2Token = null;
             String username = StringUtils.isEmpty(oAuthAuthzRequest.getParam("username")) ? "" : oAuthAuthzRequest.getParam("username");
@@ -83,17 +85,21 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 return toInitLoginView(oAuthAuthzRequest, redirect_uri, username, error);
             }
             try {
-                String authorizationCode = null;
+                oAuth2TokenService.validJaqState();
                 OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
-                authorizationCode = oAuthIssuer.authorizationCode();
+                String authorizationCode = oAuthIssuer.authorizationCode();
                 String accessToken = oAuthIssuer.accessToken();
                 String refreshToken = oAuthIssuer.accessToken();
-                Map<String, String> user = oAuth2TokenService.loginByUsername(username, password);
-                oAuth2TokenService.validJaqState();
-                oAuth2Token = oAuth2TokenService.addClientToken(oAuthAuthzRequest.getClientId(), user.get("uid"), user.get("username"), authorizationCode, accessToken, refreshToken);
+                Map<String, Object> loginInfo = new FastMap().add("username", username).add("password", password).done();
+                oAuth2Token = oAuth2TokenService.loginByUsername(loginInfo);
+                oAuth2Token.setClient_id(oAuthAuthzRequest.getClientId());
+                oAuth2Token.setCode(authorizationCode);
+                oAuth2Token.setAccess_token(accessToken);
+                oAuth2Token.setRefresh_token(refreshToken);
+                oAuth2Token = oAuth2TokenService.addClientToken(oAuth2Token);
                 oAuth2TokenService.delJaqState();
-            } catch (BizErrorEx e) { // WEB方式登录失败时跳转到登陆页面
-                return toFailureLoginView(oAuthAuthzRequest, oAuth2TokenService.getOAuth2DomainUri() + request.getRequestURI(), redirect_uri, username, e.getMessage());
+            } catch (BizErrorEx ex) { // WEB方式登录失败时跳转到登陆页面
+                return toFailureLoginView(oAuthAuthzRequest, oAuth2TokenService.getOAuth2DomainUri() + request.getRequestURI(), redirect_uri, username, ex.getMessage());
             }
             // 进行OAuth响应构建
             OAuthASResponse.OAuthAuthorizationResponseBuilder builder =
@@ -111,15 +117,29 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
         } catch (OAuthProblemException e) { //返回错误消息（如?error=）
             if (StringUtils.isEmpty(redirect_uri)) {
-                return toBuildUTF8WebResponse(new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage()), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+                return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
             }
-            final OAuthResponse oAuthResponse =
-                    OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
-                            .error(e).location(redirect_uri).buildQueryMessage();
-            HttpHeaders headers = buildHttpUtf8Header();
-            headers.setLocation(new URI(oAuthResponse.getLocationUri()));
-            return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
+            try {
+                final OAuthResponse oAuthResponse = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
+                        .error(e).location(redirect_uri).buildQueryMessage();
+                HttpHeaders headers = buildHttpUtf8Header();
+                headers.setLocation(new URI(oAuthResponse.getLocationUri()));
+                return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求失败", HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
+        } catch (Exception e) {
+            return responseEntityByJson(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_REQUEST);
         }
+    }
+
+    private Object responseEntityByJson(String code, String errorMsg, int status, String error) throws BizErrorEx {
+        Map<String, Object> map = new FastMap()
+                .add("status", status)
+                .add("error", error)
+                .done();
+        throw new BizErrorEx(code, errorMsg, map);
     }
 
     // 登录失败重定向初始化界面
@@ -167,14 +187,14 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 // 检查验证类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
                 oAuth2TokenService.validGrantType(oAuthTokenRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
                 // 检查提交的客户端id是否正确
-                oAuth2Client = oAuth2TokenService.validClientId(oAuthTokenRequest.getClientId());
+                oAuth2Client = oAuth2TokenService.validOAuth2Client(oAuthTokenRequest.getClientId());
                 // 检查客户端安全KEY是否正确
                 oAuth2TokenService.validClientSecret(oAuth2Client.getClient_secret(), oAuthTokenRequest.getClientSecret());
                 // 检查客户端重定向
                 oAuth2TokenService.validRredirectUri(oAuth2Client.getClient_id(), oAuthTokenRequest.getRedirectURI());
                 // 获取授权码并进行认证
-                String authorization_code = oAuthTokenRequest.getParam(OAuth.OAUTH_CODE);
-                oAuth2Token = oAuth2TokenService.getTokenByCode(oAuth2Client.getClient_id(), authorization_code);
+                String code = oAuthTokenRequest.getParam(OAuth.OAUTH_CODE);
+                oAuth2Token = oAuth2TokenService.getAccessTokenByCode(oAuth2Client.getClient_id(), code);
             } catch (BizErrorEx ex) {
                 return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_GRANT);
             }
@@ -206,11 +226,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                 // 校验客户端公钥
                 OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(accessToken, accessPbk);
                 // 读取OAuth用户信息
-                Map<String, String> user = oAuth2TokenService.getOauthUser(oAuth2Token.getUid());
+                Map<String, Object> user = oAuth2TokenService.getOAuthUser(oAuth2Token.getUid());
                 // 生成OAuth响应
-                Map<String, Object> map = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
-                map.putAll(user);
-                return map;
+                Map<String, Object> resp = toBuildJsonMapResponse(RetCode.OK_STATUS, "", HttpServletResponse.SC_OK, "");
+                return new FastMap().addAll(resp).addAll(user).done();
             } catch (BizErrorEx ex) {
                 return toBuildJsonMapResponse(ex.getErrorCode(), ex.getMessage(), HttpServletResponse.SC_BAD_REQUEST, OAuthError.TokenResponse.INVALID_GRANT);
             }

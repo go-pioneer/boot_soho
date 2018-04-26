@@ -19,6 +19,7 @@ public class OAuth2Client {
     private String grant_type = "authorization_code";
     private String state;
     private String domain_uri;
+    private Integer usestate; // 1.正常 2.冻结 3.删除
 
     public String getClient_id() {
         return client_id;
@@ -130,6 +131,14 @@ public class OAuth2Client {
 
     public void setDomain_uri(String domain_uri) {
         this.domain_uri = domain_uri;
+    }
+
+    public Integer getUsestate() {
+        return usestate;
+    }
+
+    public void setUsestate(Integer usestate) {
+        this.usestate = usestate;
     }
 
 }

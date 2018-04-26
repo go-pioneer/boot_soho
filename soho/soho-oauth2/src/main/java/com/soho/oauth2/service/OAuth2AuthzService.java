@@ -1,5 +1,6 @@
 package com.soho.oauth2.service;
 
+import com.soho.mybatis.exception.BizErrorEx;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import java.net.URISyntaxException;
 public interface OAuth2AuthzService {
 
     // 获取授权码
-    public Object authorize(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException, URISyntaxException;
+    public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 获取access_token
     public Object access_token(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException;

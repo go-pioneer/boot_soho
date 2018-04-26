@@ -36,26 +36,19 @@ public interface OAuth2TokenService {
     /**
      * 校验client_secret参数是否正常
      *
-     * @param client_secret1 系统配置密钥
-     * @param client_secret2 用户参数密钥
+     * @param client_secret      系统配置密钥
+     * @param user_client_secret 用户参数密钥
      */
-    public void validClientSecret(String client_secret1, String client_secret2) throws BizErrorEx;
+    public void validClientSecret(String client_secret, String user_client_secret) throws BizErrorEx;
 
     /**
-     * 校验authCode是否有效
+     * 校验code是否有效
      *
      * @param client_id
-     * @param authCode
-     * @return OauthClientToken
+     * @param code
+     * @return OAuth2Token
      */
-    public OAuth2Token getTokenByCode(String client_id, String authCode) throws BizErrorEx;
-
-    /**
-     * authCode设置已使用
-     *
-     * @param access_token
-     */
-    public OAuth2Token delAuthCode(String access_token) throws BizErrorEx;
+    public OAuth2Token getAccessTokenByCode(String client_id, String code) throws BizErrorEx;
 
     /**
      * 获取client_id对应的回调地址
@@ -103,9 +96,9 @@ public interface OAuth2TokenService {
      * 获取oauth用户信息
      *
      * @param uid
-     * @return OauthUser
+     * @return Map<String, Object>
      */
-    public Map<String, String> getOauthUser(String uid) throws BizErrorEx;
+    public Map<String, Object> getOAuthUser(String uid) throws BizErrorEx;
 
     /**
      * 注销access_token
@@ -131,11 +124,10 @@ public interface OAuth2TokenService {
     /**
      * 帐号密码登录
      *
-     * @param username
-     * @param password
-     * @return OauthUser
+     * @param map
+     * @return OAuth2Token
      */
-    public Map<String, String> loginByUsername(String username, String password) throws BizErrorEx;
+    public OAuth2Token loginByUsername(Map<String, Object> map) throws BizErrorEx;
 
     /**
      * 生成二次认证的密钥,防止暴力破解

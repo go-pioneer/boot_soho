@@ -8,6 +8,7 @@ public class BizErrorEx extends Exception {
 
     private String errorCode;
     private String msg;
+    private Object errorObject;
 
     public BizErrorEx() {
         super();
@@ -33,6 +34,13 @@ public class BizErrorEx extends Exception {
         setErrorCode(errorCode);
     }
 
+    public BizErrorEx(String errorCode, String msg, Object errorObject) {
+        super(msg);
+        setMsg(msg);
+        setErrorCode(errorCode);
+        setErrorObject(errorObject);
+    }
+
     public BizErrorEx(String msg, Throwable e, String errorCode) {
         super(msg, e);
         setErrorCode(errorCode);
@@ -54,4 +62,13 @@ public class BizErrorEx extends Exception {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
+    public Object getErrorObject() {
+        return errorObject;
+    }
+
+    public void setErrorObject(Object errorObject) {
+        this.errorObject = errorObject;
+    }
+
 }
