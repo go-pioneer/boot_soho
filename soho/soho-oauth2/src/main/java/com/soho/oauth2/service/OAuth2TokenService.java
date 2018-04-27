@@ -30,16 +30,19 @@ public interface OAuth2TokenService {
      * 校验client_id参数是否正常
      *
      * @param client_id
+     * @param request_ip
      */
-    public OAuth2Client validOAuth2Client(String client_id) throws BizErrorEx;
+    public OAuth2Client validOAuth2Client(String client_id, String request_ip) throws BizErrorEx;
 
     /**
-     * 校验client_secret参数是否正常
+     * 校验客户端配置参数是否正常
      *
-     * @param client_secret      系统配置密钥
-     * @param user_client_secret 用户参数密钥
+     * @param oAuth2Client  系统客户端配置
+     * @param redirect_uri  客户端重定向地址
+     * @param valid_secret  是否校验客户端密钥
+     * @param client_secret 客户端密钥参数
      */
-    public void validClientSecret(String client_secret, String user_client_secret) throws BizErrorEx;
+    public void validClientConfig(OAuth2Client oAuth2Client, String redirect_uri, boolean valid_secret, String client_secret) throws BizErrorEx;
 
     /**
      * 校验code是否有效
@@ -49,15 +52,6 @@ public interface OAuth2TokenService {
      * @return OAuth2Token
      */
     public OAuth2Token getAccessTokenByCode(String client_id, String code) throws BizErrorEx;
-
-    /**
-     * 获取client_id对应的回调地址
-     *
-     * @param client_id
-     * @param redirect_uri
-     * @return String
-     */
-    public String validRredirectUri(String client_id, String redirect_uri) throws BizErrorEx;
 
     /**
      * 校验state参数是否为空
@@ -103,10 +97,10 @@ public interface OAuth2TokenService {
     /**
      * 注销access_token
      *
-     * @param access_token
-     * @return OauthClientToken
+     * @param oAuth2Token
+     * @return OAuth2Token
      */
-    public OAuth2Token logoutToken(String access_token, String access_pbk) throws BizErrorEx;
+    public OAuth2Token logoutToken(OAuth2Token oAuth2Token) throws BizErrorEx;
 
 
     /**
@@ -133,10 +127,11 @@ public interface OAuth2TokenService {
      * 生成二次认证的密钥,防止暴力破解
      *
      * @param client_id
+     * @param access_time
      * @param access_token
      * @return String
      */
-    public String buildAccessPbk(String client_id, String access_token);
+    public String buildAccessPbk(String client_id, long access_time, String access_token);
 
     /**
      * OAUTH2登录WebView

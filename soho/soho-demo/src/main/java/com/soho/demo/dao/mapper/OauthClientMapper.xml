@@ -10,6 +10,7 @@
         <result column="mobile" jdbcType="VARCHAR" property="mobile" />
         <result column="address" jdbcType="VARCHAR" property="address" />
         <result column="domain_uri" jdbcType="VARCHAR" property="domain_uri" />
+        <result column="bindIp" jdbcType="VARCHAR" property="bindIp" />
         <result column="usestate" jdbcType="INTEGER" property="usestate" />
         <result column="ctime" jdbcType="BIGINT" property="ctime" />
         <result column="utime" jdbcType="BIGINT" property="utime" />
@@ -17,8 +18,8 @@
     </resultMap>
     
     <sql id="Base_Column_List">
-        id, client_id, client_secret, company, mobile, address, domain_uri, usestate, ctime, 
-        utime, state
+        id, client_id, client_secret, company, mobile, address, domain_uri, bindIp, usestate, 
+        ctime, utime, state
     </sql>
     
     <insert id="insert" parameterType="com.soho.demo.domain.OauthClient">
@@ -44,6 +45,9 @@
             </if>
             <if test="domain_uri != null">
                 domain_uri,
+            </if>
+            <if test="bindIp != null">
+                bindIp,
             </if>
             <if test="usestate != null">
                 usestate,
@@ -76,6 +80,9 @@
             </if>
             <if test="domain_uri != null">
                 #{domain_uri,jdbcType=VARCHAR},
+            </if>
+            <if test="bindIp != null">
+                #{bindIp,jdbcType=VARCHAR},
             </if>
             <if test="usestate != null">
                 #{usestate,jdbcType=INTEGER},
@@ -112,6 +119,9 @@
             </if>
             <if test="domain_uri != null">
                 domain_uri = #{domain_uri,jdbcType=VARCHAR},
+            </if>
+            <if test="bindIp != null">
+                bindIp = #{bindIp,jdbcType=VARCHAR},
             </if>
             <if test="usestate != null">
                 usestate = #{usestate,jdbcType=INTEGER},
@@ -172,6 +182,9 @@
             </if>
             <if test="updateObj.domain_uri != null">
                 domain_uri = #{updateObj.domain_uri,jdbcType=VARCHAR},
+            </if>
+            <if test="updateObj.bindIp != null">
+                bindIp = #{updateObj.bindIp,jdbcType=VARCHAR},
             </if>
             <if test="updateObj.usestate != null">
                 usestate = #{updateObj.usestate,jdbcType=INTEGER},

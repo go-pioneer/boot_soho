@@ -18,6 +18,8 @@ public class OauthClient implements IDEntity<Long> {
 
     private String domain_uri;
 
+    private String bindIp;
+
     private Integer usestate;
 
     private Long ctime;
@@ -80,6 +82,14 @@ public class OauthClient implements IDEntity<Long> {
 
     public void setDomain_uri(String domain_uri) {
         this.domain_uri = domain_uri == null ? null : domain_uri.trim();
+    }
+
+    public String getBindIp() {
+        return bindIp;
+    }
+
+    public void setBindIp(String bindIp) {
+        this.bindIp = bindIp == null ? null : bindIp.trim();
     }
 
     public Integer getUsestate() {

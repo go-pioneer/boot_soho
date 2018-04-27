@@ -19,12 +19,12 @@ public interface OAuth2AuthzService {
     public Object access_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 获取用户信息
-    public Object userinfo(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException, URISyntaxException;
+    public Object userinfo(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 注销access_token
-    public Object logout_token(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException;
+    public Object logout_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
     // 续期access_token
-    public Object refresh_token(HttpServletRequest request, HttpServletResponse response) throws OAuthSystemException;
+    public Object refresh_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx;
 
 }

@@ -1,5 +1,7 @@
 package com.soho.mybatis.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author shadow
  */
@@ -9,42 +11,46 @@ public class BizErrorEx extends Exception {
     private String errorCode;
     private String msg;
     private Object errorObject;
+    private HttpStatus httpStatus;
 
     public BizErrorEx() {
-        super();
+        this(null, null, null, null, HttpStatus.OK);
     }
 
     public BizErrorEx(Throwable e) {
-        super(e);
+        this(e, null, null, null, HttpStatus.OK);
     }
 
     public BizErrorEx(String msg) {
-        super(msg);
-        setMsg(msg);
+        this(null, null, msg, null, HttpStatus.OK);
     }
 
     public BizErrorEx(String msg, Throwable e) {
-        super(msg, e);
-        setMsg(msg);
+        this(e, null, msg, null, HttpStatus.OK);
     }
 
     public BizErrorEx(String errorCode, String msg) {
-        super(msg);
-        setMsg(msg);
-        setErrorCode(errorCode);
+        this(null, errorCode, msg, null, HttpStatus.OK);
     }
 
-    public BizErrorEx(String errorCode, String msg, Object errorObject) {
-        super(msg);
-        setMsg(msg);
-        setErrorCode(errorCode);
-        setErrorObject(errorObject);
+    public BizErrorEx(String errorCode, String msg, HttpStatus httpStatus) {
+        this(null, errorCode, msg, null, httpStatus);
     }
 
-    public BizErrorEx(String msg, Throwable e, String errorCode) {
+    public BizErrorEx(String errorCode, String msg, Object errorObject, HttpStatus httpStatus) {
+        this(null, errorCode, msg, errorObject, httpStatus);
+    }
+
+    public BizErrorEx(String errorCode, String msg, Throwable e) {
+        this(e, errorCode, msg, null, HttpStatus.OK);
+    }
+
+    public BizErrorEx(Throwable e, String errorCode, String msg, Object errorObject, HttpStatus httpStatus) {
         super(msg, e);
-        setErrorCode(errorCode);
-        setMsg(msg);
+        this.errorCode = errorCode;
+        this.msg = msg;
+        this.errorObject = errorObject;
+        this.httpStatus = httpStatus;
     }
 
     public String getErrorCode() {
@@ -69,6 +75,14 @@ public class BizErrorEx extends Exception {
 
     public void setErrorObject(Object errorObject) {
         this.errorObject = errorObject;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
 }

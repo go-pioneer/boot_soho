@@ -28,6 +28,8 @@ import java.util.Map;
 @Service
 public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
 
+    private static final long access_expire_time = 1209600000l;
+
     @Autowired
     private ConfigData config;
     @Autowired
@@ -55,7 +57,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             clientToken.setToken_state(oAuth2Token.getToken_state());
             clientToken.setLogout_time(oAuth2Token.getLogout_time());
             clientToken.setCode_expire(oAuth2Token.getAccess_time() + 600000l);
-            clientToken.setToken_expire(oAuth2Token.getAccess_time() + 1209600000l);
+            clientToken.setToken_expire(oAuth2Token.getAccess_time() + access_expire_time);
             clientToken.setCtime(System.currentTimeMillis());
             oauthClientTokenDAO.insert(clientToken);
         } catch (MybatisDAOEx ex) {
@@ -108,6 +110,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
                 oAuth2Client.setClient_secret(client.getClient_secret());
                 oAuth2Client.setDomain_uri(client.getDomain_uri());
                 oAuth2Client.setUsestate(client.getUsestate());
+                oAuth2Client.setBindIp(client.getBindIp());
                 return oAuth2Client;
             }
         } catch (MybatisDAOEx ex) {
@@ -119,7 +122,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
     @Override
     public Map<String, Object> getOAuthUser(String uid) throws BizErrorEx {
         try {
-            OauthUser user = oauthUserDAO.findOneByCnd(new SQLCnd().eq("uid", uid).eq("state", 1));
+            OauthUser user = oauthUserDAO.findOneByCnd(new SQLCnd().eq("uid", uid));
             if (user != null) {
                 return new FastMap()
                         .add("uid", user.getUid())
@@ -146,6 +149,25 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
         } catch (MybatisDAOEx ex) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_LOGOUT_FAIL, "令牌注销失败,请重新尝试");
         }
+    }
+
+    @Override
+    public OAuth2Token refreshTokenBySelf(OAuth2Token oAuth2Token) throws BizErrorEx {
+        try {
+            OauthClientToken clientToken = oauthClientTokenDAO.findOneByCnd(new SQLCnd().eq("client_id", oAuth2Token.getClient_id()).eq("access_token", oAuth2Token.getAccess_token()).eq("refresh_token", oAuth2Token.getRefresh_token()));
+            if (clientToken != null) {
+                long current_time = System.currentTimeMillis();
+                clientToken.setToken_state(1);
+                clientToken.setRefresh_time(current_time);
+                clientToken.setToken_expire(current_time + access_expire_time);
+                clientToken.setUtime(current_time);
+                oauthClientTokenDAO.update(clientToken);
+                return transform(clientToken);
+            }
+        } catch (MybatisDAOEx ex) {
+            ex.printStackTrace();
+        }
+        throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_LOGOUT_FAIL, "令牌续期失败,请重新尝试");
     }
 
     @Override
