@@ -16,6 +16,7 @@
         <result column="refresh_token" jdbcType="VARCHAR" property="refresh_token" />
         <result column="refresh_time" jdbcType="BIGINT" property="refresh_time" />
         <result column="logout_time" jdbcType="BIGINT" property="logout_time" />
+        <result column="redirect_uri" jdbcType="VARCHAR" property="redirect_uri" />
         <result column="ctime" jdbcType="BIGINT" property="ctime" />
         <result column="utime" jdbcType="BIGINT" property="utime" />
         <result column="state" jdbcType="INTEGER" property="state" />
@@ -23,7 +24,8 @@
     
     <sql id="Base_Column_List">
         id, client_id, uid, access_token, code, code_state, code_expire, token_state, token_expire, 
-        access_time, refresh_token, refresh_time, logout_time, ctime, utime, state
+        access_time, refresh_token, refresh_time, logout_time, redirect_uri, ctime, utime, 
+        state
     </sql>
     
     <insert id="insert" parameterType="com.soho.demo.domain.OauthClientToken">
@@ -67,6 +69,9 @@
             </if>
             <if test="logout_time != null">
                 logout_time,
+            </if>
+            <if test="redirect_uri != null">
+                redirect_uri,
             </if>
             <if test="ctime != null">
                 ctime,
@@ -114,6 +119,9 @@
             </if>
             <if test="logout_time != null">
                 #{logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="redirect_uri != null">
+                #{redirect_uri,jdbcType=VARCHAR},
             </if>
             <if test="ctime != null">
                 #{ctime,jdbcType=BIGINT},
@@ -165,6 +173,9 @@
             </if>
             <if test="logout_time != null">
                 logout_time = #{logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="redirect_uri != null">
+                redirect_uri = #{redirect_uri,jdbcType=VARCHAR},
             </if>
             <if test="ctime != null">
                 ctime = #{ctime,jdbcType=BIGINT},
@@ -240,6 +251,9 @@
             </if>
             <if test="updateObj.logout_time != null">
                 logout_time = #{updateObj.logout_time,jdbcType=BIGINT},
+            </if>
+            <if test="updateObj.redirect_uri != null">
+                redirect_uri = #{updateObj.redirect_uri,jdbcType=VARCHAR},
             </if>
             <if test="updateObj.ctime != null">
                 ctime = #{updateObj.ctime,jdbcType=BIGINT},

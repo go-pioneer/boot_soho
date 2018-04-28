@@ -5,6 +5,7 @@ import com.soho.oauth2.model.OAuth2Client;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2TokenService;
+import com.soho.spring.model.OAuthData;
 import com.soho.spring.security.EncryptService;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
@@ -18,10 +19,10 @@ import java.util.Map;
  */
 public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
-    private static final String PBK_KEY = "p/ZT!dl%8";
-
     @Autowired(required = false)
     private EncryptService encryptService;
+    @Autowired
+    private OAuthData oAuthData;
 
     // 扩展接口,保存授权数据到系统
     public abstract void addClientTokenBySelf(OAuth2Token oAuth2Token) throws BizErrorEx;
@@ -51,15 +52,19 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     public abstract OAuth2Token loginByUsername(Map<String, Object> map) throws BizErrorEx;
 
     // 扩展接口,OAUTH2.0系统域名
-    public abstract String getOAuth2DomainUri();
+    public String getOAuth2DomainUri() {
+        return oAuthData.getDomain();
+    }
 
-    protected String getPbkKey() {
-        return PBK_KEY;
+    protected String getEncryptyKey() {
+        return encryptService.aes_d(oAuthData.getEncryptyKey());
     }
 
     @Override
     public OAuth2Token addClientToken(OAuth2Token oAuth2Token) throws BizErrorEx {
         oAuth2Token.setAccess_time(System.currentTimeMillis()); // 授权时间
+        oAuth2Token.setCode_expire(oAuth2Token.getAccess_time() + oAuthData.getCodeExpire());
+        oAuth2Token.setToken_expire(oAuth2Token.getAccess_time() + oAuthData.getTokenExpire());
         oAuth2Token.setRefresh_time(oAuth2Token.getAccess_time()); // 令牌重新授权刷新时间
         oAuth2Token.setCode_state(1); // 授权码状态 1.正常 2.失效
         oAuth2Token.setToken_state(1); // 授权令牌状态 1.正常 2.失效
@@ -70,13 +75,18 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
     @Override
     public OAuth2Token validAccessPbk(String access_token, String access_pbk) throws BizErrorEx {
+        return validAccessPbk(access_token, access_pbk, true);
+    }
+
+    @Override
+    public OAuth2Token validAccessPbk(String access_token, String access_pbk, boolean invalid_token) throws BizErrorEx {
         if (StringUtils.isEmpty(access_token)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_NULL, "客户端请求参数【access_token】不能为空");
         }
         if (StringUtils.isEmpty(access_pbk)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_PBK_NULL, "客户端请求参数【access_pbk】不能为空");
         }
-        OAuth2Token oAuth2Token = getOAuth2Token(access_token);
+        OAuth2Token oAuth2Token = getOAuth2Token(access_token, invalid_token);
         String client_id = oAuth2Token.getClient_id();
         String build_pbk = buildAccessPbk(client_id, oAuth2Token.getAccess_time(), access_token);
         if (!access_pbk.equals(build_pbk)) {
@@ -87,6 +97,11 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
     @Override
     public OAuth2Token getOAuth2Token(String access_token) throws BizErrorEx {
+        return getOAuth2Token(access_token, true);
+    }
+
+    @Override
+    public OAuth2Token getOAuth2Token(String access_token, boolean invalid_token) throws BizErrorEx {
         if (StringUtils.isEmpty(access_token)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_NULL, "客户端请求参数【access_token】不能为空");
         }
@@ -94,11 +109,13 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
         if (oAuth2Token == null) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_ILLEGAL, "客户端请求参数【access_token】不存在");
         }
-        if (oAuth2Token.getToken_state() != 1) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_INVALID, "客户端请求参数【access_token】已失效");
-        }
-        if (oAuth2Token.getToken_expire() < System.currentTimeMillis()) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_EXPIRED, "客户端请求参数【access_token】已过期");
+        if (invalid_token) {
+            if (oAuth2Token.getToken_state() != 1) {
+                throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_INVALID, "客户端请求参数【access_token】已失效");
+            }
+            if (oAuth2Token.getToken_expire() < System.currentTimeMillis()) {
+                throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_EXPIRED, "客户端请求参数【access_token】已过期");
+            }
         }
         return oAuth2Token;
     }
@@ -106,7 +123,7 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     @Override
     public String buildAccessPbk(String client_id, long access_time, String access_token) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("&access_time").append(access_time).append("&client_id=").append(client_id).append("&access_token=").append(access_token).append("&key=").append(getPbkKey());
+        buffer.append("&access_time").append(access_time).append("&client_id=").append(client_id).append("&access_token=").append(access_token).append("&key=").append(getEncryptyKey());
         return encryptService.md5(buffer.toString());
     }
 
@@ -141,7 +158,7 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     }
 
     @Override
-    public OAuth2Token getAccessTokenByCode(String client_id, String code) throws BizErrorEx {
+    public OAuth2Token getAccessTokenByCode(String client_id, String code, String redirect_uri) throws BizErrorEx {
         if (StringUtils.isEmpty(client_id)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ID_NULL, "客户端请求参数【client_id】不能为空");
         }
@@ -151,6 +168,9 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
         OAuth2Token oAuth2Token = getAccessTokenBySelf(client_id, code);
         if (oAuth2Token == null) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CODE_ILLEGAL, "客户端请求参数【code】不存在");
+        }
+        if (StringUtils.isEmpty(oAuth2Token.getRedirect_uri()) || !oAuth2Token.getRedirect_uri().equals(redirect_uri)) {
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_REDIRCTURI_INVALID, "客户端请求参数【redirect_uri】重定向地址错误");
         }
         if (oAuth2Token.getCode_state() != 1) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CODE_INVALID, "客户端请求参数【code】已失效");
@@ -162,20 +182,25 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     }
 
     @Override
-    public void validClientConfig(OAuth2Client oAuth2Client, String redirect_uri, boolean valid_secret, String client_secret) throws BizErrorEx {
+    public void validClientSecret(OAuth2Client oAuth2Client, String client_secret) throws BizErrorEx {
+        if (StringUtils.isEmpty(client_secret)) {
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【client_secret】不能为空");
+        }
+        if (!encryptService.aes_e(client_secret).equals(oAuth2Client.getClient_secret())) {
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【client_secret】校验失败");
+        }
+    }
+
+    @Override
+    public void validRedirectUri(OAuth2Client oAuth2Client, String redirect_uri) throws BizErrorEx {
         if (StringUtils.isEmpty(redirect_uri)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】不能为空");
         }
         if (!redirect_uri.startsWith(oAuth2Client.getDomain_uri())) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】与绑定域名不匹配");
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】校验失败");
         }
-        if (valid_secret) {
-            if (StringUtils.isEmpty(client_secret)) {
-                throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【client_secret】不能为空");
-            }
-            if (!encryptService.aes_e(client_secret).equals(oAuth2Client.getClient_secret())) {
-                throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【client_secret】校验失败");
-            }
+        if (redirect_uri.indexOf("?") != -1 || redirect_uri.indexOf("&") != -1 || redirect_uri.indexOf("=") != -1) {
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】格式有误");
         }
     }
 
@@ -183,6 +208,9 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     public String validState(String state) throws BizErrorEx {
         if (StringUtils.isEmpty(state)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【state】不能为空");
+        }
+        if (state.length() > 100) {
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【state】长度超出范围");
         }
         return state;
     }
@@ -217,20 +245,13 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     }
 
     @Override
-    public OAuth2Token refreshToken(String client_id, String refresh_token, String access_token, String access_pbk) throws BizErrorEx {
-        if (StringUtils.isEmpty(client_id)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【client_id】不能为空");
-        }
+    public OAuth2Token refreshToken(String access_token, String refresh_token) throws BizErrorEx {
         if (StringUtils.isEmpty(refresh_token)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【refresh_token】不能为空");
         }
         if (StringUtils.isEmpty(access_token)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【access_token】不能为空");
         }
-        if (StringUtils.isEmpty(access_pbk)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【access_pbk】不能为空");
-        }
-        OAuth2Client oAuth2Client = validOAuth2Client(client_id, null);
         OAuth2Token oAuth2Token = getOAuth2TokenBySelf(access_token);
         if (oAuth2Token == null) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_ILLEGAL, "客户端请求参数【access_token】不存在");
@@ -238,16 +259,12 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
         if (!oAuth2Token.getRefresh_token().equals(refresh_token)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【refresh_token】校验失败");
         }
-        String build_pbk = buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_time(), access_token);
-        if (!access_pbk.equals(build_pbk)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_PBK_INVALID, "客户端请求参数【access_pbk】校验失败");
-        }
         return refreshTokenBySelf(oAuth2Token);
     }
 
     @Override
     public String getOAuth2LoginView() {
-        return "oauth2/login";
+        return oAuthData.getLoginView();
     }
 
     @Override

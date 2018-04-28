@@ -29,29 +29,46 @@ public interface OAuth2TokenService {
     /**
      * 校验client_id参数是否正常
      *
+     * @param access_token
+     * @param access_pbk
+     * @param token_invalid true.判断Token是否无效,false不判断
+     */
+    public OAuth2Token validAccessPbk(String access_token, String access_pbk, boolean token_invalid) throws BizErrorEx;
+
+    /**
+     * 校验client_id参数是否正常
+     *
      * @param client_id
      * @param request_ip
      */
     public OAuth2Client validOAuth2Client(String client_id, String request_ip) throws BizErrorEx;
 
     /**
-     * 校验客户端配置参数是否正常
+     * 校验客户端密钥参数是否正常
      *
      * @param oAuth2Client  系统客户端配置
-     * @param redirect_uri  客户端重定向地址
-     * @param valid_secret  是否校验客户端密钥
      * @param client_secret 客户端密钥参数
      */
-    public void validClientConfig(OAuth2Client oAuth2Client, String redirect_uri, boolean valid_secret, String client_secret) throws BizErrorEx;
+    public void validClientSecret(OAuth2Client oAuth2Client, String client_secret) throws BizErrorEx;
+
+    /**
+     * 校验客户端重定向地址参数是否正常
+     *
+     * @param oAuth2Client
+     * @param redirect_uri
+     * @throws BizErrorEx
+     */
+    public void validRedirectUri(OAuth2Client oAuth2Client, String redirect_uri) throws BizErrorEx;
 
     /**
      * 校验code是否有效
      *
      * @param client_id
      * @param code
+     * @param redirect_uri
      * @return OAuth2Token
      */
-    public OAuth2Token getAccessTokenByCode(String client_id, String code) throws BizErrorEx;
+    public OAuth2Token getAccessTokenByCode(String client_id, String code, String redirect_uri) throws BizErrorEx;
 
     /**
      * 校验state参数是否为空
@@ -87,6 +104,15 @@ public interface OAuth2TokenService {
     public OAuth2Token getOAuth2Token(String access_token) throws BizErrorEx;
 
     /**
+     * 通过access_token获取认证数据
+     *
+     * @param access_token
+     * @param invalid      true.判断Token是否无效,false不判断
+     * @return OauthClientToken
+     */
+    public OAuth2Token getOAuth2Token(String access_token, boolean token_invalid) throws BizErrorEx;
+
+    /**
      * 获取oauth用户信息
      *
      * @param uid
@@ -106,14 +132,12 @@ public interface OAuth2TokenService {
     /**
      * 续期access_token
      *
-     * @param client_id
      * @param refresh_token
      * @param access_token
-     * @param access_pbk
      * @return OAuth2Token
      * @throws BizErrorEx
      */
-    public OAuth2Token refreshToken(String client_id, String refresh_token, String access_token, String access_pbk) throws BizErrorEx;
+    public OAuth2Token refreshToken(String access_token, String refresh_token) throws BizErrorEx;
 
     /**
      * 帐号密码登录

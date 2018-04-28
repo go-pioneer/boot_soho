@@ -30,6 +30,8 @@ public class OauthClientToken implements IDEntity<Long> {
 
     private Long logout_time;
 
+    private String redirect_uri;
+
     private Long ctime;
 
     private Long utime;
@@ -138,6 +140,14 @@ public class OauthClientToken implements IDEntity<Long> {
 
     public void setLogout_time(Long logout_time) {
         this.logout_time = logout_time;
+    }
+
+    public String getRedirect_uri() {
+        return redirect_uri;
+    }
+
+    public void setRedirect_uri(String redirect_uri) {
+        this.redirect_uri = redirect_uri == null ? null : redirect_uri.trim();
     }
 
     public Long getCtime() {

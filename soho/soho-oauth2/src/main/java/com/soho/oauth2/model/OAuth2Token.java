@@ -16,6 +16,7 @@ public class OAuth2Token {
     private String refresh_token;
     private Long refresh_time;
     private Long logout_time;
+    private String redirect_uri;
     private String uid;
 
     public String getClient_id() {
@@ -112,6 +113,14 @@ public class OAuth2Token {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getRedirect_uri() {
+        return redirect_uri;
+    }
+
+    public void setRedirect_uri(String redirect_uri) {
+        this.redirect_uri = redirect_uri;
     }
 
 }

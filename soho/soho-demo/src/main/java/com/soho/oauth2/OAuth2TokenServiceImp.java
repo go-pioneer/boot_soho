@@ -14,6 +14,7 @@ import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.imp.AbstractOAuth2TokenService;
 import com.soho.spring.model.ConfigData;
+import com.soho.spring.model.OAuthData;
 import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.security.EncryptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,10 @@ import java.util.Map;
 @Service
 public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
 
-    private static final long access_expire_time = 1209600000l;
-
     @Autowired
     private ConfigData config;
+    @Autowired
+    private OAuthData oAuthData;
     @Autowired
     private EncryptService encryptService;
 
@@ -56,9 +57,10 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             clientToken.setCode_state(oAuth2Token.getCode_state());
             clientToken.setToken_state(oAuth2Token.getToken_state());
             clientToken.setLogout_time(oAuth2Token.getLogout_time());
-            clientToken.setCode_expire(oAuth2Token.getAccess_time() + 600000l);
-            clientToken.setToken_expire(oAuth2Token.getAccess_time() + access_expire_time);
+            clientToken.setCode_expire(oAuth2Token.getAccess_time() + oAuthData.getCodeExpire());
+            clientToken.setToken_expire(oAuth2Token.getAccess_time() + oAuthData.getTokenExpire());
             clientToken.setCtime(System.currentTimeMillis());
+            clientToken.setRedirect_uri(oAuth2Token.getRedirect_uri());
             oauthClientTokenDAO.insert(clientToken);
         } catch (MybatisDAOEx ex) {
             ex.printStackTrace();
@@ -159,7 +161,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
                 long current_time = System.currentTimeMillis();
                 clientToken.setToken_state(1);
                 clientToken.setRefresh_time(current_time);
-                clientToken.setToken_expire(current_time + access_expire_time);
+                clientToken.setToken_expire(current_time + oAuthData.getTokenExpire());
                 clientToken.setUtime(current_time);
                 oauthClientTokenDAO.update(clientToken);
                 return transform(clientToken);
@@ -190,11 +192,6 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
         }
     }
 
-    @Override
-    public String getOAuth2DomainUri() {
-        return config.getDomain();
-    }
-
     private OAuth2Token transform(OauthClientToken clientToken) {
         if (clientToken != null) {
             OAuth2Token oAuth2Token = new OAuth2Token();
@@ -210,6 +207,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             oAuth2Token.setToken_state(clientToken.getToken_state());
             oAuth2Token.setCode_state(clientToken.getCode_state());
             oAuth2Token.setLogout_time(clientToken.getLogout_time());
+            oAuth2Token.setRedirect_uri(clientToken.getRedirect_uri());
             return oAuth2Token;
         }
         return null;

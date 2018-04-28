@@ -24,5 +24,6 @@ public class OAuth2ErrorCode {
     public static String OAUTH_CODE_ILLEGAL = "000911"; // CODE不存在
     public static String OAUTH_CODE_INVALID = "000912"; // CODE无效
     public static String OAUTH_CODE_EXPIRED = "000913"; // CODE过期
+    public static String OAUTH_REDIRCTURI_INVALID = "000914"; // 授权重定向地址错误
 
 }
