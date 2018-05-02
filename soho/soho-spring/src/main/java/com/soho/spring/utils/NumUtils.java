@@ -8,41 +8,41 @@ import java.math.BigDecimal;
 public class NumUtils {
 
     public static String add(Object s1, Object s2, int scale) {
-        BigDecimal b1 = new BigDecimal(s1.toString());
-        BigDecimal b2 = new BigDecimal(s2.toString());
-        BigDecimal ret = b1.add(b2);
-        ret = ret.setScale(scale, BigDecimal.ROUND_HALF_DOWN);
-        return ret.toString();
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        BigDecimal decimal = b1.add(b2);
+        return digit(decimal.toString(), scale);
     }
 
     public static String subtract(Object s1, Object s2, int scale) {
-        BigDecimal b1 = new BigDecimal(s1.toString());
-        BigDecimal b2 = new BigDecimal(s2.toString());
-        BigDecimal ret = b1.subtract(b2);
-        ret = ret.setScale(scale, BigDecimal.ROUND_HALF_DOWN);
-        return ret.toString();
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        BigDecimal decimal = b1.subtract(b2);
+        return digit(decimal.toString(), scale);
     }
 
     public static String multiply(Object s1, Object s2, int scale) {
-        BigDecimal b1 = new BigDecimal(s1.toString());
-        BigDecimal b2 = new BigDecimal(s2.toString());
-        BigDecimal ret = b1.multiply(b2);
-        ret = ret.setScale(scale, BigDecimal.ROUND_HALF_DOWN);
-        return ret.toString();
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        BigDecimal decimal = b1.multiply(b2);
+        return digit(decimal.toString(), scale);
     }
 
     public static String divide(Object s1, Object s2, int scale) {
-        BigDecimal b1 = new BigDecimal(s1.toString());
-        BigDecimal b2 = new BigDecimal(s2.toString());
-        if (b2.compareTo(new BigDecimal(0)) == 0) {
-            return "0";
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        String decimal = "0";
+        if (b2.compareTo(BigDecimal.ZERO) != 0) {
+            decimal = b1.divide(b2, 20, BigDecimal.ROUND_HALF_UP).toString();
         }
-        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_DOWN).toString();
+        return digit(decimal.toString(), scale);
     }
 
     // s1 < s2
     public static boolean compareToLT(Object s1, Object s2) {
-        if (new BigDecimal(s1.toString()).compareTo(new BigDecimal(s2.toString())) < 0) {
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(b2) < 0) {
             return true;
         }
         return false;
@@ -50,7 +50,9 @@ public class NumUtils {
 
     // s1 > s2
     public static boolean compareToGT(Object s1, Object s2) {
-        if (new BigDecimal(s1.toString()).compareTo(new BigDecimal(s2.toString())) > 0) {
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(b2) > 0) {
             return true;
         }
         return false;
@@ -58,7 +60,9 @@ public class NumUtils {
 
     // s1 <= s2
     public static boolean compareToLTE(Object s1, Object s2) {
-        if (new BigDecimal(s1.toString()).compareTo(new BigDecimal(s2.toString())) <= 0) {
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(b2) <= 0) {
             return true;
         }
         return false;
@@ -66,7 +70,9 @@ public class NumUtils {
 
     // s1 >= s2
     public static boolean compareToGTE(Object s1, Object s2) {
-        if (new BigDecimal(s1.toString()).compareTo(new BigDecimal(s2.toString())) >= 0) {
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(b2) >= 0) {
             return true;
         }
         return false;
@@ -74,7 +80,9 @@ public class NumUtils {
 
     // s1 = s2
     public static boolean compareToEQ(Object s1, Object s2) {
-        if (new BigDecimal(s1.toString()).compareTo(new BigDecimal(s2.toString())) == 0) {
+        BigDecimal b1 = toBigDecimal(s1);
+        BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(b2) == 0) {
             return true;
         }
         return false;
@@ -123,6 +131,22 @@ public class NumUtils {
             str2 = str2 + "0";
         }
         return str2;
+    }
+
+    private static BigDecimal toBigDecimal(Object object) {
+        String string = null;
+        if (object instanceof Integer) {
+            string = Integer.toString((Integer) object);
+        } else if (object instanceof Long) {
+            string = Long.toString((Long) object);
+        } else if (object instanceof Double) {
+            string = Double.toString((Double) object);
+        } else if (object instanceof Float) {
+            string = Float.toString((Float) object);
+        } else {
+            string = String.valueOf(object);
+        }
+        return new BigDecimal(string);
     }
 
 }
