@@ -75,7 +75,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             OAuth2Token oAuth2Token = null;
             try {
                 oAuth2TokenService.validJaqState();
-                Map<String, Object> loginInfo = new FastMap().add("username", username).add("password", password).done();
+                Map<String, Object> loginInfo = new FastMap<>().add("username", username).add("password", password).done();
                 oAuth2Token = oAuth2TokenService.loginByUsername(loginInfo);
                 OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
                 oAuth2Token.setClient_id(oAuthAuthzRequest.getClientId());

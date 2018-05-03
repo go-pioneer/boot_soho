@@ -6,25 +6,25 @@ import java.util.Map;
 /**
  * @author shadow
  */
-public class FastMap {
+public class FastMap<T> {
 
-    private Map<String, Object> map;
+    private Map<String, T> map;
 
     public FastMap() {
         map = new HashMap<>();
     }
 
-    public FastMap add(String key, Object value) {
+    public FastMap add(String key, T value) {
         map.put(key, value);
         return this;
     }
 
-    public FastMap addAll(Map<String, Object> allmap) {
+    public FastMap addAll(Map<String, T> allmap) {
         map.putAll(allmap);
         return this;
     }
 
-    public Map<String, Object> done() {
+    public Map<String, T> done() {
         return map;
     }
 

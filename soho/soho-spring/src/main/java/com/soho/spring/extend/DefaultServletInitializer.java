@@ -4,6 +4,7 @@ import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
+import com.soho.spring.mvc.model.FastMap;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -28,10 +29,9 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
 
     public CacheManager initCacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-        Cache cache = new EhCache();
-        Map<String, Cache> cacheMap = new HashMap<>();
-        cacheMap.put(CacheManager.SHIRO_DATA_CACHE, cache);
-        simpleCacheManager.setCacheMap(cacheMap);
+        simpleCacheManager.setCacheMap(new FastMap<Cache>()
+                .add(CacheManager.SHIRO_DATA_CACHE, new EhCache())
+                .done());
         return simpleCacheManager;
     }
 
