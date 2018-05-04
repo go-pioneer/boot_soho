@@ -7,12 +7,16 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author shadow
  */
 public class SessionUtils {
 
     public static final String USER = "_SESSION_USER_";
+    public static final String USER_ROLES = "_SESSION_USER_ROLES_";
     public static final String ONLINE = "_ONLIEN_SESSION_ID_";
 
     public static Subject getSubject() {
@@ -34,6 +38,18 @@ public class SessionUtils {
     public static void setUser(Object user, Object principal) {
         getSession().setAttribute(USER, user);
         setOnlineUserId(principal, getSession().getId().toString());
+    }
+
+    public static void setUserRoles(Object roles) {
+        getSession().setAttribute(USER_ROLES, roles);
+    }
+
+    public static Set<String> getUserRoles() {
+        Object object = getSession().getAttribute(USER_ROLES);
+        if (object != null && object instanceof Set) {
+            return (Set<String>) object;
+        }
+        return new HashSet<>();
     }
 
     public static void setOnlineUserId(Object userId, Object sessionId) {
