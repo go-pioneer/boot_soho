@@ -1,6 +1,5 @@
 package com.soho.mybatis.crud.dao.imp;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.soho.mybatis.crud.aconst.OPT;
@@ -43,14 +42,14 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return getSqlSession().insert(sqlId(OPT.INSERT), entity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("保存数据失败", e, "10002");
+            throw new MybatisDAOEx("保存数据失败", e, "000701");
         }
     }
 
     public int insert(List<E> entities) throws MybatisDAOEx {
         validateNullObject(entities);
         if (entities.isEmpty()) {
-            throw new MybatisDAOEx("实体参数集合不能为空", "10003");
+            throw new MybatisDAOEx("实体参数集合不能为空", "000702");
         }
         try {
             for (E entity : entities) {
@@ -59,7 +58,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return entities.size();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("保存数据失败", e, "10002");
+            throw new MybatisDAOEx("保存数据失败", e, "000703");
         }
     }
 
@@ -69,7 +68,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return getSqlSession().update(sqlId(OPT.UPDATE), entity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("更新数据失败", e, "10004");
+            throw new MybatisDAOEx("更新数据失败", e, "000704");
         }
     }
 
@@ -79,21 +78,21 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return getSqlSession().update(sqlId(OPT.UPDATEBYCND), cnd);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("更新数据失败", e, "10004");
+            throw new MybatisDAOEx("更新数据失败", e, "000704");
         }
     }
 
     public int delete(E... entities) throws MybatisDAOEx {
         validateNullObject(entities);
         if (entities.length <= 0) {
-            throw new MybatisDAOEx("实体参数集合不能为空", "10003");
+            throw new MybatisDAOEx("实体参数集合不能为空", "000702");
         }
         try {
             List<Object> ids = new ArrayList<Object>();
             for (E entity : entities) {
                 validateNullObject(entities);
                 if (entity.getId() == null) {
-                    throw new MybatisDAOEx("实体参数主键不能为空", "10004");
+                    throw new MybatisDAOEx("实体参数主键不能为空", "000705");
                 } else {
                     ids.add(entity.getId());
                 }
@@ -101,7 +100,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return delete(new SQLCnd().in("id", ids.toArray()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("删除数据失败", e, "10005");
+            throw new MybatisDAOEx("删除数据失败", e, "000706");
         }
     }
 
@@ -111,7 +110,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return getSqlSession().delete(sqlId(OPT.DELETE), cnd);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("删除数据失败", e, "10005");
+            throw new MybatisDAOEx("删除数据失败", e, "000706");
         }
     }
 
@@ -119,19 +118,19 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
         try {
             validateNullObject(entity);
             if (entity.getId() == null) {
-                throw new MybatisDAOEx("实体参数主键不能为空", "10004");
+                throw new MybatisDAOEx("实体参数主键不能为空", "000705");
             }
             return delete(new SQLCnd().eq("id", entity.getId()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("删除数据失败", e, "10005");
+            throw new MybatisDAOEx("删除数据失败", e, "000706");
         }
     }
 
     public int delete(Long... ids) throws MybatisDAOEx {
         validateNullObject(ids);
         if (ids.length <= 0) {
-            throw new MybatisDAOEx("实体参数集合不能为空", "10003");
+            throw new MybatisDAOEx("实体参数集合不能为空", "000703");
         }
         try {
             List<Object> objects = new ArrayList<Object>();
@@ -142,7 +141,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return delete(new SQLCnd().in("id", objects.toArray()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("删除数据失败", e, "10005");
+            throw new MybatisDAOEx("删除数据失败", e, "000706");
         }
     }
 
@@ -152,7 +151,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return delete(new SQLCnd().eq("id", id));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("删除数据失败", e, "10005");
+            throw new MybatisDAOEx("删除数据失败", e, "000706");
         }
     }
 
@@ -162,7 +161,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return findOneByCnd(new SQLCnd().eq("id", id));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据失败", e, "10006");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -175,7 +174,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return result;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -189,7 +188,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return result;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -198,7 +197,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return countByCnd(new SQLCnd());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -207,7 +206,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return findByCnd(new SQLCnd());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -226,7 +225,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             Integer pageNo = null;
             Integer pageSize = null;
             if (pagination == null) {
-                throw new MybatisDAOEx("分页参数对象不能为空", "10008");
+                throw new MybatisDAOEx("分页参数对象不能为空", "000708");
             } else {
                 pageNo = pagination.getPageNo() == null ? 1 : pagination.getPageNo();
                 pageSize = pagination.getPageSize() == null ? 10 : pagination.getPageSize();
@@ -238,33 +237,8 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return new SimplePagination<E>(cnd.getPagination().getPageNo(), cnd.getPagination().getPageSize(), cnd.getPagination().getPageTotal(), data);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
-    }
-
-    @Override
-    public <T> List<T> findOnlyByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
-        List<E> list = findByCnd(cnd);
-        if (!list.isEmpty()) {
-            String field = cnd.getOnlyField();
-            JSONArray array = JSON.parseArray(JSON.toJSONString(list));
-            List<T> newList = new ArrayList<>(array.size());
-            for (Object object : array) {
-                JSONObject json = (JSONObject) object;
-                newList.add(json.getObject(field, clazz));
-            }
-            return newList;
-        }
-        return new ArrayList<>();
-    }
-
-    @Override
-    public <T> T findOnlyOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
-        List<T> list = findOnlyByCnd(cnd, clazz);
-        if (!list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
     }
 
     @Override
@@ -278,7 +252,7 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
             return result;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new MybatisDAOEx("查询数据记录失败", e, "10007");
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
         }
     }
 
@@ -309,12 +283,36 @@ public class MyBatisDAOImp<E extends IDEntity<Long>> extends SqlSessionDaoSuppor
         return null;
     }
 
+    @Override
+    public <T> T findFieldOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
+        List<T> list = findFieldByCnd(cnd, clazz);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> List<T> findFieldByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx {
+        validateNullObject(cnd);
+        try {
+            List<T> result = getSqlSession().selectList(sqlId(OPT.FINDFIELD), cnd);
+            if (result == null || result.isEmpty()) {
+                return new ArrayList<>();
+            }
+            return JSONArray.parseArray(JSONObject.toJSONString(result), clazz);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new MybatisDAOEx("查询数据记录失败", e, "000707");
+        }
+    }
+
     /**
      * 校验空参数
      */
     private void validateNullObject(Object obj) throws MybatisDAOEx {
         if (obj == null) {
-            throw new MybatisDAOEx("实体参数对象不能为空", "10001");
+            throw new MybatisDAOEx("实体参数对象不能为空", "000702");
         }
     }
 

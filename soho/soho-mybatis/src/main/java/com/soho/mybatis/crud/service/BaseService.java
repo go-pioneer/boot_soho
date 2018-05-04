@@ -198,4 +198,24 @@ public interface BaseService<E extends IDEntity<ID>, ID> {
      */
     public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx;
 
+    /**
+     * 获取单独的字段单条集合
+     *
+     * @param cnd
+     * @param clazz
+     * @return T
+     * @throws BizErrorEx
+     */
+    public <T> T findFieldOneByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx;
+
+    /**
+     * 获取单独的字段集合
+     *
+     * @param cnd
+     * @param clazz
+     * @return List<T>
+     * @throws BizErrorEx
+     */
+    public <T> List<T> findFieldByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx;
+
 }

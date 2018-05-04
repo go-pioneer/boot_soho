@@ -182,4 +182,20 @@ public abstract class BaseServiceImp<E extends IDEntity<ID>, ID> implements Base
         }
     }
 
+    public <T> List<T> findFieldByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findFieldByCnd(cnd, clazz);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
+    public <T> T findFieldOneByCnd(Cnd cnd, Class<T> clazz) throws BizErrorEx {
+        try {
+            return getMybatisDAO().findFieldOneByCnd(cnd, clazz);
+        } catch (MybatisDAOEx e) {
+            throw new BizErrorEx(e);
+        }
+    }
+
 }

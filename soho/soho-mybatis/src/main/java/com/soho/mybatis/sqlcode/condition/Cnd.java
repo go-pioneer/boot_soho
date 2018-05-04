@@ -55,8 +55,6 @@ public interface Cnd {
 
     public Cnd fields(String... keys);
 
-    public Cnd only(String key);
-
     public Cnd addUpdateObj(Object obj);
 
     public Cnd addUpdateKeyValue(String[] keys, Object[] values);
@@ -68,8 +66,6 @@ public interface Cnd {
     public Pagination<Object> getPagination();
 
     public void setPagination(Pagination<Object> pagination);
-
-    public String getOnlyField();
 
     public Cnd from(String table);
 

@@ -7,7 +7,15 @@ package com.soho.mybatis.crud.aconst;
  */
 public enum OPT {
 
-    INSERT("insert"), FIND("findByCnd"), COUNT("countByCnd"), UPDATE("update"), DELETE("deleteByCnd"), FINDBYPAGE("findByPage"), UPDATEBYCND("updateByCnd"), FINDMAP("findMapByCnd");
+    INSERT("insert"),
+    FIND("findByCnd"),
+    COUNT("countByCnd"),
+    UPDATE("update"),
+    DELETE("deleteByCnd"),
+    FINDBYPAGE("findByPage"),
+    UPDATEBYCND("updateByCnd"),
+    FINDMAP("findMapByCnd"),
+    FINDFIELD("findFieldByCnd");
 
     private OPT(String value) {
         this.value = value;

@@ -16,7 +16,6 @@ public class SQLCnd implements Cnd {
 
     protected List<Condition<?>> conditions = new ArrayList<>();
     protected List<String> fields = new ArrayList<>();
-    protected String onlyField = "";
     protected List<String> distincts = new ArrayList<>();
     protected List<String> groupbys = new ArrayList<>();
     protected List<Condition<?>> orderbys = new ArrayList<>();
@@ -189,12 +188,6 @@ public class SQLCnd implements Cnd {
     }
 
     @Override
-    public Cnd only(String field) {
-        onlyField = new String(field);
-        return this;
-    }
-
-    @Override
     public List<Condition<?>> getConditions() {
         return conditions;
     }
@@ -235,11 +228,6 @@ public class SQLCnd implements Cnd {
     public Cnd addOther(String key, Object value) {
         other.put(key, value);
         return this;
-    }
-
-    @Override
-    public String getOnlyField() {
-        return onlyField;
     }
 
     @Override

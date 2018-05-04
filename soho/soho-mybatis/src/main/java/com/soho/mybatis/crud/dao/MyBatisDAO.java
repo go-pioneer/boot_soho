@@ -160,24 +160,6 @@ public interface MyBatisDAO<E extends IDEntity<ID>, ID> {
     public Pagination<E> pagingByCnd(Cnd cnd) throws MybatisDAOEx;
 
     /**
-     * 获取单独的字段集合
-     *
-     * @param cnd
-     * @return List<T>
-     * @throws MybatisDAOEx
-     */
-    public <T> List<T> findOnlyByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
-
-    /**
-     * 获取单独的字段单条集合
-     *
-     * @param cnd
-     * @return List<T>
-     * @throws MybatisDAOEx
-     */
-    public <T> T findOnlyOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
-
-    /**
      * 获取多个MAP数据
      *
      * @param cnd
@@ -212,5 +194,25 @@ public interface MyBatisDAO<E extends IDEntity<ID>, ID> {
      * @throws MybatisDAOEx
      */
     public <T> T findMapOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
+
+    /**
+     * 获取单独的字段单条集合
+     *
+     * @param cnd
+     * @param clazz
+     * @return T
+     * @throws MybatisDAOEx
+     */
+    public <T> T findFieldOneByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
+
+    /**
+     * 获取单独的字段集合
+     *
+     * @param cnd
+     * @param clazz
+     * @return List<T>
+     * @throws MybatisDAOEx
+     */
+    public <T> List<T> findFieldByCnd(Cnd cnd, Class<T> clazz) throws MybatisDAOEx;
 
 }
