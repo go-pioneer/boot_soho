@@ -4,6 +4,7 @@ import com.soho.spring.extend.HtmlTemplateLoader;
 import com.soho.spring.extend.freemarker.GTM8Tag;
 import com.soho.spring.extend.freemarker.HasRoleTag;
 import com.soho.spring.extend.freemarker.HtmlTag;
+import com.soho.spring.extend.freemarker.UserTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +24,8 @@ public class FreeMarkerConfig {
     private GTM8Tag gtm8Tag;
     @Autowired(required = false)
     private HasRoleTag hasRoleTag;
+    @Autowired(required = false)
+    private UserTag userTag;
 
 
     @PostConstruct
@@ -31,6 +34,7 @@ public class FreeMarkerConfig {
         configuration.setSharedVariable("html", htmlTag);
         configuration.setSharedVariable("gtm8", gtm8Tag);
         configuration.setSharedVariable("hasRole", hasRoleTag);
+        configuration.setSharedVariable("usr", userTag);
     }
 
 }

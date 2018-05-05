@@ -1,5 +1,7 @@
 package com.soho.spring.extend.freemarker;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.soho.spring.shiro.utils.SessionUtils;
 import freemarker.core.Environment;
 import freemarker.template.TemplateDirectiveBody;
@@ -14,36 +16,26 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * FreeMarker自定义标签,节点权限控制
+ * FreeMarker自定义标签,会话用户对象
  *
  * @author shadow
  */
 @Component
-public class HasRoleTag implements TemplateDirectiveModel {
+public class UserTag implements TemplateDirectiveModel {
 
     public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody directiveBody)
             throws TemplateException, IOException {
-        Object role = params.get("role");
-        if (StringUtils.isEmpty(role)) {
-            throw new TemplateException("参数[id]不能为空", null);
-        }
-        if (hasRole(role)) {
-            directiveBody.render(env.getOut());
-        } else {
-            env.getOut().write("");
-        }
-
-    }
-
-    private boolean hasRole(Object role) {
-        String[] roles = role.toString().split(",");
-        Subject subject = SessionUtils.getSubject();
-        for (String r : roles) {
-            if (subject.hasRole(r)) {
-                return true;
+        String content = "";
+        Object key = params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            Object object = SessionUtils.getUser();
+            if (object != null) {
+                JSONObject user = JSON.parseObject(JSON.toJSONString(object));
+                if (!StringUtils.isEmpty(user.getString(key.toString()))) {
+                    content = user.getString(key.toString());
+                }
             }
         }
-        return false;
+        env.getOut().write(content);
     }
-
-}  
+}

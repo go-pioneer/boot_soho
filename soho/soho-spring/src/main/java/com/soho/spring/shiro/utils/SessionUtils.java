@@ -2,6 +2,7 @@ package com.soho.spring.shiro.utils;
 
 import com.soho.spring.utils.SpringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.Session;
@@ -94,6 +95,24 @@ public class SessionUtils {
         Object object = getSubject().getPrincipal();
         if (object != null) {
             return (T) object;
+        }
+        return null;
+    }
+
+    public static void logout() {
+        try {
+            getSession().removeAttribute(USER_ROLES);
+            getSession().removeAttribute(USER);
+            getSubject().logout();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <T> T login(AuthenticationToken token, boolean user) {
+        getSubject().login(token);
+        if (user) {
+            return getUser();
         }
         return null;
     }

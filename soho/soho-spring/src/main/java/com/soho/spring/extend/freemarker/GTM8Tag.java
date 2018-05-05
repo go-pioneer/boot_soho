@@ -6,6 +6,7 @@ import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateDirectiveModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.Map;
  *
  * @author shadow
  */
+@Component
 public class GTM8Tag implements TemplateDirectiveModel {
 
     public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody directiveBody)
