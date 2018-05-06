@@ -8,6 +8,9 @@ public class RetCode {
     public static final String OK_STATUS = "000000";
     public static final String OK_MESSAGE = "操作成功";
 
+    public static final String BIZ_ERROR_STATUS = "999100";
+    public static final String BIZ_ERROR_MESSAGE = "业务系统繁忙";
+
     public static final String SESSION_NOTEXIST_STATUS = "999995";
     public static final String SESSION_NOTEXIST_MESSAGE = "您尚未登录或会话已超时";
 

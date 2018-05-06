@@ -22,7 +22,7 @@ public class BizErrorEx extends Exception {
     }
 
     public BizErrorEx(String msg) {
-        this(null, null, msg, null, HttpStatus.OK);
+        this(null, "999100", msg, null, HttpStatus.OK);
     }
 
     public BizErrorEx(String msg, Throwable e) {
@@ -83,6 +83,18 @@ public class BizErrorEx extends Exception {
 
     public void setHttpStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
+    }
+
+    public static BizErrorEx transform(Exception e) throws BizErrorEx {
+        if (e instanceof MybatisDAOEx) {
+            throw new BizErrorEx(((MybatisDAOEx) e).getErrorCode(), e.getMessage());
+        } else if (e instanceof BizErrorEx) {
+            throw (BizErrorEx) e;
+        } else if (e instanceof Exception) {
+            throw new BizErrorEx("999100", "业务系统繁忙");
+        } else {
+            return null;
+        }
     }
 
 }

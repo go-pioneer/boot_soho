@@ -1,5 +1,6 @@
 package com.soho.spring.shiro.utils;
 
+import com.soho.mybatis.crud.domain.IDEntity;
 import com.soho.spring.utils.SpringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -32,6 +33,14 @@ public class SessionUtils {
         Object object = getSession().getAttribute(USER);
         if (object != null) {
             return (T) object;
+        }
+        return null;
+    }
+
+    public static <T> T getUserId() {
+        IDEntity<T> idEntity = getUser();
+        if (idEntity != null) {
+            return idEntity.getId();
         }
         return null;
     }
