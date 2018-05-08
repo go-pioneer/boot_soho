@@ -2,6 +2,7 @@ package com.soho.spring.configuration;
 
 import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
 import com.soho.spring.model.ConfigData;
+import com.soho.spring.model.OSSData;
 import com.soho.spring.mvc.filter.SafetyFilter;
 import com.soho.spring.mvc.interceptor.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class MvcWebConfig implements WebMvcConfigurer {
 
     @Autowired(required = false)
     private ConfigData configData;
+    @Autowired(required = false)
+    private OSSData ossData;
 
     @Bean
     public RequestInterceptor getSecurityInterceptor() {
@@ -34,8 +37,8 @@ public class MvcWebConfig implements WebMvcConfigurer {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(configData.getMaxFileSize()); // 设置单个文件大小
-        factory.setMaxRequestSize(configData.getMaxRequestSize()); // 设置总上传数据总大小
+        factory.setMaxFileSize(ossData.getMaxFileSize()); // 设置单个文件大小
+        factory.setMaxRequestSize(ossData.getMaxRequestSize()); // 设置总上传数据总大小
         return factory.createMultipartConfig();
     }
 

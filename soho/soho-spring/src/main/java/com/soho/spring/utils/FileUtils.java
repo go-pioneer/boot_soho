@@ -1,13 +1,15 @@
 package com.soho.spring.utils;
 
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.spring.model.ConfigData;
 import com.soho.spring.model.FileData;
+import com.soho.spring.model.OSSData;
 import com.soho.spring.model.RetCode;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -24,12 +26,21 @@ public class FileUtils {
     private final static Map<String, String> fileExt = new HashMap<>(3);
 
     static {
-        fileExt.put(".jpg", "ffd8ff");
+        fileExt.put(".jpg", "ffd8ffe0");
         fileExt.put(".jpeg", "ffd8ffe0");
         fileExt.put(".png", "89504e47");
     }
 
-    public static FileData uploadImageByReSize(MultipartFile multipartFile, String userDir, boolean thumbnail) throws BizErrorEx {
+    /**
+     * @param multipartFile 上传文件流
+     * @param maxFileSizeKb 限制文件图片大小,单位/kb
+     * @param maxWidth      限制图片最大宽度
+     * @param userTempDir   临时目录
+     * @param thumbnail     是否生成缩略图
+     * @return FileData
+     * @throws BizErrorEx
+     */
+    public static FileData uploadImageByReSize(MultipartFile multipartFile, Integer maxFileSizeKb, Integer maxWidth, String userTempDir, boolean thumbnail) throws BizErrorEx {
         if (multipartFile == null || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
             throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件为空");
         }
@@ -47,31 +58,44 @@ public class FileUtils {
         String newFileName = System.currentTimeMillis() + "" + number + orgFileExt;
         String lastFileName = null;
         try {
-            String savePath = SpringUtils.getBean(ConfigData.class).getSavePath() + File.separator + userDir + File.separator;
+            OSSData ossData = SpringUtils.getBean(OSSData.class);
+            String savePath = ossData.getSavePath() + File.separator + userTempDir + File.separator;
             File saveDir = new File(savePath);
             if (!saveDir.exists()) {
                 saveDir.mkdirs();
             }
             lastFileName = savePath + newFileName;
-            multipartFile.transferTo(new File(lastFileName));
+            File saveFile = new File(lastFileName);
+            multipartFile.transferTo(saveFile);
+            if (NumUtils.compareToGT(multipartFile.getSize(), maxFileSizeKb * 1024)) {
+                throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】大小规格超出限定:" + maxFileSizeKb + "KB");
+            }
             if (!checkFileHead(lastFileName, orgFileExt)) {
-                File file = new File(lastFileName);
-                if (file.exists() && file.isFile()) {
-                    file.delete();
+                if (saveFile.exists() && saveFile.isFile()) {
+                    saveFile.delete();
                 }
                 throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】内容格式异常,请重新尝试");
             }
-            Thumbnails.of(lastFileName).scale(1.0f).toFile(lastFileName);
+            BufferedImage sourceImg = ImageIO.read(new FileInputStream(saveFile));
+            if (sourceImg.getWidth() > maxWidth) {
+                throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】宽度规格超出限定:" + maxWidth);
+            }
             FileData fileData = new FileData(savePath, orgFileName, orgFileExt, newFileName, lastFileName);
-            if (thumbnail) {
-                String reFileName = newFileName.replaceAll("\\.", "_s.");
-                String reFilePath = savePath + File.separator + reFileName;
-                Thumbnails.of(lastFileName).scale(0.5f).toFile(reFilePath);
-                fileData.setReFileName(reFileName);
-                fileData.setReFilePath(reFilePath);
+            if (".jpg".equals(orgFileExt)) {
+                Thumbnails.of(lastFileName).scale(1.0f).toFile(lastFileName);
+                if (thumbnail) {
+                    String reFileName = newFileName.replaceAll("\\.", "_s.");
+                    String reFilePath = savePath + File.separator + reFileName;
+                    Thumbnails.of(lastFileName).scale(0.5f).toFile(reFilePath);
+                    fileData.setReFileName(reFileName);
+                    fileData.setReFilePath(reFilePath);
+                }
             }
             return fileData;
         } catch (Exception e) {
+            if (e instanceof BizErrorEx) {
+                throw (BizErrorEx) e;
+            }
             e.printStackTrace();
         }
         throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传图片文件失败,请重新尝试");

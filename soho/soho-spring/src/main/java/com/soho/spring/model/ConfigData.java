@@ -12,10 +12,6 @@ public class ConfigData {
     private String redirectUrl;
     private String jsoupPrefix;
     private String[] apiPrefix;
-    // 上传参数
-    private String savePath;
-    private String maxFileSize;
-    private String maxRequestSize;
     // 加密参数
     private String encryptyKey = "&OGFpY/6xoV`@P1Z";
 
@@ -65,30 +61,6 @@ public class ConfigData {
 
     public void setApiPrefix(String[] apiPrefix) {
         this.apiPrefix = apiPrefix;
-    }
-
-    public String getSavePath() {
-        return savePath;
-    }
-
-    public void setSavePath(String savePath) {
-        this.savePath = savePath;
-    }
-
-    public String getMaxFileSize() {
-        return maxFileSize;
-    }
-
-    public void setMaxFileSize(String maxFileSize) {
-        this.maxFileSize = maxFileSize;
-    }
-
-    public String getMaxRequestSize() {
-        return maxRequestSize;
-    }
-
-    public void setMaxRequestSize(String maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
     }
 
     public String getEncryptyKey() {

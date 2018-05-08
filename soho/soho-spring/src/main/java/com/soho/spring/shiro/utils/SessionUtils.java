@@ -37,8 +37,8 @@ public class SessionUtils {
         return null;
     }
 
-    public static <T> T getUserId() {
-        IDEntity<T> idEntity = getUser();
+    public static Long getUserId() {
+        IDEntity<Long> idEntity = getUser();
         if (idEntity != null) {
             return idEntity.getId();
         }

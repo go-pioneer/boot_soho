@@ -26,13 +26,6 @@ public class ConfigDataConfiguration {
     @Value("${default.encryptyKey}")
     private String encryptyKey;
 
-    @Value("${upload.savePath}")
-    private String savePath;
-    @Value("${upload.maxFileSize}")
-    private String maxFileSize;
-    @Value("${upload.maxRequestSize}")
-    private String maxRequestSize;
-
     @Bean
     public ConfigData initConfigData() {
         ConfigData config = new ConfigData();
@@ -43,9 +36,6 @@ public class ConfigDataConfiguration {
         config.setJsoupPrefix(jsoupPrefix != null ? jsoupPrefix : "");
         config.setApiPrefix(apiPrefix != null ? apiPrefix.split(",") : new String[]{});
         config.setEncryptyKey(encryptyKey);
-        config.setSavePath(savePath);
-        config.setMaxFileSize(maxFileSize);
-        config.setMaxRequestSize(maxRequestSize);
         return config;
     }
 

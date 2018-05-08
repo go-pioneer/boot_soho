@@ -14,10 +14,12 @@ public class FileData implements Serializable {
     private String fileExt;
     private String newFileName;
     private String newFilePath;
+    private String newFileUrl;
+    private String newFileMD5;
     private String reFileName;
     private String reFilePath;
-    private String newFileUrl;
     private String reFileUrl;
+    private String reFileMD5;
 
     public FileData() {
 
@@ -71,6 +73,22 @@ public class FileData implements Serializable {
         this.newFilePath = newFilePath;
     }
 
+    public String getNewFileUrl() {
+        return newFileUrl;
+    }
+
+    public void setNewFileUrl(String newFileUrl) {
+        this.newFileUrl = newFileUrl;
+    }
+
+    public String getNewFileMD5() {
+        return newFileMD5;
+    }
+
+    public void setNewFileMD5(String newFileMD5) {
+        this.newFileMD5 = newFileMD5;
+    }
+
     public String getReFileName() {
         return reFileName;
     }
@@ -87,20 +105,20 @@ public class FileData implements Serializable {
         this.reFilePath = reFilePath;
     }
 
-    public String getNewFileUrl() {
-        return newFileUrl;
-    }
-
-    public void setNewFileUrl(String newFileUrl) {
-        this.newFileUrl = newFileUrl;
-    }
-
     public String getReFileUrl() {
         return reFileUrl;
     }
 
     public void setReFileUrl(String reFileUrl) {
         this.reFileUrl = reFileUrl;
+    }
+
+    public String getReFileMD5() {
+        return reFileMD5;
+    }
+
+    public void setReFileMD5(String reFileMD5) {
+        this.reFileMD5 = reFileMD5;
     }
 
 }

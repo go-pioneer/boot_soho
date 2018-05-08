@@ -47,7 +47,7 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/upload")
     public Object upload(String username, MultipartFile file) throws BizErrorEx {
-        return FileUtils.uploadImageByReSize(file, "1", true);
+        return FileUtils.uploadImageByReSize(file, 500, 500, "1", true);
     }
 
     @ResponseBody
