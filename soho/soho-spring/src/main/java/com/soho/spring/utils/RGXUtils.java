@@ -1,5 +1,6 @@
 package com.soho.spring.utils;
 
+import com.soho.spring.model.OSSData;
 import com.soho.spring.model.RGX;
 import org.springframework.util.StringUtils;
 
@@ -16,17 +17,12 @@ public class RGXUtils {
         return object.matches(regex.toString());
     }
 
-    public static void main(String[] args) {
-        String s = "0.0";
-        long l1 = System.currentTimeMillis();
-        for (int i = 0; i < 10; i++) {
-            long l2 = System.currentTimeMillis();
-            if (s.length() > 0) {
-                boolean b = matches(s, RGX.FLOAT);
-            }
-            System.out.println(((System.currentTimeMillis() - l2)) + "毫秒");
+    public static boolean matchImgUrl(String imgurl) {
+        OSSData ossData = SpringUtils.getBean(OSSData.class);
+        if (!StringUtils.isEmpty(imgurl) && imgurl.startsWith(ossData.getDomain())) {
+            return true;
         }
-        System.out.println("最终合计耗时:" + ((System.currentTimeMillis() - l1)) + "毫秒");
+        return false;
     }
 
 }

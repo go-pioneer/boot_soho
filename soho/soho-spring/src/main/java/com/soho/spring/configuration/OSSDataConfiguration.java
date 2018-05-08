@@ -33,13 +33,7 @@ public class OSSDataConfiguration {
         OSSData config = new OSSData();
         config.setAppId(appId);
         config.setAppKey(appKey);
-        if (domain != null) {
-            if (domain.endsWith("/")) {
-                config.setDomain(domain);
-            } else {
-                config.setDomain(domain + "/");
-            }
-        }
+        config.setDomain(domain);
         config.setEndpoint(endpoint);
         config.setBucketName(bucketName);
         config.setSavePath(savePath);
