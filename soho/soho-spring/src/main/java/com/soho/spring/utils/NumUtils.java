@@ -24,6 +24,9 @@ public class NumUtils {
     public static String multiply(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
+        if (b1.compareTo(BigDecimal.ZERO) == 0 || b2.compareTo(BigDecimal.ZERO) == 0) {
+            return digit(0, scale);
+        }
         BigDecimal decimal = b1.multiply(b2);
         return digit(decimal.toString(), scale);
     }
