@@ -6,6 +6,7 @@ import com.soho.spring.model.OSSData;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.mvc.model.FastView;
+import com.soho.spring.shiro.utils.FormTokenUtils;
 import com.soho.spring.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,7 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
 
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
                                          Exception ex) {
+        FormTokenUtils.holdFormToken(request, handler); // 保持FormToken有效性
         String requestUri = request.getRequestURI();
         String queryString = StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString();
         Map<String, String> callmap = new HashMap<>();

@@ -25,6 +25,8 @@ public class FreeMarkerConfig {
     private UserTag userTag;
     @Autowired(required = false)
     private OSSDomainTag ossDomainTag;
+    @Autowired(required = false)
+    private TokenTag tokenTag;
 
 
     @PostConstruct
@@ -34,6 +36,7 @@ public class FreeMarkerConfig {
         configuration.setSharedVariable("gtm8", gtm8Tag);
         configuration.setSharedVariable("hasRole", hasRoleTag);
         configuration.setSharedVariable("usr", userTag);
+        configuration.setSharedVariable("formToken", tokenTag);
         configuration.setSharedVariable("OSSDomain", ossDomainTag);
     }
 

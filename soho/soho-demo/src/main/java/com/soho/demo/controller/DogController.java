@@ -6,6 +6,7 @@ import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
+import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.utils.FileUtils;
 import org.apache.shiro.SecurityUtils;
@@ -44,6 +45,7 @@ public class DogController {
         return new FastView("/index").add("username", username).done();
     }
 
+    @FormToken
     @ResponseBody
     @RequestMapping("/upload")
     public Object upload(String username, MultipartFile file) throws BizErrorEx {

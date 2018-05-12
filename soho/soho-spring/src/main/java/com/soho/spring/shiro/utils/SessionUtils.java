@@ -8,9 +8,11 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author shadow
@@ -98,6 +100,10 @@ public class SessionUtils {
             return (T) object;
         }
         return null;
+    }
+
+    public static void removeAttribute(Object key) {
+        getSession().removeAttribute(key);
     }
 
     public static <T> T getPrincipal() {

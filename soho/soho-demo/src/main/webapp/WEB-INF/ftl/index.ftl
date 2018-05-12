@@ -12,6 +12,7 @@
 </head>
 <body>
 <form action="/dog/upload" method="post" enctype="multipart/form-data">
+<@formToken/>
 ${username!''}
     <hr>
     <input type="text" name="username" value="${username!''}"/>
