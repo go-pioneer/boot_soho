@@ -15,43 +15,40 @@ import java.util.UUID;
  */
 public class FormTokenUtils {
 
-    public static final String FORM_TOKEN = "_SECURITY_FORM_TOKEN_";
+    public static final String SECURITY_FORM_TOKEN = "_SECURITY_FORM_TOKEN_";
 
     public static String addFormToken() {
         String form_token = UUID.randomUUID().toString();
-        SessionUtils.setAttribute(FORM_TOKEN, form_token);
-        return "<input type=\"hidden\" name=\"" + FORM_TOKEN + "\" value=\"" + form_token + "\"/>";
+        SessionUtils.setAttribute(SECURITY_FORM_TOKEN, form_token);
+        return "<input type=\"hidden\" name=\"" + SECURITY_FORM_TOKEN + "\" value=\"" + form_token + "\"/>";
     }
 
     public static void validFormToken(HttpServletRequest request, Object handler) throws BizErrorEx {
-        if (!isFormTokenRequest(handler)) {
-            return;
-        }
-        String form_token = request.getParameter(FormTokenUtils.FORM_TOKEN);
-        if (StringUtils.isEmpty(form_token) || form_token.length() > 100) {
-            throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "数据安全校验参数异常");
-        }
-        if (!form_token.equals(SessionUtils.getAttribute(FORM_TOKEN))) {
-            throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "数据安全校验失败,请重新刷新页面");
+        if (isFormTokenRequest(handler)) {
+            String form_token = request.getParameter(SECURITY_FORM_TOKEN);
+            if (StringUtils.isEmpty(form_token) || form_token.length() > 100) {
+                throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "数据安全校验参数异常");
+            }
+            if (!form_token.equals(SessionUtils.getAttribute(SECURITY_FORM_TOKEN))) {
+                throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "数据安全校验失败,请重新刷新页面");
+            }
         }
     }
 
     public static void delFormToken(HttpServletRequest request, Object handler) {
-        if (!isFormTokenRequest(handler)) {
-            return;
+        if (isFormTokenRequest(handler)) {
+            Object object = request.getAttribute(SECURITY_FORM_TOKEN);
+            if (object == null || !SECURITY_FORM_TOKEN.equals(object)) {
+                SessionUtils.removeAttribute(SECURITY_FORM_TOKEN);
+            }
+            request.removeAttribute(SECURITY_FORM_TOKEN);
         }
-        Object object = request.getAttribute(FORM_TOKEN);
-        if (object == null || !FORM_TOKEN.equals(object)) {
-            SessionUtils.removeAttribute(FORM_TOKEN);
-        }
-        request.removeAttribute(FORM_TOKEN);
     }
 
     public static void holdFormToken(HttpServletRequest request, Object handler) {
-        if (!isFormTokenRequest(handler)) {
-            return;
+        if (isFormTokenRequest(handler)) {
+            request.setAttribute(SECURITY_FORM_TOKEN, SECURITY_FORM_TOKEN);
         }
-        request.setAttribute(FormTokenUtils.FORM_TOKEN, FormTokenUtils.FORM_TOKEN);
     }
 
     public static boolean isFormTokenRequest(Object handler) {
