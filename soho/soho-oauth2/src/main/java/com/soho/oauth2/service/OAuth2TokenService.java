@@ -107,7 +107,6 @@ public interface OAuth2TokenService {
      * 通过access_token获取认证数据
      *
      * @param access_token
-     * @param invalid      true.判断Token是否无效,false不判断
      * @return OauthClientToken
      */
     public OAuth2Token getOAuth2Token(String access_token, boolean token_invalid) throws BizErrorEx;
@@ -116,7 +115,7 @@ public interface OAuth2TokenService {
      * 获取oauth用户信息
      *
      * @param uid
-     * @return Map<String, Object>
+     * @return Map<String   ,       Object>
      */
     public Map<String, Object> getOAuthUser(String uid) throws BizErrorEx;
 
@@ -150,12 +149,10 @@ public interface OAuth2TokenService {
     /**
      * 生成二次认证的密钥,防止暴力破解
      *
-     * @param client_id
-     * @param access_time
      * @param access_token
      * @return String
      */
-    public String buildAccessPbk(String client_id, long access_time, String access_token);
+    public String buildAccessPbk(String access_token);
 
     /**
      * OAUTH2登录WebView

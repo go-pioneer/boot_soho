@@ -2,6 +2,7 @@ package com.soho.oauth2.service.imp;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.oauth2.model.OAuth2Client;
+import com.soho.oauth2.model.OAuth2ClientParam;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2AuthzService;
@@ -14,14 +15,9 @@ import com.soho.spring.utils.HttpUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,44 +45,42 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     private EncryptService encryptService;
 
     private static final String CLIENT_PBK = "client_pbk";
+    private static final String ACCESS_PBK = "access_pbk";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String ERROR = "error";
 
     @Override
     public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
-        String redirect_uri = null;
+        // 构建OAuth请求参数对象
+        OAuth2ClientParam parameter = buildAuthorizeParam(request);
         try {
-            // 构建OAuth 授权请求
-            OAuthAuthzRequest oAuthAuthzRequest = new OAuthAuthzRequest(request);
-            // 获取客户端重定向地址
-            redirect_uri = oAuthAuthzRequest.getRedirectURI();
             // 检查传入的客户端参数
-            oAuth2TokenService.validState(oAuthAuthzRequest.getState());
-            oAuth2TokenService.validResponseType(oAuthAuthzRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE));
-            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(oAuthAuthzRequest.getClientId(), null);
-            oAuth2TokenService.validRedirectUri(oAuth2Client, redirect_uri);
-            String username = StringUtils.isEmpty(oAuthAuthzRequest.getParam("username")) ? "" : oAuthAuthzRequest.getParam("username");
-            String password = StringUtils.isEmpty(oAuthAuthzRequest.getParam("password")) ? "" : oAuthAuthzRequest.getParam("password");
-            String error = StringUtils.isEmpty(oAuthAuthzRequest.getParam("error")) ? "" : oAuthAuthzRequest.getParam("error");
+            oAuth2TokenService.validState(parameter.getState());
+            oAuth2TokenService.validResponseType(parameter.getResponse_type());
+            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(parameter.getClient_id(), null);
+            oAuth2TokenService.validRedirectUri(oAuth2Client, parameter.getRedirect_uri());
             // 校验PBK签名
-            Object s_pbk = SessionUtils.getAttribute(CLIENT_PBK);
-            String pbk = oAuthAuthzRequest.getParam(CLIENT_PBK);
-            if (StringUtils.isEmpty(s_pbk) || !s_pbk.equals(pbk)) {
-                return toInitLoginView(oAuthAuthzRequest, redirect_uri, username, error);
+            Object client_pbk = SessionUtils.getAttribute(CLIENT_PBK);
+            if (StringUtils.isEmpty(client_pbk) || !client_pbk.equals(request.getParameter(CLIENT_PBK))) {
+                return toInitLoginView(parameter);
             }
             OAuth2Token oAuth2Token = null;
             try {
                 oAuth2TokenService.validJaqState();
-                Map<String, Object> loginInfo = new FastMap<>().add("username", username).add("password", password).done();
+                Map<String, Object> loginInfo = new FastMap<>().add("username", parameter.getUsername()).add("password", parameter.getPassword()).done();
                 oAuth2Token = oAuth2TokenService.loginByUsername(loginInfo);
                 OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
-                oAuth2Token.setClient_id(oAuthAuthzRequest.getClientId());
+                oAuth2Token.setClient_id(oAuth2Client.getClient_id());
                 oAuth2Token.setCode(oAuthIssuer.authorizationCode());
                 oAuth2Token.setAccess_token(oAuthIssuer.accessToken());
                 oAuth2Token.setRefresh_token(oAuthIssuer.accessToken());
-                oAuth2Token.setRedirect_uri(redirect_uri);
+                oAuth2Token.setRedirect_uri(parameter.getRedirect_uri());
                 oAuth2Token = oAuth2TokenService.addClientToken(oAuth2Token);
                 oAuth2TokenService.delJaqState();
             } catch (BizErrorEx ex) { // WEB方式登录失败时跳转到登陆页面
-                return toFailureLoginView(oAuthAuthzRequest, oAuth2TokenService.getOAuth2DomainUri() + request.getRequestURI(), redirect_uri, username, ex.getMessage());
+                parameter.setError(ex.getMessage());
+                return toFailureLoginView(parameter, oAuth2TokenService.getOAuth2DomainUri() + request.getRequestURI());
             }
             // 进行OAuth响应构建
             OAuthASResponse.OAuthAuthorizationResponseBuilder builder =
@@ -95,66 +89,52 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             // 设置授权码
             builder.setCode(oAuth2Token.getCode());
             // 设置返回客户端自定义数据
-            builder.setParam("state", oAuthAuthzRequest.getState());
+            builder.setParam("state", parameter.getState());
             // 构建响应
-            final OAuthResponse oAuthResponse = builder.location(redirect_uri).buildQueryMessage();
+            final OAuthResponse oAuthResponse = builder.location(parameter.getRedirect_uri()).buildQueryMessage();
             // 根据OAuthResponse返回ResponseEntity响应
             HttpHeaders headers = buildHttpUtf8Header();
             headers.setLocation(new URI(oAuthResponse.getLocationUri()));
             return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
         } catch (BizErrorEx e) {
             return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
-        } catch (OAuthProblemException e) { //返回错误消息（如?error=）
-            if (StringUtils.isEmpty(redirect_uri)) {
-                return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
-            }
-            try {
-                final OAuthResponse oAuthResponse = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
-                        .error(e).location(redirect_uri).buildQueryMessage();
-                HttpHeaders headers = buildHttpUtf8Header();
-                headers.setLocation(new URI(oAuthResponse.getLocationUri()));
-                return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求失败", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
     @Override
     public Object access_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
-            // 构建OAuth请求
-            OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
+            String client_id = request.getParameter(OAuth.OAUTH_CLIENT_ID);
+            String client_secret = request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+            String redirect_uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
+            String code = request.getParameter(OAuth.OAUTH_CODE);
             // 校验类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
-            oAuth2TokenService.validGrantType(oAuthTokenRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
+            oAuth2TokenService.validGrantType(request.getParameter(OAuth.OAUTH_GRANT_TYPE));
             // 校验客户端id是否正确
-            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(oAuthTokenRequest.getClientId(), getClientIpAddr(request));
+            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getClientIpAddr(request));
             // 校验客户端重定向参数
-            oAuth2TokenService.validRedirectUri(oAuth2Client, oAuthTokenRequest.getRedirectURI());
+            oAuth2TokenService.validRedirectUri(oAuth2Client, redirect_uri);
             // 校验客户端密钥参数
-            oAuth2TokenService.validClientSecret(oAuth2Client, oAuthTokenRequest.getClientSecret());
+            oAuth2TokenService.validClientSecret(oAuth2Client, client_secret);
             // 获取授权码并进行认证
-            OAuth2Token oAuth2Token = oAuth2TokenService.getAccessTokenByCode(oAuth2Client.getClient_id(), oAuthTokenRequest.getParam(OAuth.OAUTH_CODE), oAuthTokenRequest.getRedirectURI());
+            OAuth2Token oAuth2Token = oAuth2TokenService.getAccessTokenByCode(client_id, code, redirect_uri);
             // 生成校验的PBK
-            String access_pbk = oAuth2TokenService.buildAccessPbk(oAuth2Client.getClient_id(), oAuth2Token.getAccess_time(), oAuth2Token.getAccess_token());
+            String access_pbk = oAuth2TokenService.buildAccessPbk(oAuth2Token.getAccess_token());
             // 生成OAuth响应
             return new FastMap()
                     .add("access_token", oAuth2Token.getAccess_token())
+                    .add("refresh_token", oAuth2Token.getRefresh_token())
                     .add("access_pbk", access_pbk)
                     .add("access_time", oAuth2Token.getAccess_time())
-                    .add("refresh_token", oAuth2Token.getRefresh_token())
                     .add("refresh_time", oAuth2Token.getRefresh_time())
                     .add("token_expire", oAuth2Token.getToken_expire())
                     .done();
         } catch (BizErrorEx e) {
             return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
-        } catch (OAuthProblemException e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
@@ -162,23 +142,18 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     public Object userinfo(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
             // 构建OAuth资源请求
-            OAuthAccessResourceRequest oAuthAccessResourceRequest = new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
-            // 获取Access Token
-            String accessToken = oAuthAccessResourceRequest.getAccessToken();
-            // 获取令牌公钥
-            String accessPbk = request.getParameter("access_pbk");
+            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
+            String access_pbk = request.getParameter(ACCESS_PBK);
             // 校验Token,Pbk
-            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(accessToken, accessPbk);
+            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(access_token, access_pbk);
             // 校验客户端配置
             oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getClientIpAddr(request));
             // 读取OAuth用户信息,生成OAuth响应
             return oAuth2TokenService.getOAuthUser(oAuth2Token.getUid());
         } catch (BizErrorEx e) {
             return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
-        } catch (OAuthProblemException e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
@@ -186,25 +161,19 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     public Object refresh_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
             // 构建OAuth资源请求
-            OAuthAccessResourceRequest oAuthAccessResourceRequest = new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
-            // 获取Access_Token
-            String access_token = oAuthAccessResourceRequest.getAccessToken();
-            // 获取Client_Id
-            String client_id = request.getParameter("client_id");
-            // 获取Client_Secret
-            String client_secret = request.getParameter("client_secret");
-            // 获取Refresh_Token
-            String refresh_token = request.getParameter("refresh_token");
-            // 获取令牌公钥
-            String access_pbk = request.getParameter("access_pbk");
+            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
+            String access_pbk = request.getParameter(ACCESS_PBK);
+            String client_id = request.getParameter(OAuth.OAUTH_CLIENT_ID);
+            String client_secret = request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+            String refresh_token = request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
             // 校验Token,Pbk
-            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(access_token, access_pbk, false);
+            oAuth2TokenService.validAccessPbk(access_token, access_pbk, false);
             // 校验客户端配置
-            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getClientIpAddr(request));
+            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getClientIpAddr(request));
             // 校验客户端密钥
             oAuth2TokenService.validClientSecret(oAuth2Client, client_secret);
             // 延期Access_Token授权时间
-            oAuth2Token = oAuth2TokenService.refreshToken(access_token, refresh_token);
+            OAuth2Token oAuth2Token = oAuth2TokenService.refreshToken(access_token, refresh_token);
             return new FastMap()
                     .add("result", "令牌续期成功")
                     .add("client_id", oAuth2Token.getClient_id())
@@ -213,10 +182,8 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
                     .add("token_expire", oAuth2Token.getToken_expire()).done();
         } catch (BizErrorEx e) {
             return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
-        } catch (OAuthProblemException e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
@@ -224,11 +191,8 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     public Object logout_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
             // 构建OAuth资源请求
-            OAuthAccessResourceRequest oAuthAccessResourceRequest = new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
-            // 获取Access Token
-            String access_token = oAuthAccessResourceRequest.getAccessToken();
-            // 获取令牌公钥
-            String access_pbk = request.getParameter("access_pbk");
+            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
+            String access_pbk = request.getParameter(ACCESS_PBK);
             // 校验Token,Pbk
             OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(access_token, access_pbk);
             // 校验客户端配置
@@ -239,23 +203,21 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             return new FastMap().add("result", "令牌注销成功").done();
         } catch (BizErrorEx e) {
             return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
-        } catch (OAuthProblemException e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
-            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return responseFailEntity(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
     // 登录失败重定向初始化界面
-    private ModelAndView toFailureLoginView(OAuthAuthzRequest oAuthAuthzRequest, String req_uri, String redirect_uri, String username, String error) {
+    private ModelAndView toFailureLoginView(OAuth2ClientParam parameter, String req_uri) {
         try {
             StringBuffer buffer = new StringBuffer("redirect:").append(req_uri);
-            buffer.append("?client_id=").append(oAuthAuthzRequest.getClientId());
-            buffer.append("&response_type=").append(oAuthAuthzRequest.getResponseType());
-            buffer.append("&redirect_uri=").append(URLEncoder.encode(redirect_uri, "UTF-8"));
-            buffer.append("&state=").append(oAuthAuthzRequest.getState());
-            buffer.append("&error=").append(URLEncoder.encode(error, "UTF-8"));
-            buffer.append("&username=").append(username);
+            buffer.append("?client_id=").append(parameter.getClient_id());
+            buffer.append("&response_type=").append(parameter.getResponse_type());
+            buffer.append("&redirect_uri=").append(URLEncoder.encode(parameter.getRedirect_uri(), "UTF-8"));
+            buffer.append("&state=").append(parameter.getState());
+            buffer.append("&error=").append(URLEncoder.encode(parameter.getError(), "UTF-8"));
+            buffer.append("&username=").append(parameter.getUsername());
             return new FastView(buffer.toString()).done();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -264,19 +226,12 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     }
 
     // 初始化OAUTH2.0登录界面
-    private ModelAndView toInitLoginView(OAuthAuthzRequest oAuthAuthzRequest, String redirect_uri, String username, String error) {
-        OAuth2Client client = new OAuth2Client();
-        client.setClient_id(oAuthAuthzRequest.getClientId());
-        client.setResponse_type(oAuthAuthzRequest.getResponseType());
-        client.setRedirect_uri(redirect_uri);
-        client.setState(oAuthAuthzRequest.getState());
-        String pbk = encryptService.md5(client.getClient_id() + System.currentTimeMillis());
-        SessionUtils.setAttribute(CLIENT_PBK, pbk);
+    private ModelAndView toInitLoginView(OAuth2ClientParam parameter) {
+        String client_pbk = encryptService.md5(parameter.getClient_id() + System.currentTimeMillis());
+        parameter.setClient_pbk(client_pbk);
+        SessionUtils.setAttribute(CLIENT_PBK, client_pbk);
         return new FastView(oAuth2TokenService.getOAuth2LoginView())
-                .add("client", client)
-                .add("username", username)
-                .add("error", error)
-                .add(CLIENT_PBK, pbk)
+                .add("client", parameter)
                 .done();
     }
 
@@ -293,6 +248,27 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
 
     private String getClientIpAddr(HttpServletRequest request) {
         return HttpUtils.getIpAddr(request);
+    }
+
+    private OAuth2ClientParam buildAuthorizeParam(HttpServletRequest request) {
+        String redirect_uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
+        String state = request.getParameter(OAuth.OAUTH_STATE);
+        String client_id = request.getParameter(OAuth.OAUTH_CLIENT_ID);
+        String response_type = request.getParameter(OAuth.OAUTH_RESPONSE_TYPE);
+        String username = StringUtils.isEmpty(request.getParameter(USERNAME)) ? "" : request.getParameter(USERNAME);
+        String password = StringUtils.isEmpty(request.getParameter(PASSWORD)) ? "" : request.getParameter(PASSWORD);
+        String error = StringUtils.isEmpty(request.getParameter(ERROR)) ? "" : request.getParameter(ERROR);
+        String client_pbk = request.getParameter(CLIENT_PBK);
+        OAuth2ClientParam param = new OAuth2ClientParam();
+        param.setRedirect_uri(redirect_uri);
+        param.setState(state);
+        param.setClient_id(client_id);
+        param.setResponse_type(response_type);
+        param.setUsername(username);
+        param.setPassword(password);
+        param.setError(error);
+        param.setClient_pbk(client_pbk);
+        return param;
     }
 
 }

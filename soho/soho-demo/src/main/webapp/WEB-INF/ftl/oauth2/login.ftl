@@ -12,16 +12,15 @@
 <body>
 	<div class="wrapper">
 		<div class="login_box">
-            <input type="hidden" name="error" id="error" value="${error!''}"/>
+            <input type="hidden" name="error" id="error" value="${client.error!''}"/>
             <form id="oauth2form" action="/oauth2.0/v1.0/authorize" method="post">
-			<input type="hidden" name="client_pbk" value="${client_pbk!''}"/>
+			<input type="hidden" name="client_pbk" value="${client.client_pbk!''}"/>
 			<input type="hidden" name="client_id" value="${client.client_id!''}"/>
-			<input type="hidden" name="client_secret" value="${client.client_secret!''}"/>
 			<input type="hidden" name="response_type" value="${client.response_type!''}"/>
 			<input type="hidden" name="redirect_uri" value="${client.redirect_uri!''}"/>
 			<input type="hidden" name="state" value="${client.state!''}"/>
 			<div class="item" id="error_show" style="display: none">
-				<span style="color: #ffcc5f;position: relative;padding-left: 30px"><img style="position: absolute;top: 0;left: 0;width: 26px;height: 26px;top: 50%;margin-top: -12px" src="/static/oauth/images/icon_warning.png">${error!''}</span>
+				<span style="color: #ffcc5f;position: relative;padding-left: 30px"><img style="position: absolute;top: 0;left: 0;width: 26px;height: 26px;top: 50%;margin-top: -12px" src="/static/oauth/images/icon_warning.png">${client.error!''}</span>
 			</div>
 			<div class="item">
 				<i class="icon_account"></i>

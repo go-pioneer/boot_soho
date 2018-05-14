@@ -46,7 +46,7 @@ public class OAuthTest {
 
     private static String oauth2_userinfo(String token, String pbk) {
         HttpClient httpClient = new DefaultHttpClient();
-        String loginUrl = domain + "/oauth2.0/v1.0/userinfo?access_token=" + token + "&access_pbk=" + pbk;
+        String loginUrl = domain + "/oauth2.0/v1.0/userinfo";
         HttpPost httpPatch = new HttpPost(loginUrl);
         // httpPatch.setHeader("Content-type", "application/json");
         httpPatch.setHeader("Charset", HTTP.UTF_8);
@@ -54,6 +54,8 @@ public class OAuthTest {
         httpPatch.setHeader("Accept-Charset", HTTP.UTF_8);
         try {
             List<NameValuePair> nvps = new ArrayList<>();
+            nvps.add(new BasicNameValuePair("access_token", token));
+            nvps.add(new BasicNameValuePair("access_pbk", pbk));
             httpPatch.setEntity(new UrlEncodedFormEntity(nvps));
             HttpResponse response = httpClient.execute(httpPatch);
             String result = EntityUtils.toString(response.getEntity());
@@ -67,7 +69,7 @@ public class OAuthTest {
 
     private static String oauth2_logout(String token, String pbk) {
         HttpClient httpClient = new DefaultHttpClient();
-        String loginUrl = domain + "/oauth2.0/v1.0/logout?access_token=" + token + "&access_pbk=" + pbk;
+        String loginUrl = domain + "/oauth2.0/v1.0/logout";
         HttpPost httpPatch = new HttpPost(loginUrl);
         // httpPatch.setHeader("Content-type", "application/json");
         httpPatch.setHeader("Charset", HTTP.UTF_8);
@@ -75,6 +77,8 @@ public class OAuthTest {
         httpPatch.setHeader("Accept-Charset", HTTP.UTF_8);
         try {
             List<NameValuePair> nvps = new ArrayList<>();
+            nvps.add(new BasicNameValuePair("access_token", token));
+            nvps.add(new BasicNameValuePair("access_pbk", pbk));
             httpPatch.setEntity(new UrlEncodedFormEntity(nvps));
             HttpResponse response = httpClient.execute(httpPatch);
             String result = EntityUtils.toString(response.getEntity());
@@ -86,9 +90,9 @@ public class OAuthTest {
         return "";
     }
 
-    private static String oauth2_refresh(String token, String pbk, String client_id, String client_secret, String refresh_token) {
+    private static String oauth2_refresh(String token, String pbk, String refresh_token) {
         HttpClient httpClient = new DefaultHttpClient();
-        String loginUrl = domain + "/oauth2.0/v1.0/refresh_token?access_token=" + token + "&access_pbk=" + pbk;
+        String loginUrl = domain + "/oauth2.0/v1.0/refresh_token";
         HttpPost httpPatch = new HttpPost(loginUrl);
         // httpPatch.setHeader("Content-type", "application/json");
         httpPatch.setHeader("Charset", HTTP.UTF_8);
@@ -96,9 +100,11 @@ public class OAuthTest {
         httpPatch.setHeader("Accept-Charset", HTTP.UTF_8);
         try {
             List<NameValuePair> nvps = new ArrayList<>();
-            nvps.add(new BasicNameValuePair("client_id", client_id));
-            nvps.add(new BasicNameValuePair("client_secret", client_secret));
+            nvps.add(new BasicNameValuePair("client_id", "c522f0c158d4c9d5be2f1032c38a8148"));
+            nvps.add(new BasicNameValuePair("client_secret", "c522f0c158d4c9d5be2f1032c38a8148"));
             nvps.add(new BasicNameValuePair("refresh_token", refresh_token));
+            nvps.add(new BasicNameValuePair("access_token", token));
+            nvps.add(new BasicNameValuePair("access_pbk", pbk));
             httpPatch.setEntity(new UrlEncodedFormEntity(nvps));
             HttpResponse response = httpClient.execute(httpPatch);
             String result = EntityUtils.toString(response.getEntity());
@@ -115,13 +121,17 @@ public class OAuthTest {
 //    static String domain = "http://pos.linkworld-group.com";
 
     public static void main(String[] args) throws Exception {
-        // http://localhost:8080/oauth2.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&state=1&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth2.0%2Fcallback
+        // localhost:8011/oauth2.0/v1.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth2.0%2Fcallback&state=1
         // http://119.23.23.55:7070/oauth2.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&state=1&redirect_uri=http%3A%2F%2F119.23.23.55%3A7070%2Fcallback
         // http://localhost:8080/oauth2.0/token?client_id=c522f0c158d4c9d5be2f1032c38a8148&client_secret=ab58ba1691bbc45f3925e916d5cf01c7&grant_type=authorization_code&state=1&redirect_uri=http://localhost:8080/oauth2.0/callback&code=6ce74e7c1d9aeee1998f90b45143c8a1
-        oauth2_token("dc535ebf8cd08253fa6dc239c93aa927");
-        oauth2_userinfo("2dea6c55d3c793daccf6a4ca9c1a4d8a", "e1dbc9b2532a5fb14f205c896a8a6f56");
-        oauth2_logout("bbff8a5c8e4d42bfeb0ff1a3b7b17378", "c28c1367da50af560a97acefe0be7501");
-//        oauth2_refresh("bbff8a5c8e4d42bfeb0ff1a3b7b17378", "c28c1367da50af560a97acefe0be7501", "c522f0c158d4c9d5be2f1032c38a8148", "c522f0c158d4c9d5be2f1032c38a8148", "8bf6d6b77d831ae4c1ce5da2b2e38f58");
+        String code = "4cc1ef49ee4f10e4d90fad477172ba17";
+        String access_token = "b81fd3325d9ee5ba61ea6c77cc73ddbe";
+        String access_pbk = "75ef31ee1ef1256bd8d7d4fc4e4469f0";
+        String refresh_token = "b7bf7ecf8e67e399faee02ac00e8e5c8";
+        oauth2_token(code);
+        oauth2_userinfo(access_token, access_pbk);
+        oauth2_logout(access_token, access_pbk);
+        oauth2_refresh(access_token, access_pbk, refresh_token);
     }
 
 }

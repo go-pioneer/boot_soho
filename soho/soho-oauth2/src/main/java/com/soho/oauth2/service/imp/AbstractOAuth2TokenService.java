@@ -86,13 +86,11 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
         if (StringUtils.isEmpty(access_pbk)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_PBK_NULL, "客户端请求参数【access_pbk】不能为空");
         }
-        OAuth2Token oAuth2Token = getOAuth2Token(access_token, invalid_token);
-        String client_id = oAuth2Token.getClient_id();
-        String build_pbk = buildAccessPbk(client_id, oAuth2Token.getAccess_time(), access_token);
+        String build_pbk = buildAccessPbk(access_token);
         if (!access_pbk.equals(build_pbk)) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_TOKEN_PBK_INVALID, "客户端请求参数【access_pbk】校验失败");
         }
-        return oAuth2Token;
+        return getOAuth2Token(access_token, invalid_token);
     }
 
     @Override
@@ -121,9 +119,9 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     }
 
     @Override
-    public String buildAccessPbk(String client_id, long access_time, String access_token) {
+    public String buildAccessPbk(String access_token) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("&access_time").append(access_time).append("&client_id=").append(client_id).append("&access_token=").append(access_token).append("&key=").append(getEncryptyKey());
+        buffer.append("&access_token=").append(access_token).append("&key=").append(getEncryptyKey());
         return encryptService.md5(buffer.toString());
     }
 
@@ -193,14 +191,11 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
     @Override
     public void validRedirectUri(OAuth2Client oAuth2Client, String redirect_uri) throws BizErrorEx {
-        if (StringUtils.isEmpty(redirect_uri)) {
+        if (StringUtils.isEmpty(redirect_uri) || redirect_uri.length() > 255) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】不能为空");
         }
         if (!redirect_uri.startsWith(oAuth2Client.getDomain_uri())) {
             throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】校验失败");
-        }
-        if (redirect_uri.indexOf("?") != -1 || redirect_uri.indexOf("&") != -1 || redirect_uri.indexOf("=") != -1) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【redirect_uri】格式有误");
         }
     }
 
@@ -218,11 +213,11 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     @Override
     public String validResponseType(String responseType) throws BizErrorEx {
         if (StringUtils.isEmpty(responseType)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【ResponseType】不能为空");
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【response_type】不能为空");
         }
         // responseType目前仅支持CODE，另外还有TOKEN
         if (!ResponseType.CODE.toString().equals(responseType)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【ResponseType】不支持");
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【response_type】不支持");
         }
         return responseType;
     }
@@ -230,11 +225,11 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     @Override
     public String validGrantType(String grantType) throws BizErrorEx {
         if (StringUtils.isEmpty(grantType)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【GrantType】不能为空");
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【grant_type】不能为空");
         }
         // 检查验证类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
         if (!GrantType.AUTHORIZATION_CODE.toString().equals(grantType)) {
-            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【GrantType】不支持");
+            throw new BizErrorEx(OAuth2ErrorCode.OAUTH_CLIENT_ERROR, "客户端请求参数【grant_type】不支持");
         }
         return grantType;
     }
