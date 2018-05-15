@@ -1,5 +1,6 @@
 package com.soho.demo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.crud.aconst.MODE;
@@ -8,6 +9,7 @@ import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.model.FastView;
+import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.FileUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -31,12 +33,13 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/login")
     public Object login(String username, String password) throws BizErrorEx {
+        System.out.println(SessionUtils.getSession().getId());
         UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
         SecurityUtils.getSubject().login(token);
         Map<String, String> map = new HashMap<>();
-        map.put("sessionId", SecurityUtils.getSubject().getSession().getId().toString());
-        // map.put("xss", XSSUtils.strip("<a>test&><"));
-        SecurityUtils.getSubject().getSession().getAttribute("test");
+        map.put("sessionId", SessionUtils.getSession().getId().toString());
+        System.out.println(SessionUtils.getSession().getId());
+        System.out.println(JSON.toJSONString(SessionUtils.getUser()));
         return map;
     }
 

@@ -28,7 +28,7 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         definition.setUnauthorizedUrl("/403");
         List<RuleChain> ruleChains = new ArrayList<>();
         ruleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
-        ruleChains.add(new RuleChain("/dog/findAll", "kickout,role[user]"));
+        ruleChains.add(new RuleChain("/dog/findAll", "authc"));
         definition.setRuleChains(WCCUtils.ruleChainComparator(ruleChains));
         return definition;
     }
@@ -43,6 +43,11 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
     @Override
     public Map<String, Filter> initFilters() {
         return new LinkedHashMap<>();
+    }
+
+    @Override
+    public boolean isHttpsCookieSecure() {
+        return false;
     }
 
 }

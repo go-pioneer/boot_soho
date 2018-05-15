@@ -124,10 +124,10 @@ public class OAuthTest {
         // localhost:8011/oauth2.0/v1.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth2.0%2Fcallback&state=1
         // http://119.23.23.55:7070/oauth2.0/authorize?client_id=c522f0c158d4c9d5be2f1032c38a8148&response_type=code&state=1&redirect_uri=http%3A%2F%2F119.23.23.55%3A7070%2Fcallback
         // http://localhost:8080/oauth2.0/token?client_id=c522f0c158d4c9d5be2f1032c38a8148&client_secret=ab58ba1691bbc45f3925e916d5cf01c7&grant_type=authorization_code&state=1&redirect_uri=http://localhost:8080/oauth2.0/callback&code=6ce74e7c1d9aeee1998f90b45143c8a1
-        String code = "4cc1ef49ee4f10e4d90fad477172ba17";
-        String access_token = "b81fd3325d9ee5ba61ea6c77cc73ddbe";
-        String access_pbk = "75ef31ee1ef1256bd8d7d4fc4e4469f0";
-        String refresh_token = "b7bf7ecf8e67e399faee02ac00e8e5c8";
+        String code = "150c4beb97d0a0ad10cce32a44b937a0";
+        String access_token = "5cffbf0a4de888c76e1a1fc9d5066740";
+        String access_pbk = "72c9f5ad12c6fb33495d09f8b3b62484";
+        String refresh_token = "b65e18d465c2e692dc51ac4e6f9194b1";
         oauth2_token(code);
         oauth2_userinfo(access_token, access_pbk);
         oauth2_logout(access_token, access_pbk);

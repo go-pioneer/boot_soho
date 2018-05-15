@@ -93,7 +93,8 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             // 构建响应
             final OAuthResponse oAuthResponse = builder.location(parameter.getRedirect_uri()).buildQueryMessage();
             // 根据OAuthResponse返回ResponseEntity响应
-            HttpHeaders headers = buildHttpUtf8Header();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-type", "text/html;charset=UTF-8");
             headers.setLocation(new URI(oAuthResponse.getLocationUri()));
             return new ResponseEntity(headers, HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
         } catch (BizErrorEx e) {
@@ -113,7 +114,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
             // 校验类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
             oAuth2TokenService.validGrantType(request.getParameter(OAuth.OAUTH_GRANT_TYPE));
             // 校验客户端id是否正确
-            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getClientIpAddr(request));
+            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getIpAddr(request));
             // 校验客户端重定向参数
             oAuth2TokenService.validRedirectUri(oAuth2Client, redirect_uri);
             // 校验客户端密钥参数
@@ -141,13 +142,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     @Override
     public Object userinfo(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
-            // 构建OAuth资源请求
-            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
-            String access_pbk = request.getParameter(ACCESS_PBK);
             // 校验Token,Pbk
-            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(access_token, access_pbk);
+            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(request.getParameter(OAuth.OAUTH_ACCESS_TOKEN), request.getParameter(ACCESS_PBK));
             // 校验客户端配置
-            oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getClientIpAddr(request));
+            oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getIpAddr(request));
             // 读取OAuth用户信息,生成OAuth响应
             return oAuth2TokenService.getOAuthUser(oAuth2Token.getUid());
         } catch (BizErrorEx e) {
@@ -161,19 +159,17 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     public Object refresh_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
             // 构建OAuth资源请求
-            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
-            String access_pbk = request.getParameter(ACCESS_PBK);
             String client_id = request.getParameter(OAuth.OAUTH_CLIENT_ID);
             String client_secret = request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
             String refresh_token = request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
             // 校验Token,Pbk
-            oAuth2TokenService.validAccessPbk(access_token, access_pbk, false);
+            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(request.getParameter(OAuth.OAUTH_ACCESS_TOKEN), request.getParameter(ACCESS_PBK), false);
             // 校验客户端配置
-            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getClientIpAddr(request));
+            OAuth2Client oAuth2Client = oAuth2TokenService.validOAuth2Client(client_id, getIpAddr(request));
             // 校验客户端密钥
             oAuth2TokenService.validClientSecret(oAuth2Client, client_secret);
             // 延期Access_Token授权时间
-            OAuth2Token oAuth2Token = oAuth2TokenService.refreshToken(access_token, refresh_token);
+            oAuth2TokenService.refreshToken(oAuth2Token.getAccess_token(), refresh_token);
             return new FastMap()
                     .add("result", "令牌续期成功")
                     .add("client_id", oAuth2Token.getClient_id())
@@ -190,13 +186,10 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
     @Override
     public Object logout_token(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         try {
-            // 构建OAuth资源请求
-            String access_token = request.getParameter(OAuth.OAUTH_ACCESS_TOKEN);
-            String access_pbk = request.getParameter(ACCESS_PBK);
             // 校验Token,Pbk
-            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(access_token, access_pbk);
+            OAuth2Token oAuth2Token = oAuth2TokenService.validAccessPbk(request.getParameter(OAuth.OAUTH_ACCESS_TOKEN), request.getParameter(ACCESS_PBK));
             // 校验客户端配置
-            oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getClientIpAddr(request));
+            oAuth2TokenService.validOAuth2Client(oAuth2Token.getClient_id(), getIpAddr(request));
             // 注销Access Token
             oAuth2TokenService.logoutToken(oAuth2Token);
             // 根据OAuthResponse生成ResponseEntity
@@ -240,13 +233,7 @@ public class OAuth2AuthzServiceImp implements OAuth2AuthzService {
         throw new BizErrorEx(errorCode, errorMsg, HttpStatus.valueOf(status));
     }
 
-    private HttpHeaders buildHttpUtf8Header() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "text/html;charset=UTF-8");
-        return headers;
-    }
-
-    private String getClientIpAddr(HttpServletRequest request) {
+    private String getIpAddr(HttpServletRequest request) {
         return HttpUtils.getIpAddr(request);
     }
 

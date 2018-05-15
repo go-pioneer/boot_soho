@@ -20,4 +20,7 @@ public interface ShiroInitializeService {
     // 初始化认证拦截器
     public Map<String, Filter> initFilters();
 
+    // 开启HTTPS Cookie数据安全
+    public boolean isHttpsCookieSecure();
+
 }

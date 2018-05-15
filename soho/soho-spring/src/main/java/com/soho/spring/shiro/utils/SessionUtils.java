@@ -6,13 +6,12 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author shadow
@@ -47,9 +46,18 @@ public class SessionUtils {
         return null;
     }
 
+    public static void doCreateNewSession(Object user, Object principal) {
+        getSecurityManager().logout(getSubject()); // 注销旧主体,自动创建新主体
+        setUser(user, principal);
+    }
+
     public static void setUser(Object user, Object principal) {
         getSession().setAttribute(USER, user);
         setOnlineUserId(principal, getSession().getId().toString());
+    }
+
+    public static SecurityManager getSecurityManager() {
+        return SecurityUtils.getSecurityManager();
     }
 
     public static void setUserRoles(Object roles) {
