@@ -7,6 +7,7 @@ import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
+import com.soho.spring.shiro.session.ShiroSessionDAO;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
@@ -77,7 +78,7 @@ public class ShiroConfiguration {
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        defaultWebSessionManager.setSessionDAO(new EnterpriseCacheSessionDAO());
+        defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO());
         Cookie cookie = defaultWebSessionManager.getSessionIdCookie();
         cookie.setSecure(shiroInitializeService.isHttpsCookieSecure());
         securityManager.setSessionManager(defaultWebSessionManager);

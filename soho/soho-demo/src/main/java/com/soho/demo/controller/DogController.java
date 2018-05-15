@@ -1,6 +1,5 @@
 package com.soho.demo.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.crud.aconst.MODE;
@@ -8,6 +7,7 @@ import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
 import com.soho.spring.mvc.annotation.FormToken;
+import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.FileUtils;
@@ -33,14 +33,21 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/login")
     public Object login(String username, String password) throws BizErrorEx {
-        System.out.println(SessionUtils.getSession().getId());
+        // System.out.println(SessionUtils.getSessionId());
+        long start = System.currentTimeMillis();
         UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
         SecurityUtils.getSubject().login(token);
         Map<String, String> map = new HashMap<>();
-        map.put("sessionId", SessionUtils.getSession().getId().toString());
-        System.out.println(SessionUtils.getSession().getId());
-        System.out.println(JSON.toJSONString(SessionUtils.getUser()));
+        map.put("sessionId", SessionUtils.getSessionId());
+        System.out.println("doReadSession---" + (System.currentTimeMillis() - start));
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/logout")
+    public Object logout() {
+        SessionUtils.logout();
+        return new FastMap<>().add("sessionId", SessionUtils.getSessionId()).done();
     }
 
     @RequestMapping("/index")

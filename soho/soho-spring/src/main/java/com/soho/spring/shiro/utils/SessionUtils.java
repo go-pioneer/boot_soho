@@ -30,6 +30,10 @@ public class SessionUtils {
         return getSubject().getSession();
     }
 
+    public static String getSessionId() {
+        return getSubject().getSession().getId().toString();
+    }
+
     public static <T> T getUser() {
         Object object = getSession().getAttribute(USER);
         if (object != null) {
