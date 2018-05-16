@@ -8,6 +8,9 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author shadow
+ */
 public class ShiroSessionDAO extends EnterpriseCacheSessionDAO {
 
     private List<String> anonUrls;

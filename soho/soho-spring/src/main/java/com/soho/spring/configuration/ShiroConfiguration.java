@@ -1,6 +1,7 @@
 package com.soho.spring.configuration;
 
 import com.soho.spring.model.ConfigData;
+import com.soho.spring.shiro.factory.DefaultShiroFilterFactoryBean;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
 import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
 import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
@@ -46,7 +47,7 @@ public class ShiroConfiguration {
 
     @Bean
     public ShiroFilterFactoryBean initShirFilter(SecurityManager securityManager) {
-        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new DefaultShiroFilterFactoryBean();
         InitDefinition definition = shiroInitializeService.initFilterChainDefinition();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         shiroFilterFactoryBean.setLoginUrl(definition.getLoginUrl());
