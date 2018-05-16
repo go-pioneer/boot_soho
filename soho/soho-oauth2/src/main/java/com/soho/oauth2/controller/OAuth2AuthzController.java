@@ -2,6 +2,7 @@ package com.soho.oauth2.controller;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.oauth2.service.OAuth2AuthzService;
+import com.soho.spring.mvc.annotation.FormToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class OAuth2AuthzController {
     @Autowired(required = false)
     private OAuth2AuthzService oAuth2AuthzService;
 
+    @FormToken
     @RequestMapping(value = {"/authorize"})
     public Object authorize(HttpServletRequest request, HttpServletResponse response) throws BizErrorEx {
         return oAuth2AuthzService.authorize(request, response);

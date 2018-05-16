@@ -1,11 +1,15 @@
 package com.soho.spring.utils;
 
 import java.math.BigDecimal;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by shadow on 2017/5/17.
  */
 public class NumUtils {
+
+    private static int[] numbers = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     public static String add(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
@@ -150,6 +154,27 @@ public class NumUtils {
             string = String.valueOf(object);
         }
         return new BigDecimal(string);
+    }
+
+    public static String getIntSN(int len) {
+        StringBuffer buffer = new StringBuffer();
+        Random random = new Random();
+        for (int i = 0; i < (len < 1 ? 1 : len); i++) {
+            buffer.append(numbers[random.nextInt(numbers.length)]);
+        }
+        return buffer.toString();
+    }
+
+    public static String getStrSN() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++) {
+            System.out.println(getStrSN());
+        }
+        System.out.println(System.currentTimeMillis() - start);
     }
 
 }

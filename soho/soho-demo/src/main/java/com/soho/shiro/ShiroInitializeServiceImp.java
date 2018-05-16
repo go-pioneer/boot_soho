@@ -26,10 +26,13 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         definition.setLoginUrl("/dog/login");
         definition.setSuccessUrl("/dog/findOne");
         definition.setUnauthorizedUrl("/403");
-        List<RuleChain> ruleChains = new ArrayList<>();
-        ruleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
-        ruleChains.add(new RuleChain("/dog/findAll", "authc"));
-        definition.setRuleChains(WCCUtils.ruleChainComparator(ruleChains));
+        List<RuleChain> anonRuleChains = new ArrayList<>();
+        anonRuleChains.add(new RuleChain("/static/**", "anon"));
+        definition.setAnonRuleChains(anonRuleChains);
+        List<RuleChain> roleRuleChains = new ArrayList<>();
+        roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
+        roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
+        definition.setRoleRuleChains(WCCUtils.ruleChainComparator(roleRuleChains));
         return definition;
     }
 

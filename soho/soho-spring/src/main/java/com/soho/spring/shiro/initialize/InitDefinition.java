@@ -11,14 +11,11 @@ public class InitDefinition {
     private String loginUrl = "/login";
     private String successUrl = "/index";
     private String unauthorizedUrl = "/unauthorized";
-    private List<RuleChain> ruleChains = new ArrayList<>();
+    private List<RuleChain> anonRuleChains = new ArrayList<>();
+    private List<RuleChain> roleRuleChains = new ArrayList<>();
 
     public InitDefinition() {
 
-    }
-
-    public InitDefinition(List<RuleChain> ruleChains) {
-        this.ruleChains = ruleChains;
     }
 
     public String getLoginUrl() {
@@ -45,12 +42,19 @@ public class InitDefinition {
         this.unauthorizedUrl = unauthorizedUrl;
     }
 
-    public List<RuleChain> getRuleChains() {
-        return ruleChains;
+    public List<RuleChain> getAnonRuleChains() {
+        return anonRuleChains;
     }
 
-    public void setRuleChains(List<RuleChain> ruleChains) {
-        this.ruleChains = ruleChains;
+    public void setAnonRuleChains(List<RuleChain> anonRuleChains) {
+        this.anonRuleChains = anonRuleChains;
     }
 
+    public List<RuleChain> getRoleRuleChains() {
+        return roleRuleChains;
+    }
+
+    public void setRoleRuleChains(List<RuleChain> roleRuleChains) {
+        this.roleRuleChains = roleRuleChains;
+    }
 }

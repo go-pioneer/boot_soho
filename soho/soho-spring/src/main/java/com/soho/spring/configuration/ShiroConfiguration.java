@@ -11,7 +11,6 @@ import com.soho.spring.shiro.session.ShiroSessionDAO;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -22,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,10 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setSuccessUrl(definition.getSuccessUrl());
         shiroFilterFactoryBean.setUnauthorizedUrl(definition.getUnauthorizedUrl());
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        for (RuleChain ruleChain : definition.getRuleChains()) {
+        for (RuleChain ruleChain : definition.getAnonRuleChains()) {
+            filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
+        }
+        for (RuleChain ruleChain : definition.getRoleRuleChains()) {
             filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
         }
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -78,7 +81,11 @@ public class ShiroConfiguration {
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO());
+        List<String> anonUrls = new ArrayList<>();
+        for (RuleChain ruleChain : shiroInitializeService.initFilterChainDefinition().getAnonRuleChains()) {
+            anonUrls.add(ruleChain.getUrl());
+        }
+        defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(anonUrls));
         Cookie cookie = defaultWebSessionManager.getSessionIdCookie();
         cookie.setSecure(shiroInitializeService.isHttpsCookieSecure());
         securityManager.setSessionManager(defaultWebSessionManager);
