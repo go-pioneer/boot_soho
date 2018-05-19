@@ -27,6 +27,8 @@ public class FreeMarkerConfig {
     private OSSDomainTag ossDomainTag;
     @Autowired(required = false)
     private TokenTag tokenTag;
+    @Autowired(required = false)
+    private PageTag pageTag;
 
 
     @PostConstruct
@@ -38,6 +40,7 @@ public class FreeMarkerConfig {
         configuration.setSharedVariable("usr", userTag);
         configuration.setSharedVariable("formToken", tokenTag);
         configuration.setSharedVariable("OSSDomain", ossDomainTag);
+        configuration.setSharedVariable("page", pageTag);
     }
 
 }

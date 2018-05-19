@@ -67,7 +67,7 @@ public class FileUtils {
             lastFileName = savePath + newFileName;
             File saveFile = new File(lastFileName);
             multipartFile.transferTo(saveFile);
-            if (NumUtils.compareToGT(multipartFile.getSize(), maxFileSizeKb * 1024)) {
+            if (NumUtils.GT(multipartFile.getSize(), maxFileSizeKb * 1024)) {
                 throw new BizErrorEx(RetCode.UPLOAD_ERROR_STATUS, "上传的图片文件【" + orgFileName + "】大小规格超出限定:" + maxFileSizeKb + "KB");
             }
             if (!checkFileHead(lastFileName, orgFileExt)) {
