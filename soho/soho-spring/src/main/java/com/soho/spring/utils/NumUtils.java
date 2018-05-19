@@ -46,7 +46,7 @@ public class NumUtils {
     }
 
     // s1 < s2
-    public static boolean compareToLT(Object s1, Object s2) {
+    public static boolean LT(Object s1, Object s2) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(b2) < 0) {
@@ -56,7 +56,7 @@ public class NumUtils {
     }
 
     // s1 > s2
-    public static boolean compareToGT(Object s1, Object s2) {
+    public static boolean GT(Object s1, Object s2) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(b2) > 0) {
@@ -66,7 +66,7 @@ public class NumUtils {
     }
 
     // s1 <= s2
-    public static boolean compareToLTE(Object s1, Object s2) {
+    public static boolean LTE(Object s1, Object s2) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(b2) <= 0) {
@@ -76,7 +76,7 @@ public class NumUtils {
     }
 
     // s1 >= s2
-    public static boolean compareToGTE(Object s1, Object s2) {
+    public static boolean GTE(Object s1, Object s2) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(b2) >= 0) {
@@ -86,7 +86,7 @@ public class NumUtils {
     }
 
     // s1 = s2
-    public static boolean compareToEQ(Object s1, Object s2) {
+    public static boolean EQ(Object s1, Object s2) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(b2) == 0) {
