@@ -5,42 +5,40 @@ package com.soho.spring.utils;
  */
 public class PageUtils {
 
-    public static String getHtml(Integer pageNo, Integer pageNumber) {
+    public static String getHtml(String function, Integer pageNo, Integer pageNumber) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("<div class='am-u-lg-12 am-cf'><div class='am-fr'><ul class='am-pagination tpl-pagination'>");
-        buffer.append("<li><a href='javascript:void(0);' onclick='paginator('" + pageNo + "');'>«</a></li>");
+        buffer.append("<li><a href='javascript:void(0);' onclick='" + function + "(" + ((pageNo - 1) < 1 ? 1 : (pageNo - 1)) + ");'>«</a></li>");
         if (pageNumber <= 10 || pageNo <= 5) { // 总页数<10或当前页<=5
             int end = (pageNo <= 5 && pageNumber > 10) ? 10 : pageNumber;
             end = end > pageNumber ? pageNumber : end;
-            for (int i = 1; i <= end; i++) {
-                buffer.append(addPart(pageNo, i));
-            }
+            buffer.append(addPart(function, pageNo, 1, end));
             return buffer.toString();
+        } else {
+            int begin = pageNo - 5 <= 0 ? 1 : pageNo - 5;
+            buffer.append(addPart(function, pageNo, begin, pageNo));
+            int end = pageNo + 4 > pageNumber ? pageNumber : pageNo + 4; // 结束=当前页+4
+            buffer.append(addPart(function, pageNo, pageNo + 1, end));
         }
-        int begin = pageNo - 5 <= 0 ? 1 : pageNo - 5;
-        for (int i = begin; i <= pageNo; i++) { // 开始=当前页-5
-            buffer.append(addPart(pageNo, i));
-        }
-        int end = pageNo + 4 > pageNumber ? pageNumber : pageNo + 4; // 结束=当前页+4
-        for (int i = pageNo + 1; i <= end; i++) {
-            buffer.append(addPart(pageNo, i));
-        }
-        buffer.append("<li><a href='javascript:void(0);' onclick='paginator('" + pageNo + "');'>»</a></li>");
-        buffer.append("</ul></div></div>");
+        buffer.append("<li><a href='javascript:void(0);' onclick='" + function + "(" + ((pageNo + 1) > pageNumber ? pageNumber : pageNo + 1) + ");'>»</a></li></ul></div></div>");
         return buffer.toString();
     }
 
-    private static String addPart(int pageNo, int i) {
-        boolean current = (pageNo == i) ? true : false;
-        if (current) {
-            return new StringBuffer().append("<li><a href='javascript:void(0);' class='am-active' onclick='paginator('" + i + "');'>" + i + "</a></li>").toString();
-        } else {
-            return new StringBuffer().append("<li><a href='javascript:void(0);' onclick='paginator('" + i + "');'>" + i + "</a></li>").toString();
+    private static String addPart(String function, int pageNo, int start, int end) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = start; i <= end; i++) {
+            boolean current = (pageNo == i) ? true : false;
+            if (current) {
+                buffer.append("<li class='am-active'><a href='javascript:void(0);' onclick='" + function + "(" + i + ");'>" + i + "</a></li>").toString();
+            } else {
+                buffer.append("<li><a href='javascript:void(0);' onclick='" + function + "(" + i + ");'>" + i + "</a></li>").toString();
+            }
         }
+        return buffer.toString();
     }
 
     public static void main(String[] args) {
-        String html = getHtml(10, 20);
+        String html = getHtml("page", 10, 20);
         System.out.println(html);
     }
 
