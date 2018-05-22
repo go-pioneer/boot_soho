@@ -158,6 +158,12 @@ public class SQLCnd implements Cnd {
     }
 
     @Override
+    public Cnd limit(Integer pageSize) {
+        pagination = new SimplePagination<>(1, pageSize);
+        return this;
+    }
+
+    @Override
     public Cnd distinct(String... keys) {
         for (String object : keys) {
             distincts.add(object);

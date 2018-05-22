@@ -47,6 +47,8 @@ public interface Cnd {
 
     public Cnd limit(Integer pageNo, Integer pageSize);
 
+    public Cnd limit(Integer pageSize);
+
     public Cnd distinct(String... keys);
 
     public Cnd groupby(String... keys);
