@@ -8,6 +8,7 @@ import com.soho.spring.mvc.model.FastMap;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +22,13 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
         return builder.sources(getClass());
     }
 
-    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer() {
-        String filePath = "classpath:application.properties";
-        String[] decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
+    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String filePath, String[] decodeKeys) {
+        if (StringUtils.isEmpty(filePath)) {
+            filePath = "classpath:application.properties";
+        }
+        if (decodeKeys == null || decodeKeys.length == 0) {
+            decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
+        }
         return new DefaultPropertyConfigurer(filePath, decodeKeys);
     }
 

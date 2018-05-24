@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping
-public class FormTokenController {
+public class FormSecurityController {
 
     @ResponseBody
-    @RequestMapping("/form/token")
+    @RequestMapping("/safety/formToken")
     public Object formFoken() throws BizErrorEx {
         if (!SessionUtils.getSubject().isAuthenticated()) {
             throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "请先登录");

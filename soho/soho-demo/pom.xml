@@ -31,6 +31,11 @@
             <artifactId>soho-oauth2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-aliyun</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

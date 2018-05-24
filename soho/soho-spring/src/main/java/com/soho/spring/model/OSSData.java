@@ -78,4 +78,5 @@ public class OSSData {
     public void setMaxRequestSize(String maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
     }
+
 }
