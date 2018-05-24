@@ -7,6 +7,7 @@ import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
 import com.soho.spring.mvc.annotation.FormToken;
+import com.soho.spring.mvc.annotation.GGKToken;
 import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.SessionUtils;
@@ -55,6 +56,7 @@ public class DogController {
         return new FastView("/index").add("username", username).done();
     }
 
+    @GGKToken
     @FormToken
     @ResponseBody
     @RequestMapping("/upload")

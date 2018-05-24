@@ -1,12 +1,17 @@
 package com.soho.shiro;
 
+import com.soho.aliyun.ggk.interceptor.GGKInterceptor;
 import com.soho.shiro.realm.WebLoginRealm;
+import com.soho.spring.model.GGKData;
+import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import com.soho.spring.utils.WCCUtils;
 import org.apache.shiro.realm.Realm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -19,6 +24,9 @@ import java.util.Map;
  */
 @Component
 public class ShiroInitializeServiceImp implements ShiroInitializeService {
+
+    @Autowired
+    private GGKData ggkData;
 
     @Override
     public InitDefinition initFilterChainDefinition() {
@@ -51,6 +59,14 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
     @Override
     public boolean isHttpsCookieSecure() {
         return false;
+    }
+
+    @Override
+    public List<HandlerInterceptor> initInterceptor() {
+        List<HandlerInterceptor> interceptors = new ArrayList<>();
+        interceptors.add(new FormTokenInterceptor());
+        interceptors.add(new GGKInterceptor(ggkData.getUrls()));
+        return interceptors;
     }
 
 }

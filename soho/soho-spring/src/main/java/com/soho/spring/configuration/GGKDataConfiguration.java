@@ -4,6 +4,10 @@ import com.soho.spring.model.GGKData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author shadow
@@ -26,7 +30,12 @@ public class GGKDataConfiguration {
         config.setAppId(appId);
         config.setAppKey(appKey);
         config.setPath(path);
-        config.setUrls(urls);
+        if (StringUtils.isEmpty(urls)) {
+            config.setUrls(new ArrayList<>());
+        } else {
+            String[] strs = urls.replaceAll(" ", "").split(",");
+            config.setUrls(Arrays.asList(strs));
+        }
         return config;
     }
 

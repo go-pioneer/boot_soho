@@ -1,6 +1,7 @@
 package com.soho.spring.shiro.initialize;
 
 import org.apache.shiro.realm.Realm;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.Filter;
 import java.util.List;
@@ -22,5 +23,8 @@ public interface ShiroInitializeService {
 
     // 开启HTTPS Cookie数据安全
     public boolean isHttpsCookieSecure();
+
+    // 初始化web拦截器
+    public List<HandlerInterceptor> initInterceptor();
 
 }

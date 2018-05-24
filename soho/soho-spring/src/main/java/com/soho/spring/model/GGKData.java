@@ -1,6 +1,8 @@
 package com.soho.spring.model;
 
 
+import java.util.List;
+
 /**
  * @author shadow
  */
@@ -9,7 +11,7 @@ public class GGKData {
     private String appId;
     private String appKey;
     private String path;
-    private String urls;
+    private List<String> urls;
 
     public String getAppId() {
         return appId;
@@ -35,11 +37,11 @@ public class GGKData {
         this.path = path;
     }
 
-    public String getUrls() {
+    public List<String> getUrls() {
         return urls;
     }
 
-    public void setUrls(String urls) {
+    public void setUrls(List<String> urls) {
         this.urls = urls;
     }
 
