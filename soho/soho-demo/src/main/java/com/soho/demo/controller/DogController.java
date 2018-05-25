@@ -7,7 +7,7 @@ import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
 import com.soho.spring.mvc.annotation.FormToken;
-import com.soho.spring.mvc.annotation.GGKToken;
+import com.soho.spring.mvc.annotation.KillRobot;
 import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.SessionUtils;
@@ -51,12 +51,13 @@ public class DogController {
         return new FastMap<>().add("sessionId", SessionUtils.getSessionId()).done();
     }
 
+    @KillRobot
     @RequestMapping("/index")
     public Object index(String username) {
         return new FastView("/index").add("username", username).done();
     }
 
-    @GGKToken
+    @KillRobot(goback = "/dog/index", reset = true)
     @FormToken
     @ResponseBody
     @RequestMapping("/upload")

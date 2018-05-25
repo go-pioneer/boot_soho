@@ -61,7 +61,7 @@ public class FormTokenUtils {
         }
     }
 
-    public static void holdFormToken(HttpServletRequest request, Object handler) {
+    public static void keepFormToken(HttpServletRequest request, Object handler) {
         if (isFormTokenRequest(handler)) {
             request.setAttribute(SECURITY_FORM_SN, SECURITY_FORM_SN);
         }

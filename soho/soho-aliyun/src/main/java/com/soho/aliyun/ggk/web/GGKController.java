@@ -6,6 +6,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.soho.aliyun.ggk.utils.GGKUtils;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.mvc.model.FastView;
+import com.soho.spring.shiro.utils.KillRobotUtils;
 import com.soho.spring.utils.HttpUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -19,8 +20,8 @@ public class GGKController {
 
     @RequestMapping("/init")
     public Object init(String callurl) {
-        GGKUtils.release();
-        return new FastView("ali/ggk").add("callurl", StringUtils.isEmpty(callurl) ? "" : callurl).done();
+        KillRobotUtils.release();
+        return new FastView("aliyun/ggk").add("callurl", StringUtils.isEmpty(callurl) ? "" : callurl).done();
     }
 
     @RequestMapping("/valid")
@@ -35,13 +36,13 @@ public class GGKController {
         try {
             AuthenticateSigResponse response = GGKUtils.iAcsClient.getAcsResponse(request);
             if (response.getCode() == 100) { // 验签通过
-                GGKUtils.success();
+                KillRobotUtils.success();
                 return new FastView("redirect:" + callurl).done();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new FastView("redirect:/security/ggk/init?callurl=" + callurl).done();
+        return new FastView("redirect:/ggk/init?callurl=" + callurl).done();
     }
 
 }

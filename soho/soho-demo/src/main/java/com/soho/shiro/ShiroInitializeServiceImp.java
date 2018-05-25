@@ -1,15 +1,13 @@
 package com.soho.shiro;
 
-import com.soho.aliyun.ggk.interceptor.GGKInterceptor;
+import com.soho.aliyun.ggk.interceptor.KillRobotInterceptor;
 import com.soho.shiro.realm.WebLoginRealm;
-import com.soho.spring.model.GGKData;
 import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import com.soho.spring.utils.WCCUtils;
 import org.apache.shiro.realm.Realm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -25,9 +23,6 @@ import java.util.Map;
 @Component
 public class ShiroInitializeServiceImp implements ShiroInitializeService {
 
-    @Autowired
-    private GGKData ggkData;
-
     @Override
     public InitDefinition initFilterChainDefinition() {
         InitDefinition definition = new InitDefinition();
@@ -36,6 +31,7 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
         definition.setUnauthorizedUrl("/403");
         List<RuleChain> anonRuleChains = new ArrayList<>();
         anonRuleChains.add(new RuleChain("/static/**", "anon"));
+        anonRuleChains.add(new RuleChain("/ggk/**", "anon"));
         definition.setAnonRuleChains(anonRuleChains);
         List<RuleChain> roleRuleChains = new ArrayList<>();
         roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
@@ -64,8 +60,8 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
     @Override
     public List<HandlerInterceptor> initInterceptor() {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
+        interceptors.add(new KillRobotInterceptor());
         interceptors.add(new FormTokenInterceptor());
-        interceptors.add(new GGKInterceptor(ggkData.getUrls()));
         return interceptors;
     }
 
