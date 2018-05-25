@@ -14,12 +14,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GGKToken {
 
-    public String failure() default "";
+    public String failUrl() default "";
 
-    public String success() default "";
-
-    public boolean ajax() default false;
-
-    public String url() default "/ggk/init";
+    public String ggkUrl() default "/ggk/init";
 
 }

@@ -1,10 +1,14 @@
 package com.soho.aliyun.ggk.interceptor;
 
 import com.soho.aliyun.ggk.utils.GGKUtils;
+import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.GGKData;
+import com.soho.spring.model.RetCode;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.GGKToken;
 import com.soho.spring.shiro.utils.FormTokenUtils;
+import com.soho.spring.utils.HttpUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -39,11 +43,21 @@ public class GGKInterceptor implements HandlerInterceptor {
         if (annotation == null) {
             return true;
         }
-        String requestURI = request.getRequestURI();
+        String queryString = StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString();
+        String requestURI = request.getRequestURI() + queryString;
         for (String url : ggkData.getUrls()) {
             if (requestURI.startsWith(url)) {
+                String failUrl = annotation.failUrl(); // 失败后跳转
+                String ggkUrl = annotation.ggkUrl(); // GGK请求地址
                 if (!GGKUtils.validate()) {
-                    response.sendRedirect(request.getContextPath() + "/ggk/init");
+                    if (HttpUtils.isAjax(request)) {
+                        throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "请先进行安全认证");
+                    }
+                    if (!StringUtils.isEmpty(failUrl)) {
+                        response.sendRedirect(ggkUrl + "?" + failUrl);
+                    } else {
+                        response.sendRedirect(ggkUrl + "?" + requestURI);
+                    }
                     return false;
                 }
             }
