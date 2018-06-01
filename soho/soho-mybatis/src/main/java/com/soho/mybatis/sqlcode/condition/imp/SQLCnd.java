@@ -9,6 +9,7 @@ import com.soho.mybatis.sqlcode.aconst.SortBy;
 import com.soho.mybatis.sqlcode.condition.Cnd;
 import com.soho.mybatis.sqlcode.domain.Condition;
 import com.soho.mybatis.sqlcode.domain.Join;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -259,7 +260,9 @@ public class SQLCnd implements Cnd {
             orderbys.addAll(oldSql.orderbys);
             updateObj.putAll(oldSql.updateObj);
             other.putAll(oldSql.other);
-            fromJoinTable = new String(oldSql.fromJoinTable);
+            if (!StringUtils.isEmpty(oldSql.fromJoinTable)) {
+                fromJoinTable = new String(oldSql.fromJoinTable);
+            }
             joins.addAll(oldSql.joins);
             if (oldSql.pagination != null) {
                 pagination = new SimplePagination<>();
