@@ -251,23 +251,23 @@ public class SQLCnd implements Cnd {
     @Override
     public Cnd copy(Cnd cnd) {
         if (cnd instanceof SQLCnd) {
-            SQLCnd sqlCnd = (SQLCnd) cnd;
-            conditions.addAll(sqlCnd.conditions);
-            fields.addAll(sqlCnd.fields);
-            distincts.addAll(sqlCnd.distincts);
-            groupbys.addAll(sqlCnd.groupbys);
-            orderbys.addAll(sqlCnd.orderbys);
-            updateObj.putAll(sqlCnd.updateObj);
-            other.putAll(sqlCnd.other);
-            fromJoinTable = sqlCnd.fromJoinTable;
-            joins = sqlCnd.joins;
-            if (sqlCnd.pagination != null) {
+            SQLCnd oldSql = (SQLCnd) cnd;
+            conditions.addAll(oldSql.conditions);
+            fields.addAll(oldSql.fields);
+            distincts.addAll(oldSql.distincts);
+            groupbys.addAll(oldSql.groupbys);
+            orderbys.addAll(oldSql.orderbys);
+            updateObj.putAll(oldSql.updateObj);
+            other.putAll(oldSql.other);
+            fromJoinTable = new String(oldSql.fromJoinTable);
+            joins.addAll(oldSql.joins);
+            if (oldSql.pagination != null) {
                 pagination = new SimplePagination<>();
-                pagination.setPageNumber(sqlCnd.pagination.getPageNumber());
-                pagination.setPageTotal(sqlCnd.pagination.getPageTotal());
-                pagination.setPageSize(sqlCnd.pagination.getPageSize());
-                pagination.setPageNo(sqlCnd.pagination.getPageNo());
-                pagination.setData(sqlCnd.pagination.getData());
+                pagination.setPageNumber(oldSql.pagination.getPageNumber());
+                pagination.setPageTotal(oldSql.pagination.getPageTotal());
+                pagination.setPageSize(oldSql.pagination.getPageSize());
+                pagination.setPageNo(oldSql.pagination.getPageNo());
+                pagination.setData(oldSql.pagination.getData());
             }
         }
         return this;
