@@ -17,7 +17,7 @@ public class UserSessionAspect implements InvokeAspect {
         if (objects != null && objects.length > 0) {
             Object[] newobjects = new Object[objects.length];
             for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof ReqData<?>) {
+                if (objects[i] instanceof ReqData<?, ?>) {
                     ReqData reqData = (ReqData) objects[i];
                     Session session = SessionUtils.getSession();
                     if (session != null) {

@@ -1,11 +1,16 @@
 package com.soho.spring.model;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * Created by shadow on 2017/9/8.
  */
-public class ReqData<T> implements Serializable {
+public class ReqData<T, M> implements Serializable {
 
     private String access_token;    // 授权TOKEN
     private String client_device;   // 客户端设备 参数: android, iphone
@@ -15,7 +20,7 @@ public class ReqData<T> implements Serializable {
     private String client_uid;      // 用户UID
     private String client_pbk;      // 用户授权公钥
     private T user;                 // 用户信息,可填充ID,USER对象
-
+    private Map<String, Object> pojo;                // 表单提交对象数据
     private Integer pageNo = 1;
     private Integer pageSize = 50;
 
@@ -97,6 +102,22 @@ public class ReqData<T> implements Serializable {
 
     public void setUser(T user) {
         this.user = user;
+    }
+
+    public Map<String, Object> getPojo() {
+        return pojo;
+    }
+
+    public void setPojo(Map<String, Object> pojo) {
+        this.pojo = pojo;
+    }
+
+    public M getModel() {
+        if (pojo != null && !pojo.isEmpty()) {
+            Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+            return JSON.parseObject(JSON.toJSONString(pojo), type);
+        }
+        return null;
     }
 
     public String getClient_pbk() {
