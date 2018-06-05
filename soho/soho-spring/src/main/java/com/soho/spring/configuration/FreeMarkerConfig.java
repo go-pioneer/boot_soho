@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.Locale;
 
 /**
  * @author shadow
@@ -28,19 +29,25 @@ public class FreeMarkerConfig {
     @Autowired(required = false)
     private TokenTag tokenTag;
     @Autowired(required = false)
-    private PageTag pageTag;
+    private PaginationTag paginationTag;
 
 
     @PostConstruct
     public void setSharedVariable() {
         configuration.setTemplateLoader(new HtmlTemplateLoader(configuration.getTemplateLoader()));
+        // 基本设置
+        configuration.setNumberFormat("#.####");
+        configuration.setDateFormat("yyyy-MM-dd");
+        configuration.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
+        configuration.setLocale(new Locale("zh_CN"));
+        // 基本标签
         configuration.setSharedVariable("html", htmlTag);
         configuration.setSharedVariable("gtm8", gtm8Tag);
         configuration.setSharedVariable("hasRole", hasRoleTag);
         configuration.setSharedVariable("usr", userTag);
         configuration.setSharedVariable("formToken", tokenTag);
         configuration.setSharedVariable("OSSDomain", ossDomainTag);
-        configuration.setSharedVariable("page", pageTag);
+        configuration.setSharedVariable("pagination", paginationTag);
     }
 
 }

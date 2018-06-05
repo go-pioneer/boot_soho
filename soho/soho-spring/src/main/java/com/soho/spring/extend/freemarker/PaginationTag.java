@@ -1,7 +1,7 @@
 package com.soho.spring.extend.freemarker;
 
 import com.soho.spring.model.RGX;
-import com.soho.spring.utils.PageUtils;
+import com.soho.spring.utils.PaginationUtils;
 import com.soho.spring.utils.RGXUtils;
 import freemarker.core.Environment;
 import freemarker.template.TemplateDirectiveBody;
@@ -20,23 +20,27 @@ import java.util.Map;
  * @author shadow
  */
 @Component
-public class PageTag implements TemplateDirectiveModel {
+public class PaginationTag implements TemplateDirectiveModel {
 
     public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody directiveBody)
             throws TemplateException, IOException {
-        Object pageFun = params.get("pageFun");
+        Object pageFun = params.get("fn");
         Object pageNo = params.get("pageNo");
+        Object pageSize = params.get("pageSize");
         Object pageNumber = params.get("pageNumber");
         if (pageFun == null || StringUtils.isEmpty(pageFun.toString())) {
-            throw new TemplateException("参数[pageFun]非法", null);
+            throw new TemplateException("参数[fn]非法", null);
         }
         if (!RGXUtils.matches(pageNo == null ? "" : pageNo.toString(), RGX.INTEGER)) {
             throw new TemplateException("参数[pageNo]非法", null);
         }
+        if (!RGXUtils.matches(pageSize == null ? "" : pageSize.toString(), RGX.INTEGER)) {
+            throw new TemplateException("参数[pageSize]非法", null);
+        }
         if (!RGXUtils.matches(pageNumber == null ? "" : pageNumber.toString(), RGX.INTEGER)) {
             throw new TemplateException("参数[pageNumber]非法", null);
         }
-        env.getOut().write(PageUtils.getHtml(pageFun.toString(), Integer.parseInt(pageNo.toString()), Integer.parseInt(pageNumber.toString())));
+        env.getOut().write(PaginationUtils.getHtml(pageFun.toString(), Integer.parseInt(pageNo.toString()), Integer.parseInt(pageSize.toString()), Integer.parseInt(pageNumber.toString())));
     }
 
 }
