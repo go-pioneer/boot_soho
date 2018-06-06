@@ -61,6 +61,10 @@ public class LogicUtils {
         return false;
     }
 
+    public static boolean isMySQL() {
+        return true;
+    }
+
     public static boolean isOr(Object opt) {
         if (opt == null || "".equals(opt.toString())) {
             return false;

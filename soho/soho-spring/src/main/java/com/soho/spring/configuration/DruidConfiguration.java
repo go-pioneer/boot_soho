@@ -6,7 +6,6 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
-import com.soho.spring.model.ConfigData;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -121,7 +120,7 @@ public class DruidConfiguration {
 
     @Bean(name = "sqlSessionFactory")
     @Primary
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(locations);
@@ -136,9 +135,14 @@ public class DruidConfiguration {
             }
         }
         bean.setMapperLocations(resources);
-        DBSelector dbSelector = new SimpleDBSelector(database);
         bean.setPlugins(new Interceptor[]{new PageableInterceptor(dbSelector)});
         return bean.getObject();
+    }
+
+    @Bean(name = "dbSelector")
+    @Primary
+    public DBSelector dbSelector() throws Exception {
+        return new SimpleDBSelector(database);
     }
 
     @Bean(name = "transactionManager")
