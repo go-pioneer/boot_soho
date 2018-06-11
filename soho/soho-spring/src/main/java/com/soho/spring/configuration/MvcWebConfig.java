@@ -1,8 +1,8 @@
 package com.soho.spring.configuration;
 
 import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
-import com.soho.spring.model.DeftConfigData;
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.DeftConfig;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.mvc.filter.SafetyFilter;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +26,17 @@ import java.util.List;
 public class MvcWebConfig implements WebMvcConfigurer {
 
     @Autowired(required = false)
-    private DeftConfigData deftConfigData;
+    private DeftConfig deftConfig;
     @Autowired(required = false)
-    private OSSData ossData;
+    private OSSConfig ossConfig;
     @Autowired(required = false)
     private ShiroInitializeService shiroInitializeService;
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(ossData.getMaxFileSize()); // 设置单个文件大小
-        factory.setMaxRequestSize(ossData.getMaxRequestSize()); // 设置总上传数据总大小
+        factory.setMaxFileSize(ossConfig.getMaxFileSize()); // 设置单个文件大小
+        factory.setMaxRequestSize(ossConfig.getMaxRequestSize()); // 设置总上传数据总大小
         return factory.createMultipartConfig();
     }
 
@@ -45,7 +45,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new SafetyFilter());
         registration.setName("SafetyFilter"); // 设置拦截器名称
-        registration.addInitParameter("jsoupPrefix", deftConfigData.getJsoupPrefix()); // 添加默认参数
+        registration.addInitParameter("jsoupPrefix", deftConfig.getJsoupPrefix()); // 添加默认参数
         registration.addUrlPatterns("/*"); // 设置过滤路径，/*所有路径
         registration.setOrder(1); // 设置优先级
         return registration;

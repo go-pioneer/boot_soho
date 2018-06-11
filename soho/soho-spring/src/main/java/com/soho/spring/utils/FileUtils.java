@@ -2,7 +2,7 @@ package com.soho.spring.utils;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.FileData;
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.model.RetCode;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.util.StringUtils;
@@ -58,8 +58,8 @@ public class FileUtils {
         String newFileName = System.currentTimeMillis() + "" + number + orgFileExt;
         String lastFileName = null;
         try {
-            OSSData ossData = SpringUtils.getBean(OSSData.class);
-            String savePath = ossData.getSavePath() + File.separator + userTempDir + File.separator;
+            OSSConfig ossConfig = SpringUtils.getBean(OSSConfig.class);
+            String savePath = ossConfig.getSavePath() + File.separator + userTempDir + File.separator;
             File saveDir = new File(savePath);
             if (!saveDir.exists()) {
                 saveDir.mkdirs();

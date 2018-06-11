@@ -13,7 +13,7 @@ import com.soho.oauth2.model.OAuth2Client;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.imp.AbstractOAuth2TokenService;
-import com.soho.spring.model.OAuthData;
+import com.soho.spring.model.OAuth2Config;
 import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.security.EncryptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
 
     @Autowired
-    private OAuthData oAuthData;
+    private OAuth2Config oAuth2Config;
     @Autowired
     private EncryptService encryptService;
 
@@ -54,8 +54,8 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             clientToken.setCode_state(oAuth2Token.getCode_state());
             clientToken.setToken_state(oAuth2Token.getToken_state());
             clientToken.setLogout_time(oAuth2Token.getLogout_time());
-            clientToken.setCode_expire(oAuth2Token.getAccess_time() + oAuthData.getCodeExpire());
-            clientToken.setToken_expire(oAuth2Token.getAccess_time() + oAuthData.getTokenExpire());
+            clientToken.setCode_expire(oAuth2Token.getAccess_time() + oAuth2Config.getCodeExpire());
+            clientToken.setToken_expire(oAuth2Token.getAccess_time() + oAuth2Config.getTokenExpire());
             clientToken.setCtime(System.currentTimeMillis());
             clientToken.setRedirect_uri(oAuth2Token.getRedirect_uri());
             oauthClientTokenDAO.insert(clientToken);
@@ -158,7 +158,7 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
                 long current_time = System.currentTimeMillis();
                 clientToken.setToken_state(1);
                 clientToken.setRefresh_time(current_time);
-                clientToken.setToken_expire(current_time + oAuthData.getTokenExpire());
+                clientToken.setToken_expire(current_time + oAuth2Config.getTokenExpire());
                 clientToken.setUtime(current_time);
                 oauthClientTokenDAO.update(clientToken);
                 return transform(clientToken);

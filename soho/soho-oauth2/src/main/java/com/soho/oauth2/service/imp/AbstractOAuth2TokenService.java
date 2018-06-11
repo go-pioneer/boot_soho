@@ -5,7 +5,7 @@ import com.soho.oauth2.model.OAuth2Client;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2TokenService;
-import com.soho.spring.model.OAuthData;
+import com.soho.spring.model.OAuth2Config;
 import com.soho.spring.security.EncryptService;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
@@ -22,7 +22,7 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     @Autowired(required = false)
     private EncryptService encryptService;
     @Autowired
-    private OAuthData oAuthData;
+    private OAuth2Config oAuth2Config;
 
     // 扩展接口,保存授权数据到系统
     public abstract void addClientTokenBySelf(OAuth2Token oAuth2Token) throws BizErrorEx;
@@ -53,18 +53,18 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
     // 扩展接口,OAUTH2.0系统域名
     public String getOAuth2DomainUri() {
-        return oAuthData.getDomain();
+        return oAuth2Config.getDomain();
     }
 
     protected String getEncryptyKey() {
-        return encryptService.aes_d(oAuthData.getEncryptyKey());
+        return encryptService.aes_d(oAuth2Config.getEncryptyKey());
     }
 
     @Override
     public OAuth2Token addClientToken(OAuth2Token oAuth2Token) throws BizErrorEx {
         oAuth2Token.setAccess_time(System.currentTimeMillis()); // 授权时间
-        oAuth2Token.setCode_expire(oAuth2Token.getAccess_time() + oAuthData.getCodeExpire());
-        oAuth2Token.setToken_expire(oAuth2Token.getAccess_time() + oAuthData.getTokenExpire());
+        oAuth2Token.setCode_expire(oAuth2Token.getAccess_time() + oAuth2Config.getCodeExpire());
+        oAuth2Token.setToken_expire(oAuth2Token.getAccess_time() + oAuth2Config.getTokenExpire());
         oAuth2Token.setRefresh_time(oAuth2Token.getAccess_time()); // 令牌重新授权刷新时间
         oAuth2Token.setCode_state(1); // 授权码状态 1.正常 2.失效
         oAuth2Token.setToken_state(1); // 授权令牌状态 1.正常 2.失效
@@ -259,7 +259,7 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
 
     @Override
     public String getOAuth2LoginView() {
-        return oAuthData.getLoginView();
+        return oAuth2Config.getLoginView();
     }
 
     @Override

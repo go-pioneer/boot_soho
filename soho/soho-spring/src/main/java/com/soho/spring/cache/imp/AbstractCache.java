@@ -1,7 +1,7 @@
 package com.soho.spring.cache.imp;
 
 import com.soho.spring.cache.Cache;
-import com.soho.spring.model.DeftConfigData;
+import com.soho.spring.model.DeftConfig;
 import com.soho.spring.utils.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 public abstract class AbstractCache implements Cache {
 
     @Autowired(required = false)
-    private DeftConfigData deftConfigData;
+    private DeftConfig deftConfig;
 
     public <V> V get(Object key) {
         try {
@@ -89,10 +89,10 @@ public abstract class AbstractCache implements Cache {
     }
 
     private String getCacheKey(Object key) {
-        if (deftConfigData == null) {
-            deftConfigData = SpringUtils.getBean(DeftConfigData.class);
+        if (deftConfig == null) {
+            deftConfig = SpringUtils.getBean(DeftConfig.class);
         }
-        return deftConfigData.getProjectCode() + key;
+        return deftConfig.getProjectCode() + key;
     }
 
 }

@@ -1,14 +1,12 @@
 package com.soho.spring.extend.freemarker;
 
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.OSSConfig;
 import freemarker.core.Environment;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateDirectiveModel;
 import freemarker.template.TemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,11 +20,11 @@ import java.util.Map;
 public class OSSDomainTag implements TemplateDirectiveModel {
 
     @Autowired
-    private OSSData ossData;
+    private OSSConfig ossConfig;
 
     public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody directiveBody)
             throws IOException {
-        env.getOut().write(ossData.getDomain());
+        env.getOut().write(ossConfig.getDomain());
     }
 
 }

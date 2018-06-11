@@ -1,10 +1,15 @@
 package com.soho.spring.model;
 
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * @author shadow
  */
-public class OSSData {
+@Component
+@ConfigurationProperties(prefix = "alioss")
+public class OSSConfig {
 
     private String appId;
     private String appKey;

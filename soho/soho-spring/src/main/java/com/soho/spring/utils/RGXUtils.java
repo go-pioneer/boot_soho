@@ -1,6 +1,6 @@
 package com.soho.spring.utils;
 
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.model.RGX;
 import org.springframework.util.StringUtils;
 
@@ -18,8 +18,8 @@ public class RGXUtils {
     }
 
     public static boolean matchImgUrl(String imgurl) {
-        OSSData ossData = SpringUtils.getBean(OSSData.class);
-        if (!StringUtils.isEmpty(imgurl) && imgurl.startsWith(ossData.getDomain())) {
+        OSSConfig ossConfig = SpringUtils.getBean(OSSConfig.class);
+        if (!StringUtils.isEmpty(imgurl) && imgurl.startsWith(ossConfig.getDomain())) {
             return true;
         }
         return false;

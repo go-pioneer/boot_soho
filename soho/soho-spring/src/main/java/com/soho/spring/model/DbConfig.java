@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "spring.datasource")
-public class DruidConfig {
+public class DbConfig {
 
     private String database;
     private String url;

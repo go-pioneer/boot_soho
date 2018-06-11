@@ -4,7 +4,7 @@ import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.utils.SpringUtils;
 
 /**
@@ -16,8 +16,8 @@ public class GGKUtils {
 
     static {
         try {
-            OSSData ossData = SpringUtils.getBean(OSSData.class);
-            IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", ossData.getAppId(), ossData.getAppKey());
+            OSSConfig ossConfig = SpringUtils.getBean(OSSConfig.class);
+            IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", ossConfig.getAppId(), ossConfig.getAppKey());
             iAcsClient = new DefaultAcsClient(profile);
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", "afs", "afs.aliyuncs.com");
         } catch (Exception e) {

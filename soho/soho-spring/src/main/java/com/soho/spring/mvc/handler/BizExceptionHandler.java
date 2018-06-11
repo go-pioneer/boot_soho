@@ -1,8 +1,8 @@
 package com.soho.spring.mvc.handler;
 
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.spring.model.DeftConfigData;
-import com.soho.spring.model.OSSData;
+import com.soho.spring.model.DeftConfig;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.mvc.model.FastView;
@@ -29,9 +29,9 @@ import java.util.Map;
 public class BizExceptionHandler implements HandlerExceptionResolver {
 
     @Autowired
-    private DeftConfigData deftConfigData;
+    private DeftConfig deftConfig;
     @Autowired
-    private OSSData ossData;
+    private OSSConfig ossConfig;
 
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
                                          Exception ex) {
@@ -56,15 +56,15 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
                 retData = new RetData<>(errorEx.getErrorCode(), msg, callmap, httpStatus);
             }
         } else if (ex instanceof MaxUploadSizeExceededException) {
-            retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + ossData.getMaxFileSize() + "】,多文件【" + ossData.getMaxRequestSize() + "】", callmap);
+            retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + ossConfig.getMaxFileSize() + "】,多文件【" + ossConfig.getMaxRequestSize() + "】", callmap);
         } else {
             retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }
-        if (HttpUtils.isRetJson(request, deftConfigData.getApiPrefix())) {
+        if (HttpUtils.isRetJson(request, deftConfig.getApiPrefix())) {
             HttpUtils.responseJsonData(response, retData);
             return new FastView().done();
         } else {
-            return new FastView(deftConfigData.getFailureUrl()).add("retData", retData).done();
+            return new FastView(deftConfig.getFailureUrl()).add("retData", retData).done();
         }
     }
 }

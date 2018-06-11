@@ -6,7 +6,7 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
-import com.soho.spring.model.DruidConfig;
+import com.soho.spring.model.DbConfig;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -32,16 +32,16 @@ import java.sql.SQLException;
 public class DruidConfiguration {
 
     @Autowired(required = false)
-    private DruidConfig druidConfig;
+    private DbConfig dbConfig;
 
     @Bean
     public ServletRegistrationBean druidServlet() {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
         reg.addUrlMappings("/druid/*");
-        reg.addInitParameter("loginUsername", druidConfig.getUsername());
-        reg.addInitParameter("loginPassword", druidConfig.getPassword());
-        reg.addInitParameter("logSlowSql", druidConfig.getLogSlowSql());
+        reg.addInitParameter("loginUsername", dbConfig.getUsername());
+        reg.addInitParameter("loginPassword", dbConfig.getPassword());
+        reg.addInitParameter("logSlowSql", dbConfig.getLogSlowSql());
         return reg;
     }
 
@@ -59,22 +59,22 @@ public class DruidConfiguration {
     @Bean(name = "dataSource")
     public DataSource druidDataSource() {
         DruidDataSource datasource = new DruidDataSource();
-        datasource.setUrl(druidConfig.getUrl());
-        datasource.setUsername(druidConfig.getUsername());
-        datasource.setPassword(druidConfig.getPassword());
-        datasource.setDriverClassName(druidConfig.getDriverClassName());
-        datasource.setInitialSize(druidConfig.getInitialSize());
-        datasource.setMinIdle(druidConfig.getMinIdle());
-        datasource.setMaxActive(druidConfig.getMaxActive());
-        datasource.setMaxWait(druidConfig.getMaxWait());
-        datasource.setTimeBetweenEvictionRunsMillis(druidConfig.getTimeBetweenEvictionRunsMillis());
-        datasource.setMinEvictableIdleTimeMillis(druidConfig.getMinEvictableIdleTimeMillis());
-        datasource.setValidationQuery(druidConfig.getValidationQuery());
-        datasource.setTestWhileIdle(druidConfig.isTestWhileIdle());
-        datasource.setTestOnBorrow(druidConfig.isTestOnBorrow());
-        datasource.setTestOnReturn(druidConfig.isTestOnReturn());
+        datasource.setUrl(dbConfig.getUrl());
+        datasource.setUsername(dbConfig.getUsername());
+        datasource.setPassword(dbConfig.getPassword());
+        datasource.setDriverClassName(dbConfig.getDriverClassName());
+        datasource.setInitialSize(dbConfig.getInitialSize());
+        datasource.setMinIdle(dbConfig.getMinIdle());
+        datasource.setMaxActive(dbConfig.getMaxActive());
+        datasource.setMaxWait(dbConfig.getMaxWait());
+        datasource.setTimeBetweenEvictionRunsMillis(dbConfig.getTimeBetweenEvictionRunsMillis());
+        datasource.setMinEvictableIdleTimeMillis(dbConfig.getMinEvictableIdleTimeMillis());
+        datasource.setValidationQuery(dbConfig.getValidationQuery());
+        datasource.setTestWhileIdle(dbConfig.isTestWhileIdle());
+        datasource.setTestOnBorrow(dbConfig.isTestOnBorrow());
+        datasource.setTestOnReturn(dbConfig.isTestOnReturn());
         try {
-            datasource.setFilters(druidConfig.getFilters());
+            datasource.setFilters(dbConfig.getFilters());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -86,7 +86,7 @@ public class DruidConfiguration {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
-        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(druidConfig.getMgbXmlLocation());
+        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(dbConfig.getMgbXmlLocation());
         Resource sql = new PathMatchingResourcePatternResolver().getResources("classpath*:/mybatis-sqlresolver.xml")[0];
         int len = mappers.length + 1;
         Resource[] resources = new Resource[len];
@@ -105,7 +105,7 @@ public class DruidConfiguration {
     @Bean(name = "dbSelector")
     @Primary
     public DBSelector dbSelector() throws Exception {
-        return new SimpleDBSelector(druidConfig.getDatabase());
+        return new SimpleDBSelector(dbConfig.getDatabase());
     }
 
     @Bean(name = "transactionManager")

@@ -1,10 +1,15 @@
 package com.soho.spring.model;
 
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * @author shadow
  */
-public class OAuthData {
+@Component
+@ConfigurationProperties(prefix = "oauth2")
+public class OAuth2Config {
 
     // 基本参数
     private String domain;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "default")
-public class DeftConfigData {
+public class DeftConfig {
     // 基本参数
     private String domain;
     private String projectCode;

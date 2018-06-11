@@ -1,6 +1,6 @@
 package com.soho.spring.configuration;
 
-import com.soho.spring.model.DeftConfigData;
+import com.soho.spring.model.DeftConfig;
 import com.soho.spring.shiro.factory.DefaultShiroFilterFactoryBean;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
 import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
@@ -38,7 +38,7 @@ public class ShiroConfiguration {
     @Autowired(required = false)
     private ShiroInitializeService shiroInitializeService;
     @Autowired(required = false)
-    private DeftConfigData deftConfigData;
+    private DeftConfig deftConfig;
 
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
@@ -63,13 +63,13 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         Map<String, Filter> map = shiroInitializeService.initFilters();
         if (!map.containsKey("authc")) {
-            map.put("authc", new SimpleFormAuthenticationFilter(deftConfigData.getApiPrefix()));
+            map.put("authc", new SimpleFormAuthenticationFilter(deftConfig.getApiPrefix()));
         }
         if (!map.containsKey("role")) {
-            map.put("role", new SimpleRoleAuthorizationFilter(deftConfigData.getApiPrefix(), deftConfigData.getRedirectUrl()));
+            map.put("role", new SimpleRoleAuthorizationFilter(deftConfig.getApiPrefix(), deftConfig.getRedirectUrl()));
         }
         if (!map.containsKey("kickout")) {
-            map.put("kickout", new SimpleKickOutSessionFilter(deftConfigData.getApiPrefix()));
+            map.put("kickout", new SimpleKickOutSessionFilter(deftConfig.getApiPrefix()));
         }
         shiroFilterFactoryBean.setFilters(map);
         return shiroFilterFactoryBean;
