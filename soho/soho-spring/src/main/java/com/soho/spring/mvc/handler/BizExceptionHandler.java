@@ -1,7 +1,7 @@
 package com.soho.spring.mvc.handler;
 
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.spring.model.ConfigData;
+import com.soho.spring.model.DeftConfigData;
 import com.soho.spring.model.OSSData;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class BizExceptionHandler implements HandlerExceptionResolver {
 
     @Autowired
-    private ConfigData configData;
+    private DeftConfigData deftConfigData;
     @Autowired
     private OSSData ossData;
 
@@ -60,11 +60,11 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
         } else {
             retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }
-        if (HttpUtils.isRetJson(request, configData.getApiPrefix())) {
+        if (HttpUtils.isRetJson(request, deftConfigData.getApiPrefix())) {
             HttpUtils.responseJsonData(response, retData);
             return new FastView().done();
         } else {
-            return new FastView(configData.getFailureUrl()).add("retData", retData).done();
+            return new FastView(deftConfigData.getFailureUrl()).add("retData", retData).done();
         }
     }
 }

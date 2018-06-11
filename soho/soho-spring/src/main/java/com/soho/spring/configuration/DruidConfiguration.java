@@ -6,14 +6,13 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
+import com.soho.spring.model.DruidConfig;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -32,53 +31,17 @@ import java.sql.SQLException;
 @Configuration
 public class DruidConfiguration {
 
-    private Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
-
-    @Value("${spring.datasource.database}")
-    private String database;
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
-    @Value("${spring.datasource.username}")
-    private String username;
-    @Value("${spring.datasource.password}")
-    private String password;
-    @Value("${spring.datasource.driverClassName}")
-    private String driverClassName;
-    @Value("${spring.datasource.initialSize}")
-    private int initialSize;
-    @Value("${spring.datasource.minIdle}")
-    private int minIdle;
-    @Value("${spring.datasource.maxActive}")
-    private int maxActive;
-    @Value("${spring.datasource.maxWait}")
-    private int maxWait;
-    @Value("${spring.datasource.timeBetweenEvictionRunsMillis}")
-    private int timeBetweenEvictionRunsMillis;
-    @Value("${spring.datasource.minEvictableIdleTimeMillis}")
-    private int minEvictableIdleTimeMillis;
-    @Value("${spring.datasource.validationQuery}")
-    private String validationQuery;
-    @Value("${spring.datasource.testWhileIdle}")
-    private boolean testWhileIdle;
-    @Value("${spring.datasource.testOnBorrow}")
-    private boolean testOnBorrow;
-    @Value("${spring.datasource.testOnReturn}")
-    private boolean testOnReturn;
-    @Value("${spring.datasource.filters}")
-    private String filters;
-    @Value("${spring.datasource.logSlowSql}")
-    private String logSlowSql;
-    @Value("${mybatis.locations}")
-    private String locations;
+    @Autowired(required = false)
+    private DruidConfig druidConfig;
 
     @Bean
     public ServletRegistrationBean druidServlet() {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
         reg.addUrlMappings("/druid/*");
-        reg.addInitParameter("loginUsername", username);
-        reg.addInitParameter("loginPassword", password);
-        reg.addInitParameter("logSlowSql", logSlowSql);
+        reg.addInitParameter("loginUsername", druidConfig.getUsername());
+        reg.addInitParameter("loginPassword", druidConfig.getPassword());
+        reg.addInitParameter("logSlowSql", druidConfig.getLogSlowSql());
         return reg;
     }
 
@@ -96,24 +59,24 @@ public class DruidConfiguration {
     @Bean(name = "dataSource")
     public DataSource druidDataSource() {
         DruidDataSource datasource = new DruidDataSource();
-        datasource.setUrl(dbUrl);
-        datasource.setUsername(username);
-        datasource.setPassword(password);
-        datasource.setDriverClassName(driverClassName);
-        datasource.setInitialSize(initialSize);
-        datasource.setMinIdle(minIdle);
-        datasource.setMaxActive(maxActive);
-        datasource.setMaxWait(maxWait);
-        datasource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-        datasource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-        datasource.setValidationQuery(validationQuery);
-        datasource.setTestWhileIdle(testWhileIdle);
-        datasource.setTestOnBorrow(testOnBorrow);
-        datasource.setTestOnReturn(testOnReturn);
+        datasource.setUrl(druidConfig.getUrl());
+        datasource.setUsername(druidConfig.getUsername());
+        datasource.setPassword(druidConfig.getPassword());
+        datasource.setDriverClassName(druidConfig.getDriverClassName());
+        datasource.setInitialSize(druidConfig.getInitialSize());
+        datasource.setMinIdle(druidConfig.getMinIdle());
+        datasource.setMaxActive(druidConfig.getMaxActive());
+        datasource.setMaxWait(druidConfig.getMaxWait());
+        datasource.setTimeBetweenEvictionRunsMillis(druidConfig.getTimeBetweenEvictionRunsMillis());
+        datasource.setMinEvictableIdleTimeMillis(druidConfig.getMinEvictableIdleTimeMillis());
+        datasource.setValidationQuery(druidConfig.getValidationQuery());
+        datasource.setTestWhileIdle(druidConfig.isTestWhileIdle());
+        datasource.setTestOnBorrow(druidConfig.isTestOnBorrow());
+        datasource.setTestOnReturn(druidConfig.isTestOnReturn());
         try {
-            datasource.setFilters(filters);
+            datasource.setFilters(druidConfig.getFilters());
         } catch (SQLException e) {
-            logger.error("druid configuration initialization filter", e);
+            e.printStackTrace();
         }
         return datasource;
     }
@@ -123,7 +86,7 @@ public class DruidConfiguration {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
-        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(locations);
+        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(druidConfig.getMgbXmlLocation());
         Resource sql = new PathMatchingResourcePatternResolver().getResources("classpath*:/mybatis-sqlresolver.xml")[0];
         int len = mappers.length + 1;
         Resource[] resources = new Resource[len];
@@ -142,7 +105,7 @@ public class DruidConfiguration {
     @Bean(name = "dbSelector")
     @Primary
     public DBSelector dbSelector() throws Exception {
-        return new SimpleDBSelector(database);
+        return new SimpleDBSelector(druidConfig.getDatabase());
     }
 
     @Bean(name = "transactionManager")

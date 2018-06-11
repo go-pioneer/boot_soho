@@ -1,10 +1,15 @@
 package com.soho.spring.model;
 
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * @author shadow
  */
-public class ConfigData {
+@Component
+@ConfigurationProperties(prefix = "default")
+public class DeftConfigData {
     // 基本参数
     private String domain;
     private String projectCode;

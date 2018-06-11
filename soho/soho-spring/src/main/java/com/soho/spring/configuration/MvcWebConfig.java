@@ -1,7 +1,7 @@
 package com.soho.spring.configuration;
 
 import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
-import com.soho.spring.model.ConfigData;
+import com.soho.spring.model.DeftConfigData;
 import com.soho.spring.model.OSSData;
 import com.soho.spring.mvc.filter.SafetyFilter;
 import com.soho.spring.shiro.initialize.ShiroInitializeService;
@@ -26,7 +26,7 @@ import java.util.List;
 public class MvcWebConfig implements WebMvcConfigurer {
 
     @Autowired(required = false)
-    private ConfigData configData;
+    private DeftConfigData deftConfigData;
     @Autowired(required = false)
     private OSSData ossData;
     @Autowired(required = false)
@@ -45,7 +45,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new SafetyFilter());
         registration.setName("SafetyFilter"); // 设置拦截器名称
-        registration.addInitParameter("jsoupPrefix", configData.getJsoupPrefix()); // 添加默认参数
+        registration.addInitParameter("jsoupPrefix", deftConfigData.getJsoupPrefix()); // 添加默认参数
         registration.addUrlPatterns("/*"); // 设置过滤路径，/*所有路径
         registration.setOrder(1); // 设置优先级
         return registration;

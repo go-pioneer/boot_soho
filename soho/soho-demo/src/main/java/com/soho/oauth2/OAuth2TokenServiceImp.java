@@ -13,7 +13,6 @@ import com.soho.oauth2.model.OAuth2Client;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.imp.AbstractOAuth2TokenService;
-import com.soho.spring.model.ConfigData;
 import com.soho.spring.model.OAuthData;
 import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.security.EncryptService;
@@ -29,8 +28,6 @@ import java.util.Map;
 @Service
 public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
 
-    @Autowired
-    private ConfigData config;
     @Autowired
     private OAuthData oAuthData;
     @Autowired
