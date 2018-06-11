@@ -66,12 +66,12 @@ public class PageableInterceptor extends MybatisInterceptor {
         Integer pageTotal = pagination.getPageTotal();
         Integer pageNumber = 0;
         if (pageSize == null || pageSize <= 0 || pageSize > 1000) {
-            pageSize = 10;
+            pageSize = 50;
         }
         if (pageNo == null || pageNo <= 0) {
             pageNo = 1;
         }
-        if (pageTotal == null || pageTotal < 0) {
+        if (pageTotal == null || pageTotal <= 0) {
             pageTotal = 0;
         }
         pagination.setPageNo(pageNo);
@@ -79,6 +79,9 @@ public class PageableInterceptor extends MybatisInterceptor {
         pagination.setPageTotal(pageTotal);
         pageNumber = (pageTotal % pageSize == 0) ? (pageTotal / pageSize) : (pageTotal / pageSize + 1);
         pagination.setPageNumber(pageNumber);
+        if (pagination.isSpilled() && pageNo > pageNumber) {
+            pagination.setPageNo(pageNumber);
+        }
     }
 
     private String getCountSql(String sql) {

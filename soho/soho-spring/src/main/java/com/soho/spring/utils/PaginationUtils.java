@@ -6,6 +6,9 @@ package com.soho.spring.utils;
 public class PaginationUtils {
 
     public static String getHtml(String function, Integer pageNo, Integer pageSize, Integer pageNumber) {
+        if (pageNo > pageNumber) {
+            pageNo = pageNumber;
+        }
         StringBuffer buffer = new StringBuffer();
         buffer.append("<div class=\"am-u-lg-12 am-cf\">");
         buffer.append("<input type=\"hidden\" id=\"" + function + "_pageNo\" name=\"pageNo\" value=\"" + pageNo + "\"/>");

@@ -7,6 +7,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class SimplePagination<T> implements Pagination<T> {
 
+    private boolean spilled = true; // 是否重置溢出的PageNo
     private Integer pageNo;
     private Integer pageSize;
     private Integer pageTotal;
@@ -16,6 +17,11 @@ public class SimplePagination<T> implements Pagination<T> {
 
     public SimplePagination() {
 
+    }
+
+    public SimplePagination(Integer pageNo, Integer pageSize, boolean spilled) {
+        this(pageNo, pageSize, 0, null, null);
+        this.spilled = spilled;
     }
 
     public SimplePagination(Integer pageNo, Integer pageSize) {
@@ -36,6 +42,14 @@ public class SimplePagination<T> implements Pagination<T> {
         this.pageTotal = pageTotal;
         this.pageNumber = pageNumber;
         this.data = data;
+    }
+
+    public boolean isSpilled() {
+        return spilled;
+    }
+
+    public void setSpilled(boolean spilled) {
+        this.spilled = spilled;
     }
 
     public Integer getPageNo() {

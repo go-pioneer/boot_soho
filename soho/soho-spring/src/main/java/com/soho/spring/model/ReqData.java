@@ -1,10 +1,14 @@
 package com.soho.spring.model;
 
 import com.alibaba.fastjson.JSON;
+import com.soho.spring.utils.RGXUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -116,6 +120,33 @@ public class ReqData<T, M> implements Serializable {
         if (pojo != null && !pojo.isEmpty()) {
             Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
             return JSON.parseObject(JSON.toJSONString(pojo), type);
+        }
+        return null;
+    }
+
+    public Long getModelId() {
+        if (pojo != null && !pojo.isEmpty()) {
+            Object id = pojo.get("id");
+            if (id != null && RGXUtils.matches(id.toString(), RGX.INTEGER)) {
+                return Long.parseLong(id.toString());
+            }
+        }
+        return null;
+    }
+
+    public List<Long> getModelIdList() {
+        if (pojo != null && !pojo.isEmpty()) {
+            Object idArr = pojo.get("idArr");
+            if (!StringUtils.isEmpty(idArr)) {
+                String[] ids = idArr.toString().split(",");
+                List<Long> list = new ArrayList<>(ids.length);
+                for (String id : ids) {
+                    if (RGXUtils.matches(id, RGX.INTEGER)) {
+                        list.add(Long.parseLong(id));
+                    }
+                }
+                return list.isEmpty() ? null : list;
+            }
         }
         return null;
     }

@@ -148,18 +148,26 @@ public class SQLCnd implements Cnd {
 
     @Override
     public Cnd limit(Integer pageNo, Integer pageSize) {
+        return limit(pageNo, pageSize, true);
+    }
+
+    @Override
+    public Cnd limit(Integer pageNo, Integer pageSize, boolean spilled) {
         if (pageNo == null || pageNo < 1) {
             pageNo = 1;
         }
         if (pageSize == null || pageSize < 1 || pageSize > 1000) {
-            pageSize = 10;
+            pageSize = 50;
         }
-        pagination = new SimplePagination<>(pageNo, pageSize);
+        pagination = new SimplePagination<>(pageNo, pageSize, spilled);
         return this;
     }
 
     @Override
     public Cnd limit(Integer pageSize) {
+        if (pageSize == null || pageSize < 1 || pageSize > 1000) {
+            pageSize = 50;
+        }
         pagination = new SimplePagination<>(1, pageSize);
         return this;
     }

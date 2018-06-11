@@ -5,24 +5,28 @@ import java.util.List;
 
 public interface Pagination<T> extends Serializable {
 
-	public Integer getPageNo();
+    public boolean isSpilled();
 
-	public void setPageNo(Integer pageNo);
+    public void setSpilled(boolean spilled);
 
-	public Integer getPageSize();
+    public Integer getPageNo();
 
-	public void setPageSize(Integer pageSize);
+    public void setPageNo(Integer pageNo);
 
-	public Integer getPageTotal();
+    public Integer getPageSize();
 
-	public void setPageTotal(Integer pageTotal);
+    public void setPageSize(Integer pageSize);
 
-	public Integer getPageNumber();
+    public Integer getPageTotal();
 
-	public void setPageNumber(Integer pageNumber);
+    public void setPageTotal(Integer pageTotal);
 
-	public List<T> getData();
+    public Integer getPageNumber();
 
-	public void setData(List<T> data);
+    public void setPageNumber(Integer pageNumber);
+
+    public List<T> getData();
+
+    public void setData(List<T> data);
 
 }
