@@ -5,6 +5,7 @@ import com.soho.oauth2.model.OAuth2Client;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2TokenService;
+import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.OAuth2Config;
 import com.soho.spring.security.EncryptService;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
@@ -23,6 +24,8 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     private EncryptService encryptService;
     @Autowired
     private OAuth2Config oAuth2Config;
+    @Autowired
+    private DeftConfig deftConfig;
 
     // 扩展接口,保存授权数据到系统
     public abstract void addClientTokenBySelf(OAuth2Token oAuth2Token) throws BizErrorEx;
@@ -57,7 +60,7 @@ public abstract class AbstractOAuth2TokenService implements OAuth2TokenService {
     }
 
     protected String getEncryptyKey() {
-        return encryptService.aes_d(oAuth2Config.getEncryptyKey());
+        return encryptService.aes_d(deftConfig.getProjectKey());
     }
 
     @Override

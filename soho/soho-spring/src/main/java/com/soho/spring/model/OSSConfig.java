@@ -1,23 +1,30 @@
 package com.soho.spring.model;
 
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * @author shadow
  */
 @Component
-@ConfigurationProperties(prefix = "alioss")
 public class OSSConfig {
 
+    @Value("${alioss.appId}")
     private String appId;
+    @Value("${alioss.appKey}")
     private String appKey;
+    @Value("${alioss.domain}")
     private String domain;
+    @Value("${alioss.endpoint}")
     private String endpoint;
+    @Value("${alioss.bucketName}")
     private String bucketName;
+    @Value("${alioss.savePath}")
     private String savePath;
+    @Value("${alioss.maxFileSize}")
     private String maxFileSize;
+    @Value("${alioss.maxRequestSize}")
     private String maxRequestSize;
 
     public String getAppId() {

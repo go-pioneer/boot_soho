@@ -1,24 +1,29 @@
 package com.soho.spring.model;
 
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * @author shadow
  */
 @Component
-@ConfigurationProperties(prefix = "default")
 public class DeftConfig {
-    // 基本参数
+
+    @Value("${default.domain}")
     private String domain;
+    @Value("${default.projectCode}")
     private String projectCode;
+    @Value("${default.failureUrl}")
     private String failureUrl;
+    @Value("${default.redirectUrl}")
     private String redirectUrl;
+    @Value("${default.jsoupPrefix}")
     private String jsoupPrefix;
+    @Value("${default.apiPrefix}")
     private String[] apiPrefix;
-    // 加密参数
-    private String encryptyKey = "&OGFpY/6xoV`@P1Z";
+    @Value("${default.projectKey}")
+    private String projectKey;
 
     public String getDomain() {
         return domain;
@@ -68,12 +73,12 @@ public class DeftConfig {
         this.apiPrefix = apiPrefix;
     }
 
-    public String getEncryptyKey() {
-        return encryptyKey;
+    public String getProjectKey() {
+        return projectKey;
     }
 
-    public void setEncryptyKey(String encryptyKey) {
-        this.encryptyKey = encryptyKey;
+    public void setProjectKey(String projectKey) {
+        this.projectKey = projectKey;
     }
 
 }

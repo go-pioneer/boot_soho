@@ -1,32 +1,49 @@
 package com.soho.spring.model;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * @author shadow
  */
 @Component
-@ConfigurationProperties(prefix = "spring.datasource")
 public class DbConfig {
 
+    @Value("${spring.datasource.database}")
     private String database;
+    @Value("${spring.datasource.url}")
     private String url;
+    @Value("${spring.datasource.username}")
     private String username;
+    @Value("${spring.datasource.password}")
     private String password;
+    @Value("${spring.datasource.driverClassName}")
     private String driverClassName;
+    @Value("${spring.datasource.initialSize}")
     private int initialSize;
+    @Value("${spring.datasource.minIdle}")
     private int minIdle;
+    @Value("${spring.datasource.maxActive}")
     private int maxActive;
+    @Value("${spring.datasource.maxWait}")
     private int maxWait;
+    @Value("${spring.datasource.timeBetweenEvictionRunsMillis}")
     private int timeBetweenEvictionRunsMillis;
+    @Value("${spring.datasource.minEvictableIdleTimeMillis}")
     private int minEvictableIdleTimeMillis;
+    @Value("${spring.datasource.validationQuery}")
     private String validationQuery;
+    @Value("${spring.datasource.testWhileIdle}")
     private boolean testWhileIdle;
+    @Value("${spring.datasource.testOnBorrow}")
     private boolean testOnBorrow;
+    @Value("${spring.datasource.testOnReturn}")
     private boolean testOnReturn;
+    @Value("${spring.datasource.filters}")
     private String filters;
+    @Value("${spring.datasource.logSlowSql}")
     private String logSlowSql;
+    @Value("${spring.datasource.mgbXmlLocation}")
     private String mgbXmlLocation;
 
     public String getDatabase() {

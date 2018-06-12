@@ -1,6 +1,7 @@
 package com.soho.spring.model;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,15 +9,16 @@ import org.springframework.stereotype.Component;
  * @author shadow
  */
 @Component
-@ConfigurationProperties(prefix = "oauth2")
 public class OAuth2Config {
 
-    // 基本参数
+    @Value("${oauth2.domain}")
     private String domain;
+    @Value("${oauth2.codeExpire}")
     private Long codeExpire;
+    @Value("${oauth2.tokenExpire}")
     private Long tokenExpire;
+    @Value("${oauth2.loginView}")
     private String loginView;
-    private String encryptyKey;
 
     public String getDomain() {
         return domain;
@@ -48,14 +50,6 @@ public class OAuth2Config {
 
     public void setLoginView(String loginView) {
         this.loginView = loginView;
-    }
-
-    public String getEncryptyKey() {
-        return encryptyKey;
-    }
-
-    public void setEncryptyKey(String encryptyKey) {
-        this.encryptyKey = encryptyKey;
     }
 
 }
