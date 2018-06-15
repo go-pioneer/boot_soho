@@ -80,7 +80,11 @@ public class PageableInterceptor extends MybatisInterceptor {
         pageNumber = (pageTotal % pageSize == 0) ? (pageTotal / pageSize) : (pageTotal / pageSize + 1);
         pagination.setPageNumber(pageNumber);
         if (pagination.isSpilled() && pageNo > pageNumber) {
-            pagination.setPageNo(pageNumber);
+            if (pageNumber <= 0) {
+                pagination.setPageNo(1);
+            } else {
+                pagination.setPageNo(pageNumber);
+            }
         }
     }
 

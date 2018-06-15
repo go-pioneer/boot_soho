@@ -7,7 +7,11 @@ public class PaginationUtils {
 
     public static String getHtml(String function, Integer pageNo, Integer pageSize, Integer pageNumber) {
         if (pageNo > pageNumber) {
-            pageNo = pageNumber;
+            if (pageNumber <= 0) {
+                pageNo = 1;
+            } else {
+                pageNo = pageNumber;
+            }
         }
         StringBuffer buffer = new StringBuffer();
         buffer.append("<div class=\"am-u-lg-12 am-cf\">");
@@ -15,7 +19,9 @@ public class PaginationUtils {
         buffer.append("<input type=\"hidden\" id=\"" + function + "_pageSize\" name=\"pageSize\" value=\"" + pageSize + "\"/>");
         buffer.append("<div class='am-fr'><ul class='am-pagination tpl-pagination'>");
         buffer.append("<li><a title=\"上一页\" href=\"javascript:void(0);\" onclick=\"" + function + "(\'" + function + "\'," + ((pageNo - 1) < 1 ? 1 : (pageNo - 1)) + ");\">«</a></li>");
-        if (pageNumber <= 10 || pageNo <= 5) { // 总页数<10或当前页<=5
+        if (pageNumber <= 0) {
+            buffer.append(addPart(function, pageNo, pageSize, 1, 1));
+        } else if ((pageNumber > 0 && pageNumber <= 10) || pageNo <= 5) { // 总页数<10或当前页<=5
             int end = (pageNo <= 5 && pageNumber > 10) ? 10 : pageNumber;
             end = end > pageNumber ? pageNumber : end;
             buffer.append(addPart(function, pageNo, pageSize, 1, end));
