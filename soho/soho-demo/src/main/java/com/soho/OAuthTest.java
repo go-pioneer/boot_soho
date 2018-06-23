@@ -2,6 +2,7 @@ package com.soho;
 
 import com.soho.spring.utils.AESUtils;
 import com.soho.spring.utils.MD5Utils;
+import com.soho.spring.utils.RGXUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -134,12 +135,12 @@ public class OAuthTest {
 //        oauth2_userinfo(access_token, access_pbk);
 //        oauth2_logout(access_token, access_pbk);
 //        oauth2_refresh(access_token, access_pbk, refresh_token);
-        String uid = "123456";
-        String md5 = MD5Utils.MD5PBK(uid);
-        System.out.println(AESUtils.encrypt(uid)+"---"+uid+"---"+md5);
+//        String uid = "123456";
+//        String md5 = MD5Utils.MD5PBK(uid);
+//        System.out.println(AESUtils.encrypt(uid)+"---"+uid+"---"+md5);
         // 1472a4c61c68561922fe2a5c6ca597fe---123456---10019a5e35b8ccc34a686479893016d8
-        System.out.println(AESUtils.decrypt("1472a4c61c68561922fe2a5c6ca597fe"));
-
+//        System.out.println(AESUtils.decrypt("1472a4c61c68561922fe2a5c6ca597fe"));
+        System.out.println(RGXUtils.isURL("http://baidu.com"));
 
     }
 

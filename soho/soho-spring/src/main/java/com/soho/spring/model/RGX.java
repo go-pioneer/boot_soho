@@ -18,7 +18,10 @@ public enum RGX {
     // 帐号格式 字母开头+数字或下划线6-15位
     ACCOUNT("^[a-zA-Z][a-zA-Z0-9_]{5,14}$"),
     // 密码格式 任意字符6-18位
-    PASSWORD("^.{6,18}?");
+    PASSWORD("^.{6,18}?"),
+    // URL地址
+    URL("^((ht|f)tps?):\\/\\/[\\w\\-]+(\\.[\\w\\-]+)+([\\w\\-\\.,@?^=%&:\\/~\\+#]*[\\w\\-\\@?^=%&\\/~\\+#])?$");
+
 
     private RGX(String value) {
         this.value = value;

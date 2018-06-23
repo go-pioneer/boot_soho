@@ -1,6 +1,5 @@
 package com.soho.spring.extend.freemarker;
 
-import com.soho.spring.model.RGX;
 import com.soho.spring.utils.PaginationUtils;
 import com.soho.spring.utils.RGXUtils;
 import freemarker.core.Environment;
@@ -31,13 +30,13 @@ public class PaginationTag implements TemplateDirectiveModel {
         if (pageFun == null || StringUtils.isEmpty(pageFun.toString())) {
             throw new TemplateException("参数[fn]非法", null);
         }
-        if (!RGXUtils.matches(pageNo == null ? "" : pageNo.toString(), RGX.INTEGER)) {
+        if (!RGXUtils.isInteger(pageNo == null ? "" : pageNo)) {
             throw new TemplateException("参数[pageNo]非法", null);
         }
-        if (!RGXUtils.matches(pageSize == null ? "" : pageSize.toString(), RGX.INTEGER)) {
+        if (!RGXUtils.isInteger(pageSize == null ? "" : pageSize)) {
             throw new TemplateException("参数[pageSize]非法", null);
         }
-        if (!RGXUtils.matches(pageNumber == null ? "" : pageNumber.toString(), RGX.INTEGER)) {
+        if (!RGXUtils.isInteger(pageNumber == null ? "" : pageNumber)) {
             throw new TemplateException("参数[pageNumber]非法", null);
         }
         env.getOut().write(PaginationUtils.getHtml(pageFun.toString(), Integer.parseInt(pageNo.toString()), Integer.parseInt(pageSize.toString()), Integer.parseInt(pageNumber.toString())));

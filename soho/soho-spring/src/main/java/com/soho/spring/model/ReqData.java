@@ -127,7 +127,7 @@ public class ReqData<T, M> implements Serializable {
     public Long getModelId() {
         if (pojo != null && !pojo.isEmpty()) {
             Object id = pojo.get("id");
-            if (id != null && RGXUtils.matches(id.toString(), RGX.INTEGER)) {
+            if (id != null && RGXUtils.isInteger(id)) {
                 return Long.parseLong(id.toString());
             }
         }
@@ -141,7 +141,7 @@ public class ReqData<T, M> implements Serializable {
                 String[] ids = idArr.toString().split(",");
                 List<Long> list = new ArrayList<>(ids.length);
                 for (String id : ids) {
-                    if (RGXUtils.matches(id, RGX.INTEGER)) {
+                    if (RGXUtils.isInteger(id)) {
                         list.add(Long.parseLong(id));
                     }
                 }

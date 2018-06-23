@@ -1,7 +1,6 @@
 package com.soho.spring.shiro.utils;
 
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.spring.model.RGX;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.utils.NumUtils;
@@ -34,7 +33,7 @@ public class FormTokenUtils {
         if (isFormTokenRequest(handler)) {
             String form_sn = request.getParameter(SECURITY_FORM_SN);
             String form_token = request.getParameter(SECURITY_FORM_TOKEN);
-            if (StringUtils.isEmpty(form_sn) || !RGXUtils.matches(form_sn, RGX.INTEGER)) {
+            if (StringUtils.isEmpty(form_sn) || !RGXUtils.isInteger(form_sn)) {
                 throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "序列编号安全校验参数异常");
             }
             if (StringUtils.isEmpty(form_token) || form_token.length() > 100) {
