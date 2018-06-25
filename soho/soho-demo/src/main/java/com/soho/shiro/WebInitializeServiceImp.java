@@ -5,26 +5,24 @@ import com.soho.shiro.realm.WebLoginRealm;
 import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
-import com.soho.spring.shiro.initialize.ShiroInitializeService;
+import com.soho.spring.shiro.initialize.WebInitializeService;
 import com.soho.spring.utils.WCCUtils;
+import freemarker.template.TemplateDirectiveModel;
 import org.apache.shiro.realm.Realm;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.Filter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author shadow
  */
 @Component
-public class ShiroInitializeServiceImp implements ShiroInitializeService {
+public class WebInitializeServiceImp implements WebInitializeService {
 
     @Override
-    public InitDefinition initFilterChainDefinition() {
+    public InitDefinition initShiroFilterChainDefinition() {
         InitDefinition definition = new InitDefinition();
         definition.setLoginUrl("/dog/login");
         definition.setSuccessUrl("/dog/findOne");
@@ -41,14 +39,14 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
     }
 
     @Override
-    public List<Realm> initRealms() {
+    public List<Realm> initShiroRealms() {
         List<Realm> realms = new ArrayList<>();
         realms.add(new WebLoginRealm());
         return realms;
     }
 
     @Override
-    public Map<String, Filter> initFilters() {
+    public Map<String, Filter> initShiroFilters() {
         return new LinkedHashMap<>();
     }
 
@@ -58,11 +56,16 @@ public class ShiroInitializeServiceImp implements ShiroInitializeService {
     }
 
     @Override
-    public List<HandlerInterceptor> initInterceptor() {
+    public List<HandlerInterceptor> initWebMVCInterceptor() {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new KillRobotInterceptor());
         interceptors.add(new FormTokenInterceptor());
         return interceptors;
+    }
+
+    @Override
+    public Map<String, TemplateDirectiveModel> initFreeMarkerTag() {
+        return new HashMap<>();
     }
 
 }

@@ -4,7 +4,7 @@ import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
 import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.OSSConfig;
 import com.soho.spring.mvc.filter.SafetyFilter;
-import com.soho.spring.shiro.initialize.ShiroInitializeService;
+import com.soho.spring.shiro.initialize.WebInitializeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -23,14 +23,14 @@ import java.util.List;
  * @author shadow
  */
 @Configuration
-public class MvcWebConfig implements WebMvcConfigurer {
+public class SpringMvcConfiguration implements WebMvcConfigurer {
 
     @Autowired(required = false)
     private DeftConfig deftConfig;
     @Autowired(required = false)
     private OSSConfig ossConfig;
     @Autowired(required = false)
-    private ShiroInitializeService shiroInitializeService;
+    private WebInitializeService webInitializeService;
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
@@ -53,7 +53,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        List<HandlerInterceptor> interceptors = shiroInitializeService.initInterceptor();
+        List<HandlerInterceptor> interceptors = webInitializeService.initWebMVCInterceptor();
         for (HandlerInterceptor interceptor : interceptors) {
             InterceptorRegistration addInterceptor = registry.addInterceptor(interceptor);
             addInterceptor.excludePathPatterns("/static/**"); // 排除配置

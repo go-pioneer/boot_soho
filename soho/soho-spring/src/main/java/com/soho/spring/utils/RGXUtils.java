@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 public class RGXUtils {
 
     // 正则校验
-    private static boolean matches(String object, RGX regex) {
+    public static boolean matches(String object, RGX regex) {
         if (StringUtils.isEmpty(object)) {
             return false;
         }

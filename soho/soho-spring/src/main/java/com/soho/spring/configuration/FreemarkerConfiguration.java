@@ -2,18 +2,23 @@ package com.soho.spring.configuration;
 
 import com.soho.spring.extend.HtmlTemplateLoader;
 import com.soho.spring.extend.freemarker.*;
+import com.soho.spring.shiro.initialize.WebInitializeService;
+import freemarker.template.TemplateDirectiveModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author shadow
  */
 @Configuration
-public class FreeMarkerConfig {
+public class FreemarkerConfiguration {
 
+    @Autowired(required = false)
+    private WebInitializeService webInitializeService;
     @Autowired(required = false)
     private freemarker.template.Configuration configuration;
     @Autowired(required = false)
@@ -48,6 +53,12 @@ public class FreeMarkerConfig {
         configuration.setSharedVariable("formToken", tokenTag);
         configuration.setSharedVariable("OSSDomain", ossDomainTag);
         configuration.setSharedVariable("pagination", paginationTag);
+        Map<String, TemplateDirectiveModel> tagMap = webInitializeService.initFreeMarkerTag();
+        if (tagMap != null && !tagMap.isEmpty()) {
+            for (Map.Entry<String, TemplateDirectiveModel> entry : tagMap.entrySet()) {
+                configuration.setSharedVariable(entry.getKey().trim(), entry.getValue());
+            }
+        }
     }
 
 }

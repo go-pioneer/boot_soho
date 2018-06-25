@@ -7,7 +7,7 @@ import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
 import com.soho.spring.shiro.filter.SimpleRoleAuthorizationFilter;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
-import com.soho.spring.shiro.initialize.ShiroInitializeService;
+import com.soho.spring.shiro.initialize.WebInitializeService;
 import com.soho.spring.shiro.session.ShiroSessionDAO;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -36,7 +36,7 @@ public class ShiroConfiguration {
     @Autowired(required = false)
     private CacheManager cacheManager;
     @Autowired(required = false)
-    private ShiroInitializeService shiroInitializeService;
+    private WebInitializeService webInitializeService;
     @Autowired(required = false)
     private DeftConfig deftConfig;
 
@@ -48,7 +48,7 @@ public class ShiroConfiguration {
     @Bean
     public ShiroFilterFactoryBean initShiroFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new DefaultShiroFilterFactoryBean();
-        InitDefinition definition = shiroInitializeService.initFilterChainDefinition();
+        InitDefinition definition = webInitializeService.initShiroFilterChainDefinition();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         shiroFilterFactoryBean.setLoginUrl(definition.getLoginUrl());
         shiroFilterFactoryBean.setSuccessUrl(definition.getSuccessUrl());
@@ -61,7 +61,7 @@ public class ShiroConfiguration {
             filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
         }
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-        Map<String, Filter> map = shiroInitializeService.initFilters();
+        Map<String, Filter> map = webInitializeService.initShiroFilters();
         if (!map.containsKey("authc")) {
             map.put("authc", new SimpleFormAuthenticationFilter(deftConfig.getApiPrefix()));
         }
@@ -78,17 +78,17 @@ public class ShiroConfiguration {
     @Bean
     public SecurityManager initSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        List<Realm> realms = shiroInitializeService.initRealms();
+        List<Realm> realms = webInitializeService.initShiroRealms();
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
         List<String> anonUrls = new ArrayList<>();
-        for (RuleChain ruleChain : shiroInitializeService.initFilterChainDefinition().getAnonRuleChains()) {
+        for (RuleChain ruleChain : webInitializeService.initShiroFilterChainDefinition().getAnonRuleChains()) {
             anonUrls.add(ruleChain.getUrl());
         }
         defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(anonUrls));
         Cookie cookie = defaultWebSessionManager.getSessionIdCookie();
-        cookie.setSecure(shiroInitializeService.isHttpsCookieSecure());
+        cookie.setSecure(webInitializeService.isHttpsCookieSecure());
         securityManager.setSessionManager(defaultWebSessionManager);
         return securityManager;
     }
