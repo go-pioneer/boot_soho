@@ -1,6 +1,7 @@
 package com.soho.spring.configuration;
 
 import com.soho.spring.model.DeftConfig;
+import com.soho.spring.model.ErrorPageConfig;
 import com.soho.spring.shiro.factory.DefaultShiroFilterFactoryBean;
 import com.soho.spring.shiro.filter.SimpleFormAuthenticationFilter;
 import com.soho.spring.shiro.filter.SimpleKickOutSessionFilter;
@@ -39,6 +40,8 @@ public class ShiroConfiguration {
     private WebInitializeService webInitializeService;
     @Autowired(required = false)
     private DeftConfig deftConfig;
+    @Autowired(required = false)
+    private ErrorPageConfig errorPageConfig;
 
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
@@ -66,7 +69,7 @@ public class ShiroConfiguration {
             map.put("authc", new SimpleFormAuthenticationFilter(deftConfig.getApiPrefix()));
         }
         if (!map.containsKey("role")) {
-            map.put("role", new SimpleRoleAuthorizationFilter(deftConfig.getApiPrefix(), deftConfig.getRedirectUrl()));
+            map.put("role", new SimpleRoleAuthorizationFilter(deftConfig.getApiPrefix(), errorPageConfig.getUnauthorizedUrl()));
         }
         if (!map.containsKey("kickout")) {
             map.put("kickout", new SimpleKickOutSessionFilter(deftConfig.getApiPrefix()));

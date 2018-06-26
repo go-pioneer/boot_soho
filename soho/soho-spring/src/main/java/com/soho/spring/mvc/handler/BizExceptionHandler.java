@@ -1,10 +1,7 @@
 package com.soho.spring.mvc.handler;
 
 import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.spring.model.DeftConfig;
-import com.soho.spring.model.OSSConfig;
-import com.soho.spring.model.RetCode;
-import com.soho.spring.model.RetData;
+import com.soho.spring.model.*;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.FormTokenUtils;
 import com.soho.spring.shiro.utils.KillRobotUtils;
@@ -31,14 +28,19 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
     @Autowired
     private DeftConfig deftConfig;
     @Autowired
+    private ErrorPageConfig errorPageConfig;
+    @Autowired
     private OSSConfig ossConfig;
 
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
                                          Exception ex) {
-        FormTokenUtils.keepFormToken(request, handler); // 保持FormToken有效性
-        KillRobotUtils.keepKillRobot(request, handler); // 保持KillRobot有效性
         String requestUri = request.getRequestURI();
         String queryString = StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString();
+        if (requestUri.startsWith("/static/")) { // 静态资源异常不处理
+            return null;
+        }
+        FormTokenUtils.keepFormToken(request, handler); // 保持FormToken有效性
+        KillRobotUtils.keepKillRobot(request, handler); // 保持KillRobot有效性
         Map<String, String> callmap = new HashMap<>();
         callmap.put("callurl", requestUri + queryString);
         RetData<Object> retData = null;
@@ -64,7 +66,7 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
             HttpUtils.responseJsonData(response, retData);
             return new FastView().done();
         } else {
-            return new FastView(deftConfig.getFailureUrl()).add("retData", retData).done();
+            return new FastView(errorPageConfig.getFailureUrl()).add("retData", retData).done();
         }
     }
 }

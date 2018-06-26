@@ -25,14 +25,14 @@ import java.util.Set;
 public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
 
     private String[] apiPrefix;
-    private String redirectUrl;
+    private String unauthorizedUrl;
 
     public SimpleRoleAuthorizationFilter() {
     }
 
-    public SimpleRoleAuthorizationFilter(String[] apiPrefix, String redirectUrl) {
+    public SimpleRoleAuthorizationFilter(String[] apiPrefix, String unauthorizedUrl) {
         this.apiPrefix = apiPrefix;
-        this.redirectUrl = redirectUrl;
+        this.unauthorizedUrl = unauthorizedUrl;
     }
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
@@ -55,16 +55,15 @@ public class SimpleRoleAuthorizationFilter extends AuthorizationFilter {
                 HttpUtils.responseJsonData(httpResponse, retData);
             } else {
                 // 读取无权限回调地址
-                String unauthorizedUrl = getUnauthorizedUrl();
                 if (subject.isAuthenticated()) {
-                    if (StringUtils.hasText(unauthorizedUrl)) {
-                        WebUtils.issueRedirect(httpRequest, httpResponse, unauthorizedUrl);
+                    if (StringUtils.hasText(getUnauthorizedUrl())) {
+                        WebUtils.issueRedirect(httpRequest, httpResponse, getUnauthorizedUrl());
                     } else {
                         WebUtils.toHttp(httpResponse).sendError(401);
                     }
                 } else {
-                    if (StringUtils.hasText(redirectUrl)) {
-                        WebUtils.issueRedirect(httpRequest, httpResponse, redirectUrl);
+                    if (StringUtils.hasText(unauthorizedUrl)) {
+                        WebUtils.issueRedirect(httpRequest, httpResponse, unauthorizedUrl);
                     } else {
                         WebUtils.toHttp(httpResponse).sendError(404);
                     }

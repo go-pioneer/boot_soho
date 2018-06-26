@@ -2,12 +2,15 @@ package com.soho.spring.configuration;
 
 import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
 import com.soho.spring.model.DeftConfig;
+import com.soho.spring.model.ErrorPageConfig;
 import com.soho.spring.model.OSSConfig;
 import com.soho.spring.mvc.filter.SafetyFilter;
+import com.soho.spring.mvc.interceptor.ErrorPageInterceptor;
 import com.soho.spring.shiro.initialize.WebInitializeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,6 +33,8 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     @Autowired(required = false)
     private OSSConfig ossConfig;
     @Autowired(required = false)
+    private ErrorPageConfig errorPageConfig;
+    @Autowired(required = false)
     private WebInitializeService webInitializeService;
 
     @Bean
@@ -41,18 +46,35 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean testFilterRegistration() {
+    public ErrorPageFilter errorPageFilter() {
+        return new ErrorPageFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean safeFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new SafetyFilter());
-        registration.setName("SafetyFilter"); // 设置拦截器名称
+        registration.setName("safetyFilter"); // 设置拦截器名称
         registration.addInitParameter("jsoupPrefix", deftConfig.getJsoupPrefix()); // 添加默认参数
         registration.addUrlPatterns("/*"); // 设置过滤路径，/*所有路径
         registration.setOrder(1); // 设置优先级
         return registration;
     }
 
+    @Bean
+    public FilterRegistrationBean errorPageFilterRegistration() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(errorPageFilter());
+        registration.setEnabled(false);
+        return registration;
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 默认错误页面拦截器处理
+        InterceptorRegistration error = registry.addInterceptor(new ErrorPageInterceptor(deftConfig, errorPageConfig));
+        error.excludePathPatterns("/static/**"); // 排除配置
+        error.addPathPatterns("/**"); // 拦截配置
         List<HandlerInterceptor> interceptors = webInitializeService.initWebMVCInterceptor();
         for (HandlerInterceptor interceptor : interceptors) {
             InterceptorRegistration addInterceptor = registry.addInterceptor(interceptor);

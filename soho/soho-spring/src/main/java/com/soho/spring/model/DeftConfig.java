@@ -14,10 +14,6 @@ public class DeftConfig {
     private String domain;
     @Value("${default.projectCode}")
     private String projectCode;
-    @Value("${default.failureUrl}")
-    private String failureUrl;
-    @Value("${default.redirectUrl}")
-    private String redirectUrl;
     @Value("${default.jsoupPrefix}")
     private String jsoupPrefix;
     @Value("${default.apiPrefix}")
@@ -39,22 +35,6 @@ public class DeftConfig {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
-    }
-
-    public String getFailureUrl() {
-        return failureUrl;
-    }
-
-    public void setFailureUrl(String failureUrl) {
-        this.failureUrl = failureUrl;
-    }
-
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
-
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
     }
 
     public String getJsoupPrefix() {
