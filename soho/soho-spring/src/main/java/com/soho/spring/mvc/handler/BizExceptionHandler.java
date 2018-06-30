@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,11 +65,23 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
         } else {
             retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }
-        if (HttpUtils.isRetJson(request, deftConfig.getApiPrefix())) {
+        if (isJsonResponse(handler) || HttpUtils.isRetJson(request, deftConfig.getApiPrefix())) {
             HttpUtils.responseJsonData(response, retData);
             return new FastView().done();
         } else {
             return new FastView(errorPageConfig.getFailureUrl()).add("retData", retData).done();
         }
     }
+
+    public static boolean isJsonResponse(Object handler) {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            if (method.getAnnotation(ResponseBody.class) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

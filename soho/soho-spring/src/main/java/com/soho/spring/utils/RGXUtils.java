@@ -10,39 +10,36 @@ import org.springframework.util.StringUtils;
 public class RGXUtils {
 
     // 正则校验
-    public static boolean matches(String object, RGX regex) {
-        if (StringUtils.isEmpty(object)) {
-            return false;
-        }
-        return object.matches(regex.toString());
+    public static boolean matches(Object object, RGX regex) {
+        return StringUtils.isEmpty(object) ? false : object.toString().matches(regex.toString());
     }
 
     public static boolean isInteger(Object object) {
-        return matches(object.toString(), RGX.INTEGER);
+        return matches(object, RGX.INTEGER);
     }
 
     public static boolean isFloat(Object object) {
-        return matches(object.toString(), RGX.FLOAT);
+        return matches(object, RGX.FLOAT);
     }
 
     public static boolean isMobile(Object object) {
-        return matches(object.toString(), RGX.MOBILE);
+        return matches(object, RGX.MOBILE);
     }
 
     public static boolean isEmail(Object object) {
-        return matches(object.toString(), RGX.EMAIL);
+        return matches(object, RGX.EMAIL);
     }
 
     public static boolean isAccount(Object object) {
-        return matches(object.toString(), RGX.ACCOUNT);
+        return matches(object, RGX.ACCOUNT);
     }
 
     public static boolean isPassword(Object object) {
-        return matches(object.toString(), RGX.PASSWORD);
+        return matches(object, RGX.PASSWORD);
     }
 
     public static boolean isURL(Object object) {
-        return matches(object.toString(), RGX.URL);
+        return matches(object, RGX.URL);
     }
 
     public static boolean isImgUrl(String imgurl) {
