@@ -230,7 +230,7 @@ public class SQLCnd implements Cnd {
     }
 
     @Override
-    public Cnd addUpdateKeyValue(String[] keys, Object[] values) {
+    public Cnd addUpdateKeyValue(String[] keys, Object... values) {
         if (keys != null && values != null && keys.length > 0 && keys.length == values.length) {
             for (int i = 0; i < keys.length; i++) {
                 updateObj.put(keys[i], values[i]);

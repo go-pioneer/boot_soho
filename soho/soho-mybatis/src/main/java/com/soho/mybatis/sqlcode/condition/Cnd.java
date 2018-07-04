@@ -1,8 +1,6 @@
 package com.soho.mybatis.sqlcode.condition;
 
-import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.pageable.Pagination;
-import com.soho.mybatis.sqlcode.aconst.OPT;
 import com.soho.mybatis.sqlcode.aconst.SortBy;
 import com.soho.mybatis.sqlcode.domain.Condition;
 import com.soho.mybatis.sqlcode.domain.Join;
@@ -61,7 +59,7 @@ public interface Cnd {
 
     public Cnd addUpdateObj(Object obj);
 
-    public Cnd addUpdateKeyValue(String[] keys, Object[] values);
+    public Cnd addUpdateKeyValue(String[] keys, Object... values);
 
     public Cnd addOther(String key, Object value);
 
