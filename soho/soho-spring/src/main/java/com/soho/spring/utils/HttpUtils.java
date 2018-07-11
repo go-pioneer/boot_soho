@@ -1,11 +1,14 @@
 package com.soho.spring.utils;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -79,6 +82,17 @@ public class HttpUtils {
             }
         }
         return ipAddress;
+    }
+
+    public static boolean isJsonResponse(Object handler) {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            if (method.getAnnotation(ResponseBody.class) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

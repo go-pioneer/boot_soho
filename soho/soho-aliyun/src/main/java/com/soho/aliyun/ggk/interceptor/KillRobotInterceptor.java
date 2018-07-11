@@ -6,6 +6,7 @@ import com.soho.spring.mvc.annotation.KillRobot;
 import com.soho.spring.shiro.utils.KillRobotUtils;
 import com.soho.spring.utils.HttpUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -37,7 +38,7 @@ public class KillRobotInterceptor implements HandlerInterceptor {
         String goback = annotation.goback(); // 返回上一个请求
         String valid = annotation.valid(); // 认证地址
         if (!KillRobotUtils.validate()) {
-            if (HttpUtils.isAjax(request)) {
+            if (HttpUtils.isJsonResponse(handler) || HttpUtils.isAjax(request)) {
                 throw new BizErrorEx(RetCode.BIZ_ERROR_STATUS, "请先进行安全认证");
             }
             if (!StringUtils.isEmpty(goback)) {

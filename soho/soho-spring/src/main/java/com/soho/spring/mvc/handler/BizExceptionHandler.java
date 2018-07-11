@@ -65,23 +65,12 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
         } else {
             retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }
-        if (isJsonResponse(handler) || HttpUtils.isRetJson(request, deftConfig.getApiPrefix())) {
+        if (HttpUtils.isJsonResponse(handler) || HttpUtils.isRetJson(request, deftConfig.getApiPrefix())) {
             HttpUtils.responseJsonData(response, retData);
             return new FastView().done();
         } else {
             return new FastView(errorPageConfig.getFailureUrl()).add("retData", retData).done();
         }
-    }
-
-    public static boolean isJsonResponse(Object handler) {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Method method = handlerMethod.getMethod();
-            if (method.getAnnotation(ResponseBody.class) != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
