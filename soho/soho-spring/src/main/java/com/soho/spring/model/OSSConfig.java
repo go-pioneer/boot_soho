@@ -26,6 +26,8 @@ public class OSSConfig {
     private String maxFileSize;
     @Value("${alioss.maxRequestSize}")
     private String maxRequestSize;
+    @Value("${alioss.ggkPath}")
+    private String ggkPath;
 
     public String getAppId() {
         return appId;
@@ -89,6 +91,14 @@ public class OSSConfig {
 
     public void setMaxRequestSize(String maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
+    }
+
+    public String getGgkPath() {
+        return ggkPath;
+    }
+
+    public void setGgkPath(String ggkPath) {
+        this.ggkPath = ggkPath;
     }
 
 }

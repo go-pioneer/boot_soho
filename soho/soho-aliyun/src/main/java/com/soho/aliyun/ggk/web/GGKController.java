@@ -3,9 +3,11 @@ package com.soho.aliyun.ggk.web;
 import com.aliyuncs.afs.model.v20180112.AuthenticateSigRequest;
 import com.aliyuncs.afs.model.v20180112.AuthenticateSigResponse;
 import com.soho.aliyun.ggk.utils.GGKUtils;
+import com.soho.spring.model.OSSConfig;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.KillRobotUtils;
 import com.soho.spring.utils.HttpUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +20,13 @@ import java.net.URLEncoder;
 @RequestMapping("/ggk")
 public class GGKController {
 
+    @Autowired
+    private OSSConfig ossConfig;
+
     @RequestMapping("/init")
     public Object init(String callurl) {
         KillRobotUtils.release();
-        return new FastView("/aliyun/ggk").add("callurl", StringUtils.isEmpty(callurl) ? "" : callurl).done();
+        return new FastView(ossConfig.getGgkPath()).add("callurl", StringUtils.isEmpty(callurl) ? "" : callurl).done();
     }
 
     @RequestMapping("/valid")
