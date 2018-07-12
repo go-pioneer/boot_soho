@@ -17,11 +17,6 @@ public class ErrorPageConfig {
     @Value("${errorPage.500}")
     private String error500;
 
-    @Value("${errorPage.failure}")
-    private String failureUrl;
-    @Value("${errorPage.unauthorized}")
-    private String unauthorizedUrl;
-
     public String getError403() {
         return error403;
     }
@@ -44,22 +39,6 @@ public class ErrorPageConfig {
 
     public void setError500(String error500) {
         this.error500 = error500;
-    }
-
-    public String getFailureUrl() {
-        return failureUrl;
-    }
-
-    public void setFailureUrl(String failureUrl) {
-        this.failureUrl = failureUrl;
-    }
-
-    public String getUnauthorizedUrl() {
-        return unauthorizedUrl;
-    }
-
-    public void setUnauthorizedUrl(String unauthorizedUrl) {
-        this.unauthorizedUrl = unauthorizedUrl;
     }
 
 }

@@ -69,7 +69,7 @@ public class ShiroConfiguration {
             map.put("authc", new SimpleFormAuthenticationFilter(deftConfig.getApiPrefix()));
         }
         if (!map.containsKey("role")) {
-            map.put("role", new SimpleRoleAuthorizationFilter(deftConfig.getApiPrefix(), errorPageConfig.getUnauthorizedUrl()));
+            map.put("role", new SimpleRoleAuthorizationFilter(deftConfig.getApiPrefix(), errorPageConfig.getError403()));
         }
         if (!map.containsKey("kickout")) {
             map.put("kickout", new SimpleKickOutSessionFilter(deftConfig.getApiPrefix()));

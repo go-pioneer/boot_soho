@@ -12,6 +12,8 @@ public class DeftConfig {
 
     @Value("${default.domain}")
     private String domain;
+    @Value("${default.homePage}")
+    private String homePage;
     @Value("${default.projectCode}")
     private String projectCode;
     @Value("${default.jsoupPrefix}")
@@ -27,6 +29,14 @@ public class DeftConfig {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getHomePage() {
+        return homePage;
+    }
+
+    public void setHomePage(String homePage) {
+        this.homePage = homePage;
     }
 
     public String getProjectCode() {

@@ -13,10 +13,13 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.MultipartConfigElement;
@@ -86,6 +89,14 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new FastJsonHttpUTF8MessageConverter()); // 设置HTTP UTF-8 JSON对象模型
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        if (!StringUtils.isEmpty(deftConfig.getHomePage())) {
+            registry.addViewController("/").setViewName("forward:" + deftConfig.getHomePage());
+            registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        }
     }
 
 }
