@@ -45,6 +45,12 @@ public class DogController {
     }
 
     @ResponseBody
+    @RequestMapping("/test")
+    public Object test(DogVO dogVO) throws BizErrorEx {
+        return dogVO;
+    }
+
+    @ResponseBody
     @RequestMapping("/logout")
     public Object logout() {
         SessionUtils.logout();

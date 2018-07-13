@@ -1,15 +1,12 @@
 package com.soho.spring.model;
 
-import com.alibaba.fastjson.JSON;
+import com.soho.mybatis.crud.domain.IDEntity;
 import com.soho.spring.utils.RGXUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by shadow on 2017/9/8.
@@ -24,12 +21,12 @@ public class ReqData<T, M> implements Serializable {
     private String client_uid;      // 用户UID
     private String client_pbk;      // 用户授权公钥
     private T user;                 // 用户信息,可填充ID,USER对象
-    private Map<String, Object> pojo;                // 表单提交对象数据
+    private M model;                // 父类Model对象
+    private String idArr;         // 删除对象数组
     private Integer pageNo = 1;
     private Integer pageSize = 50;
 
     public ReqData() {
-
     }
 
     public ReqData(T user) {
@@ -108,35 +105,15 @@ public class ReqData<T, M> implements Serializable {
         this.user = user;
     }
 
-    public Map<String, Object> getPojo() {
-        return pojo;
-    }
-
-    public void setPojo(Map<String, Object> pojo) {
-        this.pojo = pojo;
-    }
-
-    public M getModel() {
-        if (pojo != null && !pojo.isEmpty()) {
-            Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-            return JSON.parseObject(JSON.toJSONString(pojo), type);
-        }
-        return null;
-    }
-
     public Long getModelId() {
-        if (pojo != null && !pojo.isEmpty()) {
-            Object id = pojo.get("id");
-            if (id != null && RGXUtils.isInteger(id)) {
-                return Long.parseLong(id.toString());
-            }
+        if (model != null && (model instanceof IDEntity)) {
+            return (Long) ((IDEntity) model).getId();
         }
         return null;
     }
 
     public List<Long> getModelIdList() {
-        if (pojo != null && !pojo.isEmpty()) {
-            Object idArr = pojo.get("idArr");
+        if (!StringUtils.isEmpty(idArr)) {
             if (!StringUtils.isEmpty(idArr)) {
                 String[] ids = idArr.toString().split(",");
                 List<Long> list = new ArrayList<>(ids.length);
@@ -157,6 +134,22 @@ public class ReqData<T, M> implements Serializable {
 
     public void setClient_pbk(String client_pbk) {
         this.client_pbk = client_pbk;
+    }
+
+    public M getModel() {
+        return model;
+    }
+
+    public void setModel(M model) {
+        this.model = model;
+    }
+
+    public String getIdArr() {
+        return idArr;
+    }
+
+    public void setIdArr(String idArr) {
+        this.idArr = idArr;
     }
 
 }
