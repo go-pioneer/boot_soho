@@ -104,7 +104,7 @@ public class DruidConfiguration {
 
     @Bean(name = "dbSelector")
     @Primary
-    public DBSelector dbSelector() throws Exception {
+    public DBSelector dbSelector() {
         return new SimpleDBSelector(dbConfig.getDatabase());
     }
 
