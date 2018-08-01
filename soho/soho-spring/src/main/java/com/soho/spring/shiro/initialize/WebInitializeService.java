@@ -16,6 +16,15 @@ public interface WebInitializeService {
     // 初始化权限校验参数
     public InitDefinition initShiroFilterChainDefinition();
 
+    // 初始化无权限配置
+    public List<RuleChain> initAnonRuleChains();
+
+    // 初始化默认权限配置
+    public List<RuleChain> initDeftRuleChains();
+
+    // 初始化数据库权限配置
+    public List<RuleChain> initDBRuleChains();
+
     // 初始化认证权限校验器
     public List<Realm> initShiroRealms();
 

@@ -27,15 +27,30 @@ public class WebInitializeServiceImp implements WebInitializeService {
         definition.setLoginUrl("/dog/login");
         definition.setSuccessUrl("/dog/findOne");
         definition.setUnauthorizedUrl("/403");
+        definition.setAnonRuleChains(initAnonRuleChains());
+        definition.setRoleRuleChains(WCCUtils.ruleChainComparator(initDeftRuleChains()));
+        return definition;
+    }
+
+    @Override
+    public List<RuleChain> initAnonRuleChains() {
         List<RuleChain> anonRuleChains = new ArrayList<>();
         anonRuleChains.add(new RuleChain("/static/**", "anon"));
         anonRuleChains.add(new RuleChain("/ggk/**", "anon"));
-        definition.setAnonRuleChains(anonRuleChains);
+        return anonRuleChains;
+    }
+
+    @Override
+    public List<RuleChain> initDeftRuleChains() {
         List<RuleChain> roleRuleChains = new ArrayList<>();
         roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
         roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
-        definition.setRoleRuleChains(WCCUtils.ruleChainComparator(roleRuleChains));
-        return definition;
+        return roleRuleChains;
+    }
+
+    @Override
+    public List<RuleChain> initDBRuleChains() {
+        return new ArrayList<>();
     }
 
     @Override

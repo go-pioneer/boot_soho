@@ -86,7 +86,7 @@ public class ShiroConfiguration {
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
         List<String> anonUrls = new ArrayList<>();
-        for (RuleChain ruleChain : webInitializeService.initShiroFilterChainDefinition().getAnonRuleChains()) {
+        for (RuleChain ruleChain : webInitializeService.initAnonRuleChains()) {
             anonUrls.add(ruleChain.getUrl());
         }
         defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(anonUrls));

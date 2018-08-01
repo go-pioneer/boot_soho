@@ -119,6 +119,28 @@ public class OAuthTest {
         return "";
     }
 
+    private static String testapi() {
+        HttpClient httpClient = new DefaultHttpClient();
+        String loginUrl = "http://www.lianok.pro/mapi/mch/etzc";
+        HttpPost httpPatch = new HttpPost(loginUrl);
+        // httpPatch.setHeader("Content-type", "application/json");
+        httpPatch.setHeader("Charset", HTTP.UTF_8);
+        // httpPatch.setHeader("Accept", "application/json");
+        httpPatch.setHeader("Accept-Charset", HTTP.UTF_8);
+        try {
+            List<NameValuePair> nvps = new ArrayList<>();
+            nvps.add(new BasicNameValuePair("$time", String.valueOf(System.currentTimeMillis())));
+            httpPatch.setEntity(new UrlEncodedFormEntity(nvps));
+            HttpResponse response = httpClient.execute(httpPatch);
+            String result = EntityUtils.toString(response.getEntity());
+            System.out.println("请求结果: " + result);
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     static String domain = "http://localhost:8011";
 //    static String domain = "http://119.23.23.55:7070";
 //    static String domain = "http://pos.linkworld-group.com";
@@ -140,8 +162,7 @@ public class OAuthTest {
 //        System.out.println(AESUtils.encrypt(uid)+"---"+uid+"---"+md5);
         // 1472a4c61c68561922fe2a5c6ca597fe---123456---10019a5e35b8ccc34a686479893016d8
 //        System.out.println(AESUtils.decrypt("1472a4c61c68561922fe2a5c6ca597fe"));
-        System.out.println(RGXUtils.isURL("http://baidu.com"));
-
+        testapi();
     }
 
 }
