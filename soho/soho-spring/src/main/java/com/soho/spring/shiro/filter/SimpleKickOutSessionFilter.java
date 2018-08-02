@@ -4,6 +4,7 @@ import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.HttpUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -38,9 +39,10 @@ public class SimpleKickOutSessionFilter extends AccessControlFilter {
         Subject subject = getSubject(httpRequest, httpResponse);
         // 判断用户对象是否已进行认证以及是否存在登录主体
         if (subject.isAuthenticated() && subject.getPrincipal() != null) {
-            Object sessionId = SessionUtils.getOnlineUserId(subject.getPrincipal());
+            Session session = subject.getSession();
+            Object online = session.getAttribute(SessionUtils.ONLINE);
             // 判断登录主体绑定的会话ID是否一致,如不一致则返回跳入失败函数处理
-            if (sessionId != null && !sessionId.equals(subject.getSession().getId().toString())) {
+            if (online != null && !online.equals(1)) {
                 return false;
             }
         }

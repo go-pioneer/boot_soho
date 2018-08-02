@@ -12,10 +12,10 @@ public class RetCode {
     public static final String BIZ_ERROR_MESSAGE = "业务系统繁忙";
 
     public static final String SESSION_NOTEXIST_STATUS = "999995";
-    public static final String SESSION_NOTEXIST_MESSAGE = "您尚未登录或会话已超时";
+    public static final String SESSION_NOTEXIST_MESSAGE = "您尚未登录或会话已超时,请重新登录";
 
     public static final String SESSION_KICKOUT_STATUS = "999996";
-    public static final String SESSION_KICKOUT_MESSAGE = "您的会话已被踢下线";
+    public static final String SESSION_KICKOUT_MESSAGE = "您的会话已被踢下线,请重新登录";
 
     public static final String UNAUTHORIZED_STATUS = "999997";
     public static final String UNAUTHORIZED_MESSAGE = "您没有足够的权限访问";

@@ -18,7 +18,7 @@ public class SimpleShiroCacheManager implements CacheManager, Destroyable {
     @Autowired(required = false)
     private Cache<Object, Object> cache;
 
-    public void destroy() throws Exception {
+    public void destroy() {
     }
 
     public Cache<Object, Object> getCache(String name) throws CacheException {

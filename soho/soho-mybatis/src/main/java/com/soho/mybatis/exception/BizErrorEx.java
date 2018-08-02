@@ -1,5 +1,7 @@
 package com.soho.mybatis.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -7,6 +9,8 @@ import org.springframework.http.HttpStatus;
  */
 @SuppressWarnings("serial")
 public class BizErrorEx extends Exception {
+
+    private static final Logger log = LoggerFactory.getLogger(BizErrorEx.class);
 
     private String errorCode;
     private String msg;
@@ -86,6 +90,9 @@ public class BizErrorEx extends Exception {
     }
 
     public static BizErrorEx transform(Exception e) throws BizErrorEx {
+        if (log.isDebugEnabled()) {
+            log.error(e.getMessage(), e);
+        }
         if (e instanceof MybatisDAOEx) {
             throw new BizErrorEx(((MybatisDAOEx) e).getErrorCode(), e.getMessage());
         } else if (e instanceof BizErrorEx) {

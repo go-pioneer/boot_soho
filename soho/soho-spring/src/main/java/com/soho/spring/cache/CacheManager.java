@@ -9,8 +9,6 @@ public interface CacheManager {
 
     public static final String DEFAULT_CACHE = "_default_cache_";
 
-    public static final String SESSION_CACHE = "_session_cache_";
-
     public static final String SHIRO_DATA_CACHE = "_shiro_data_cache_";
 
     /**

@@ -35,7 +35,7 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
     public CacheManager initCacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCacheMap(new FastMap<Cache>()
-                .add(CacheManager.SHIRO_DATA_CACHE, new EhCache())
+                .add(CacheManager.SHIRO_DATA_CACHE, new EhCache()).add(CacheManager.DEFAULT_CACHE, new EhCache())
                 .done());
         return simpleCacheManager;
     }

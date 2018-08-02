@@ -24,23 +24,21 @@ public class ShiroSessionDAO extends EnterpriseCacheSessionDAO {
     }
 
     protected Session doReadSession(Serializable sessionId) {
-        if (!matchAnonRequest()) {
-            return super.doReadSession(sessionId);
-        }
-        return null;
+        return matchAnonRequest() ? null : super.doReadSession(sessionId);
     }
 
     protected void doUpdate(Session session) {
-        if (!matchAnonRequest()) {
-            super.doUpdate(session);
+        if (matchAnonRequest()) {
+            return;
         }
+        super.doUpdate(session);
     }
 
     private boolean matchAnonRequest() {
         if (anonUrls != null && !anonUrls.isEmpty()) {
             String reqeust = SpringUtils.getRequest().getRequestURI();
             for (String anonUrl : anonUrls) {
-                if (WCCUtils.test(anonUrl, reqeust)) {
+                if (anonUrl.equals(reqeust) || WCCUtils.test(anonUrl, reqeust)) {
                     return true;
                 }
             }

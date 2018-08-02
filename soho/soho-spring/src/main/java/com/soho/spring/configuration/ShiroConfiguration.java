@@ -56,14 +56,21 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setLoginUrl(definition.getLoginUrl());
         shiroFilterFactoryBean.setSuccessUrl(definition.getSuccessUrl());
         shiroFilterFactoryBean.setUnauthorizedUrl(definition.getUnauthorizedUrl());
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        for (RuleChain ruleChain : definition.getAnonRuleChains()) {
-            filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
+        // 加载访问权限
+        List<RuleChain> anonRuleChains = definition.getAnonRuleChains();
+        if (anonRuleChains == null) {
+            anonRuleChains = new ArrayList<>();
         }
-        for (RuleChain ruleChain : definition.getRoleRuleChains()) {
+        List<RuleChain> deftRuleChains = definition.getRoleRuleChains();
+        if (deftRuleChains != null && !deftRuleChains.isEmpty()) {
+            anonRuleChains.addAll(deftRuleChains);
+        }
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>(anonRuleChains.size());
+        for (RuleChain ruleChain : anonRuleChains) {
             filterChainDefinitionMap.put(ruleChain.getUrl(), ruleChain.getRole());
         }
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        // 加载拦截器
         Map<String, Filter> map = webInitializeService.initShiroFilters();
         if (!map.containsKey("authc")) {
             map.put("authc", new SimpleFormAuthenticationFilter(deftConfig.getApiPrefix()));
@@ -85,8 +92,12 @@ public class ShiroConfiguration {
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        List<String> anonUrls = new ArrayList<>();
-        for (RuleChain ruleChain : webInitializeService.initAnonRuleChains()) {
+        List<RuleChain> ruleChains = webInitializeService.initAnonRuleChains();
+        if (ruleChains == null) {
+            ruleChains = new ArrayList<>();
+        }
+        List<String> anonUrls = new ArrayList<>(ruleChains.size());
+        for (RuleChain ruleChain : ruleChains) {
             anonUrls.add(ruleChain.getUrl());
         }
         defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(anonUrls));
