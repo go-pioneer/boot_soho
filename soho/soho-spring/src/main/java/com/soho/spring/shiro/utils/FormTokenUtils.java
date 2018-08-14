@@ -3,7 +3,7 @@ package com.soho.spring.shiro.utils;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.model.RetCode;
 import com.soho.spring.mvc.annotation.FormToken;
-import com.soho.spring.utils.NumUtils;
+import com.soho.spring.utils.EMath;
 import com.soho.spring.utils.RGXUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -20,8 +20,8 @@ public class FormTokenUtils {
     public static final String SECURITY_FORM_TOKEN = "_SECURITY_FORM_TOKEN_";
 
     public static String addFormToken() {
-        String form_sn = NumUtils.getIntSN(6);
-        String form_token = NumUtils.getStrSN();
+        String form_sn = EMath.getIntSN(6);
+        String form_token = EMath.getStrSN();
         SessionUtils.setAttribute(form_sn, form_token);
         StringBuffer buffer = new StringBuffer();
         buffer.append("<input type=\"hidden\" name=\"").append(SECURITY_FORM_SN).append("\" value=\"").append(form_sn).append("\"/>");

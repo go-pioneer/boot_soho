@@ -8,7 +8,17 @@
     </parent>
     <groupId>com.soho</groupId>
     <artifactId>soho-demo</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
+
+    <build>
+        <finalName>demo</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
