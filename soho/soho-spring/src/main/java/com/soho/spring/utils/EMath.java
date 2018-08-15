@@ -216,14 +216,48 @@ public class EMath {
      * @return 数值字符串
      */
     public static String digit(Object number, int scale) {
-        StringBuffer buffer = new StringBuffer("0");
-        if (scale > 0) {
-            buffer.append(".");
+        if (scale <= 0)
+            scale = 0;
+        String str1 = "";
+        String str2 = "";
+        String number1 = number.toString();
+        if (number1.indexOf(".") != -1) {
+            String[] split_str = number1.split("\\.");
+            str1 = split_str[0];
+            str2 = split_str[1];
+            if (str2.length() > scale) {
+                str2 = str2.substring(0, scale);
+                if (!"".equals(str2)) {
+                    str2 = cover4zero(str2, scale);
+                }
+            } else {
+                str2 = cover4zero(str2, scale);
+            }
+            if (!"".equals(str2)) {
+                str1 = str1 + "." + str2;
+            }
+        } else {
+            str1 = number1;
+            if (scale > 0) {
+                str2 = cover4zero("0", scale);
+            }
+            if (!"".equals(str2)) {
+                str1 = str1 + "." + str2;
+            }
         }
-        for (int i = 0; i < scale; i++) {
-            buffer.append("0");
+        return str1;
+    }
+
+    // 截断或填充差位0
+    private static String cover4zero(String str2, int scale) {
+        if (str2.length() >= scale) {
+            return str2;
         }
-        return new DecimalFormat(buffer.toString()).format(toBigDecimal(number));
+        int len = scale - str2.length();
+        for (int i = 0; i < len; i++) {
+            str2 = str2 + "0";
+        }
+        return str2;
     }
 
     /**
@@ -285,11 +319,21 @@ public class EMath {
     }
 
     public static void main(String[] args) {
-        System.out.println(A(5.46578974654, 1));
-        System.out.println(S(1278.456878764654, 8.46787));
-        System.out.println(M(0.057487, 1.05458787));
-        System.out.println(D(1, 3));
-        System.out.println(digit(1.045787431));
+        System.out.println(EMath.A(5.46578974654, 1, 5));
+        System.out.println(EMath.A("5.46578974654", 1));
+
+
+        System.out.println(EMath.S(1278.456878764654f, 8.46787d, 18));
+        System.out.println(EMath.S(new BigDecimal(1278.456878764654), 8.46787));
+
+        System.out.println(EMath.M("-0.057487", new BigDecimal(1.05458787), 15));
+        System.out.println(EMath.M(0.057487, 1.05458787));
+
+        System.out.println(EMath.D(1.1, -3.2, 10));
+        System.out.println(EMath.D(2d, new BigDecimal(3)));
+
+        System.out.println(EMath.digit(0.045787431, 8));
+        System.out.println(EMath.digit(0.045787431));
     }
 
 }
