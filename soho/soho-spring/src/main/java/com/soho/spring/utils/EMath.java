@@ -1,7 +1,6 @@
 package com.soho.spring.utils;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.UUID;
 
@@ -276,7 +275,7 @@ public class EMath {
      * @param object 参数对象
      * @return 数值对象
      */
-    private static BigDecimal toBigDecimal(Object object) {
+    public static BigDecimal toBigDecimal(Object object) {
         String string = null;
         if (object instanceof Integer) {
             string = Integer.toString((Integer) object);
@@ -330,10 +329,12 @@ public class EMath {
         System.out.println(EMath.M(0.057487, 1.05458787));
 
         System.out.println(EMath.D(1.1, -3.2, 10));
-        System.out.println(EMath.D(2d, new BigDecimal(3)));
+        System.out.println(EMath.D("0", new BigDecimal(3)));
+        System.out.println(EMath.toBigDecimal(EMath.D(0, new BigDecimal(3))));
 
         System.out.println(EMath.digit(0.045787431, 8));
         System.out.println(EMath.digit(0.045787431));
     }
 
 }
+
