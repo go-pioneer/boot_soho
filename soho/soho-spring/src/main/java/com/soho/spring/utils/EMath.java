@@ -8,6 +8,7 @@ import java.util.UUID;
  * 封装数学计算工具类
  * A-加法 S-减法 M-乘法 D-除法
  * LT-小于 LTE-小于等于 GT-大于 GTE-大于等于 EQ-等于
+ * 计算结果小于0.000001会出现科学计数方式
  *
  * @Created by shadow on 2017/5/17.
  */

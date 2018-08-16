@@ -6,6 +6,8 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
+import com.soho.spring.datasource.DataSourceKey;
+import com.soho.spring.datasource.DynamicRoutingDataSource;
 import com.soho.spring.model.DbConfig;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -24,6 +26,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author shadow
@@ -55,9 +59,13 @@ public class DruidConfiguration {
         return filterRegistrationBean;
     }
 
-    @Primary
-    @Bean(name = "dataSource")
-    public DataSource druidDataSource() {
+    public DataSource db_master(DbConfig dbConfig) {
+        /*return DataSourceBuilder.create()
+                .type(DruidDataSource.class)
+                .driverClassName(dbConfig.getDriverClassName())
+                .username(dbConfig.getUsername())
+                .password(dbConfig.getPassword())
+                .build();*/
         DruidDataSource datasource = new DruidDataSource();
         datasource.setUrl(dbConfig.getUrl());
         datasource.setUsername(dbConfig.getUsername());
@@ -81,9 +89,43 @@ public class DruidConfiguration {
         return datasource;
     }
 
+    public DataSource db_slave(DbConfig dbConfig) {
+        DruidDataSource datasource = new DruidDataSource();
+        datasource.setUrl(dbConfig.getUrl());
+        datasource.setUsername(dbConfig.getUsername());
+        datasource.setPassword(dbConfig.getPassword());
+        datasource.setDriverClassName(dbConfig.getDriverClassName());
+        datasource.setInitialSize(dbConfig.getInitialSize());
+        datasource.setMinIdle(dbConfig.getMinIdle());
+        datasource.setMaxActive(dbConfig.getMaxActive());
+        datasource.setMaxWait(dbConfig.getMaxWait());
+        datasource.setTimeBetweenEvictionRunsMillis(dbConfig.getTimeBetweenEvictionRunsMillis());
+        datasource.setMinEvictableIdleTimeMillis(dbConfig.getMinEvictableIdleTimeMillis());
+        datasource.setValidationQuery(dbConfig.getValidationQuery());
+        datasource.setTestWhileIdle(dbConfig.isTestWhileIdle());
+        datasource.setTestOnBorrow(dbConfig.isTestOnBorrow());
+        datasource.setTestOnReturn(dbConfig.isTestOnReturn());
+        try {
+            datasource.setFilters(dbConfig.getFilters());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return datasource;
+    }
+
+    @Bean(name = "dynamicDataSource")
+    public DataSource initDynamicDataSource() {
+        DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
+        Map<Object, Object> dataSourceMap = new HashMap<>(4);
+        dataSourceMap.put(DataSourceKey.DB_MASTER, db_master(dbConfig));
+        dataSourceMap.put(DataSourceKey.DB_SLAVE, db_slave(dbConfig));
+        dynamicDataSource.setTargetDataSources(dataSourceMap);
+        dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(DataSourceKey.DB_MASTER));
+        return dynamicDataSource;
+    }
+
     @Bean(name = "sqlSessionFactory")
-    @Primary
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(dbConfig.getMgbXmlLocation());
@@ -103,19 +145,16 @@ public class DruidConfiguration {
     }
 
     @Bean(name = "dbSelector")
-    @Primary
     public DBSelector dbSelector() {
         return new SimpleDBSelector(dbConfig.getDatabase());
     }
 
     @Bean(name = "transactionManager")
-    @Primary
-    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+    public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean(name = "sqlSessionTemplate")
-    @Primary
     public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }

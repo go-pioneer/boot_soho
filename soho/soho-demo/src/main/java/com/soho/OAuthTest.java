@@ -23,17 +23,10 @@ public class OAuthTest {
         HttpClient httpClient = new DefaultHttpClient();
         String loginUrl = domain + "/oauth2.0/v1.0/access_token";
         HttpPost httpPatch = new HttpPost(loginUrl);
-        // httpPatch.setHeader("Content-type", "application/json");
         httpPatch.setHeader("Charset", HTTP.UTF_8);
-        // httpPatch.setHeader("Accept", "application/json");
         httpPatch.setHeader("Accept-Charset", HTTP.UTF_8);
         try {
             List<NameValuePair> nvps = new ArrayList<>();
-            nvps.add(new BasicNameValuePair("client_id", "c522f0c158d4c9d5be2f1032c38a8148"));
-            nvps.add(new BasicNameValuePair("client_secret", "c522f0c158d4c9d5be2f1032c38a8148"));
-            nvps.add(new BasicNameValuePair("grant_type", "authorization_code"));
-            nvps.add(new BasicNameValuePair("code", code));
-            nvps.add(new BasicNameValuePair("redirect_uri", "http://localhost:8080/oauth2.0/callback"));
             httpPatch.setEntity(new UrlEncodedFormEntity(nvps));
             HttpResponse response = httpClient.execute(httpPatch);
             String result = EntityUtils.toString(response.getEntity());

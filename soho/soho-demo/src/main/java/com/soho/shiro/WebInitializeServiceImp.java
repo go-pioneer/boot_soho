@@ -43,8 +43,8 @@ public class WebInitializeServiceImp implements WebInitializeService {
     @Override
     public List<RuleChain> initDeftRuleChains() {
         List<RuleChain> roleRuleChains = new ArrayList<>();
-        roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
-        roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
+        // roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
+        // roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
         return roleRuleChains;
     }
 

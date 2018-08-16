@@ -6,6 +6,8 @@ import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.mybatis.sqlcode.domain.Join;
+import com.soho.spring.datasource.DataSourceKey;
+import com.soho.spring.datasource.DynamicDataSourceContextHolder;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.KillRobot;
 import com.soho.spring.mvc.model.FastMap;
@@ -87,9 +89,41 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findOne")
     public Object findOne() throws BizErrorEx {
+        DynamicDataSourceContextHolder.set(DataSourceKey.DB_SLAVE);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Dog dog = dogService.findOneByCnd(new SQLCnd().eq("id", 2));
         if (dog == null) {
             dog = new Dog();
+        }
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return dog;
+    }
+
+    @ResponseBody
+    @RequestMapping("/findOne1")
+    public Object findOne1() throws BizErrorEx {
+        DynamicDataSourceContextHolder.set(DataSourceKey.DB_MASTER);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Dog dog = dogService.findOneByCnd(new SQLCnd().eq("id", 2));
+        if (dog == null) {
+            dog = new Dog();
+        }
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         return dog;
     }
