@@ -13,7 +13,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @author shadow
  */
 @SpringBootApplication
-@EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.soho"})
 public class Application extends JarServletInitializer {
 

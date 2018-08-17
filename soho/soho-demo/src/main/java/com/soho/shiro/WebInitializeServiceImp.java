@@ -2,6 +2,8 @@ package com.soho.shiro;
 
 import com.soho.aliyun.ggk.interceptor.KillRobotInterceptor;
 import com.soho.shiro.realm.WebLoginRealm;
+import com.soho.spring.model.DbConfig;
+import com.soho.spring.model.HikariDS;
 import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
@@ -9,10 +11,12 @@ import com.soho.spring.shiro.initialize.WebInitializeService;
 import com.soho.spring.utils.WCCUtils;
 import freemarker.template.TemplateDirectiveModel;
 import org.apache.shiro.realm.Realm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.Filter;
+import javax.sql.DataSource;
 import java.util.*;
 
 /**
@@ -20,6 +24,9 @@ import java.util.*;
  */
 @Component
 public class WebInitializeServiceImp implements WebInitializeService {
+
+    @Autowired
+    private DbConfig dbConfig;
 
     @Override
     public InitDefinition initShiroFilterChainDefinition() {
@@ -81,6 +88,14 @@ public class WebInitializeServiceImp implements WebInitializeService {
     @Override
     public Map<String, TemplateDirectiveModel> initFreeMarkerTag() {
         return new HashMap<>();
+    }
+
+    @Override
+    public List<HikariDS> initOtherDataSource() {
+        HikariDS ds = new HikariDS("DB_SLAVE", dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
+        List<HikariDS> dsList = new ArrayList<>();
+        dsList.add(ds);
+        return dsList;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.soho.spring.shiro.initialize;
 
+import com.soho.spring.model.HikariDS;
 import freemarker.template.TemplateDirectiveModel;
 import org.apache.shiro.realm.Realm;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -39,5 +40,8 @@ public interface WebInitializeService {
 
     // 初始化freemarker标签
     public Map<String, TemplateDirectiveModel> initFreeMarkerTag();
+
+    // 初始化其他数据源
+    public List<HikariDS> initOtherDataSource();
 
 }

@@ -2,11 +2,8 @@ package com.soho.demo.controller;
 
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
-import com.soho.mybatis.crud.aconst.MODE;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.mybatis.sqlcode.domain.Join;
-import com.soho.spring.datasource.DataSourceKey;
 import com.soho.spring.datasource.DynamicDataSourceContextHolder;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.KillRobot;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -89,7 +85,7 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findOne")
     public Object findOne() throws BizErrorEx {
-        DynamicDataSourceContextHolder.set(DataSourceKey.DB_SLAVE);
+        DynamicDataSourceContextHolder.set("DB_SLAVE");
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -110,7 +106,7 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findOne1")
     public Object findOne1() throws BizErrorEx {
-        DynamicDataSourceContextHolder.set(DataSourceKey.DB_MASTER);
+        DynamicDataSourceContextHolder.set("DB_SLAVE");
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -131,15 +127,15 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/findAll")
     public Object findAll() throws BizErrorEx {
-        List list = dogService
-                .findMapByCnd(new SQLCnd().fields("a.id", "a.name")
-                        .from("dog a")
-                        .join(new Join(MODE.LEFT, "color b").on("a.id", "b.id").on("a.id", 1))
-                        .join(new Join(MODE.LEFT, "color c").on("a.id", "c.id"))
-                        .join(new Join(MODE.INNER, "color d").on("a.id", "d.id"))
-                        .eq("a.id", 2));
+//        List list = dogService
+//                .findMapByCnd(new SQLCnd().fields("a.id", "a.name")
+//                        .from("dog a")
+//                        .join(new Join(MODE.LEFT, "color b").on("a.id", "b.id").on("a.id", 1))
+//                        .join(new Join(MODE.LEFT, "color c").on("a.id", "c.id"))
+//                        .join(new Join(MODE.INNER, "color d").on("a.id", "d.id"))
+//                        .eq("a.id", 2));
 //        System.out.println(list);
-        // dogService.test(new ReqData());
+//        dogService.test(new ReqData());
         return dogService.findByCnd(new SQLCnd().eq("id", 2));
     }
 
