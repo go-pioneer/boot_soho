@@ -29,7 +29,7 @@ public class EhCache extends AbstractCache implements Cache {
     }
 
     @Override
-    public <V> V doGet(Object key) throws Exception {
+    public <V> V doGet(Object key) {
         Element element = getEhCache().get(key);
         if (element == null || element.getObjectValue() == null) {
             return null;
@@ -38,7 +38,7 @@ public class EhCache extends AbstractCache implements Cache {
     }
 
     @Override
-    public <V> boolean doPut(Object key, V value, int exp) throws Exception {
+    public <V> boolean doPut(Object key, V value, int exp) {
         Element element = new Element(key, value);
         element.setTimeToLive(exp);
         getEhCache().put(element);
@@ -46,14 +46,14 @@ public class EhCache extends AbstractCache implements Cache {
     }
 
     @Override
-    public <V> boolean doPut(Object key, V value) throws Exception {
+    public <V> boolean doPut(Object key, V value) {
         Element element = new Element(key, value);
         getEhCache().put(element);
         return true;
     }
 
     @Override
-    public <V> boolean doRemove(Object key) throws Exception {
+    public <V> boolean doRemove(Object key) {
         getEhCache().remove(key);
         return true;
     }

@@ -38,7 +38,7 @@ public class RedissonCache extends AbstractCache implements Cache {
 
     @Override
     public <V> boolean doPut(Object key, V value) {
-        return doPut(key, value, 0);
+        return doPut(key, value, 300);
     }
 
     @Override

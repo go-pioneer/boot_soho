@@ -1,6 +1,5 @@
 package com.soho.cache.redisson.service;
 
-import com.alibaba.fastjson.support.spring.FastjsonSockJsMessageCodec;
 import com.soho.spring.model.RedissonConfig;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
