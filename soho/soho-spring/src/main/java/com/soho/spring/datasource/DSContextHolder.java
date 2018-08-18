@@ -1,6 +1,6 @@
 package com.soho.spring.datasource;
 
-public class DynamicDataSourceContextHolder {
+public class DSContextHolder {
 
     private static final ThreadLocal<String> currentDatesource = new ThreadLocal<>();
 

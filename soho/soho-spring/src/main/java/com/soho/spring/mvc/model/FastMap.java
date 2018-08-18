@@ -14,6 +14,10 @@ public class FastMap<T> {
         map = new HashMap<>();
     }
 
+    public FastMap(int len) {
+        map = new HashMap<>(len);
+    }
+
     public FastMap add(String key, T value) {
         map.put(key, value);
         return this;

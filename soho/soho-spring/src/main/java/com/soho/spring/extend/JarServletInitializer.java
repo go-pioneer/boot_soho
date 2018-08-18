@@ -13,15 +13,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 public class JarServletInitializer extends SpringBootServletInitializer {
 
-    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String filePath, String[] decodeKeys) {
-        if (decodeKeys == null || decodeKeys.length == 0) {
-            decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
+    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String[] filePath, String[] decodeKeys) {
+        if (decodeKeys == null) {
+            decodeKeys = new String[]{};
         }
         return new DefaultPropertyConfigurer(filePath, decodeKeys);
     }
 
-    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String[] decodeKeys) {
-        return initPropertyPlaceholderConfigurer("classpath:application.properties", decodeKeys);
+    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String[] filePath) {
+        return new DefaultPropertyConfigurer(filePath, new String[]{});
     }
 
     public CacheManager initCacheManager() {

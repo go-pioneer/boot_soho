@@ -7,7 +7,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Spring加载配置文件
@@ -18,11 +20,19 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
 
     private String[] decodeKeys;
 
-    public AbstractPropertyConfigurer(String filePath, String[] decodeKeys) {
+    public AbstractPropertyConfigurer(String[] filePath, String[] decodeKeys) {
         this.decodeKeys = decodeKeys;
+        if (filePath == null || filePath.length <= 0) {
+            System.err.println("没有找到项目启动配置文件");
+            System.exit(-1);
+        }
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource resource = resolver.getResource(filePath);
-        setLocation(resource);
+        Resource[] resources = new Resource[filePath.length];
+        for (int i = 0; i < filePath.length; i++) {
+            Resource resource = resolver.getResource(filePath[i]);
+            resources[i] = resource;
+        }
+        setLocations(resources);
     }
 
     @Override
@@ -33,14 +43,27 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
     }
 
     public Properties decodeProperties(Properties properties) {
-        String encrypt_key = properties.getProperty("default.projectKey");
-        encrypt_key = StringUtils.isEmpty(encrypt_key) ? "" : AESUtils.decrypt(encrypt_key);
-        if (!StringUtils.isEmpty(decodeKeys) && decodeKeys.length > 0) {
-            for (String decodeKey : decodeKeys) {
-                String data = properties.getProperty(decodeKey);
-                if (!StringUtils.isEmpty(data)) {
-                    properties.put(decodeKey, AESUtils.decrypt(data, encrypt_key));
-                }
+        String encrypt = properties.getProperty("default.encrypt");
+        if (StringUtils.isEmpty(encrypt) || !Boolean.valueOf(encrypt.trim())) {
+            return properties;
+        }
+        String projectKey = properties.getProperty("default.projectKey");
+        if (projectKey == null || StringUtils.isEmpty(projectKey.trim())) {
+            System.err.println("没有找到项目密钥配置");
+            System.exit(-1);
+        }
+        projectKey = AESUtils.decrypt(projectKey.trim());
+        for (String key : decodeKeys) {
+            String data = properties.getProperty(key);
+            if (!StringUtils.isEmpty(data)) {
+                properties.put(key, AESUtils.decrypt(data.trim(), projectKey));
+            }
+        }
+        for (Map.Entry entry : properties.entrySet()) {
+            String key = entry.getKey().toString();
+            Object value = entry.getValue();
+            if ((key.endsWith("datasource.username") || key.endsWith("datasource.password")) && !StringUtils.isEmpty(value)) {
+                properties.put(key, AESUtils.decrypt(entry.getValue().toString().trim(), projectKey));
             }
         }
         return properties;

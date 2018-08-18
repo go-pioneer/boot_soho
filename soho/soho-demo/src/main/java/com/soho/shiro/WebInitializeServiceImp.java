@@ -1,10 +1,13 @@
 package com.soho.shiro;
 
 import com.soho.aliyun.ggk.interceptor.KillRobotInterceptor;
+import com.soho.demo.SlaveDB;
 import com.soho.shiro.realm.WebLoginRealm;
 import com.soho.spring.model.DbConfig;
 import com.soho.spring.model.HikariDS;
+import com.soho.spring.mvc.interceptor.DSHolderInterceptor;
 import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
+import com.soho.spring.mvc.model.FastList;
 import com.soho.spring.shiro.initialize.InitDefinition;
 import com.soho.spring.shiro.initialize.RuleChain;
 import com.soho.spring.shiro.initialize.WebInitializeService;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.Filter;
-import javax.sql.DataSource;
 import java.util.*;
 
 /**
@@ -27,6 +29,9 @@ public class WebInitializeServiceImp implements WebInitializeService {
 
     @Autowired
     private DbConfig dbConfig;
+
+    @Autowired
+    private SlaveDB slaveDB;
 
     @Override
     public InitDefinition initShiroFilterChainDefinition() {
@@ -51,7 +56,7 @@ public class WebInitializeServiceImp implements WebInitializeService {
     public List<RuleChain> initDeftRuleChains() {
         List<RuleChain> roleRuleChains = new ArrayList<>();
         // roleRuleChains.add(new RuleChain("/dog/findOne", "kickout,role[user]"));
-        // roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
+        roleRuleChains.add(new RuleChain("/dog/findAll", "authc"));
         return roleRuleChains;
     }
 
@@ -80,6 +85,7 @@ public class WebInitializeServiceImp implements WebInitializeService {
     @Override
     public List<HandlerInterceptor> initWebMVCInterceptor() {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
+        interceptors.add(new DSHolderInterceptor());
         interceptors.add(new KillRobotInterceptor());
         interceptors.add(new FormTokenInterceptor());
         return interceptors;
@@ -92,10 +98,8 @@ public class WebInitializeServiceImp implements WebInitializeService {
 
     @Override
     public List<HikariDS> initOtherDataSource() {
-        HikariDS ds = new HikariDS("DB_SLAVE", dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
-        List<HikariDS> dsList = new ArrayList<>();
-        dsList.add(ds);
-        return dsList;
+        HikariDS hikariDS = new HikariDS(slaveDB.getDsName(), slaveDB.getDriverClassName(), slaveDB.getUrl(), slaveDB.getUsername(), slaveDB.getPassword());
+        return new FastList<>().add(hikariDS).done();
     }
 
 }

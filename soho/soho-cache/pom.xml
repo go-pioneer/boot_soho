@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <xmemcached.version>2.0.0</xmemcached.version>
+        <redission.version>3.7.5</redission.version>
     </properties>
 
     <dependencies>
@@ -20,17 +20,10 @@
             <artifactId>soho-spring</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.xmemcached/xmemcached -->
         <dependency>
-            <groupId>com.googlecode.xmemcached</groupId>
-            <artifactId>xmemcached</artifactId>
-            <version>${xmemcached.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redission.version}</version>
         </dependency>
     </dependencies>
 

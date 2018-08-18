@@ -21,7 +21,7 @@ public class ZKPropertyConfigurer extends AbstractPropertyConfigurer {
     private final static String ENABLE = "zookeeper.enable";
     private final static String TIME_OUT = "zookeeper.timeout";
 
-    public ZKPropertyConfigurer(String filePath, String[] decodeKeys) {
+    public ZKPropertyConfigurer(String[] filePath, String[] decodeKeys) {
         super(filePath, decodeKeys);
     }
 

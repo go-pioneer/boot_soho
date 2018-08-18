@@ -1,10 +1,11 @@
 package com.soho.demo.controller;
 
+import com.soho.cache.redisson.lock.RDLock;
+import com.soho.cache.redisson.service.RedissonService;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.spring.datasource.DynamicDataSourceContextHolder;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.KillRobot;
 import com.soho.spring.mvc.model.FastMap;
@@ -82,47 +83,24 @@ public class DogController {
         return dog;
     }
 
+    @Autowired
+    private RedissonService redissonService;
+
+    int i = 0;
+
+    @RDLock(exkey = "test", user = true)
     @ResponseBody
     @RequestMapping("/findOne")
     public Object findOne() throws BizErrorEx {
-        DynamicDataSourceContextHolder.set("DB_SLAVE");
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Dog dog = dogService.findOneByCnd(new SQLCnd().eq("id", 2));
         if (dog == null) {
             dog = new Dog();
         }
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        i++;
+        System.out.println(i);
         return dog;
     }
 
-    @ResponseBody
-    @RequestMapping("/findOne1")
-    public Object findOne1() throws BizErrorEx {
-        DynamicDataSourceContextHolder.set("DB_SLAVE");
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Dog dog = dogService.findOneByCnd(new SQLCnd().eq("id", 2));
-        if (dog == null) {
-            dog = new Dog();
-        }
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return dog;
-    }
 
     @ResponseBody
     @RequestMapping("/findAll")

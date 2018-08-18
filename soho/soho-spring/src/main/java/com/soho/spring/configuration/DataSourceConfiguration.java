@@ -3,7 +3,7 @@ package com.soho.spring.configuration;
 import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
-import com.soho.spring.datasource.DynamicRoutingDataSource;
+import com.soho.spring.datasource.RoutingDataSource;
 import com.soho.spring.model.DbConfig;
 import com.soho.spring.model.HikariDS;
 import com.soho.spring.shiro.initialize.WebInitializeService;
@@ -30,7 +30,7 @@ import java.util.Map;
 @Configuration
 public class DataSourceConfiguration {
 
-    private final static String DB_MARSTER = "DB_MARSTER";
+    public final static String MARSTER_DB = "MARSTER_DB";
 
     @Autowired(required = false)
     private DbConfig dbConfig;
@@ -39,20 +39,20 @@ public class DataSourceConfiguration {
 
     @Bean(name = "dynamicDataSource")
     public DataSource initDynamicDataSource() {
-        DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
+        RoutingDataSource dynamicDataSource = new RoutingDataSource();
         Map<Object, Object> dataSourceMap = new HashMap<>(4);
-        dataSourceMap.put(DB_MARSTER, new HikariDS(DB_MARSTER, dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword()).done());
+        dataSourceMap.put(MARSTER_DB, new HikariDS(MARSTER_DB, dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword()).done());
         List<HikariDS> hikariDSList = webInitializeService.initOtherDataSource();
         if (hikariDSList != null && !hikariDSList.isEmpty()) {
             for (HikariDS ds : hikariDSList) {
-                if (DB_MARSTER.equals(ds.getDsName())) {
+                if (MARSTER_DB.equals(ds.getDsName())) {
                     continue;
                 }
                 dataSourceMap.put(ds.getDsName(), ds.done());
             }
         }
         dynamicDataSource.setTargetDataSources(dataSourceMap);
-        dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(DB_MARSTER));
+        dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(MARSTER_DB));
         return dynamicDataSource;
     }
 

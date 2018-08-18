@@ -22,9 +22,9 @@ public class DefaultServletInitializer extends SpringBootServletInitializer {
         return builder.sources(getClass());
     }
 
-    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String filePath, String[] decodeKeys) {
-        if (StringUtils.isEmpty(filePath)) {
-            filePath = "classpath:application.properties";
+    public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer(String[] filePath, String[] decodeKeys) {
+        if (filePath == null || filePath.length <= 0) {
+            filePath = new String[]{"classpath:application.properties"};
         }
         if (decodeKeys == null || decodeKeys.length == 0) {
             decodeKeys = new String[]{"spring.datasource.username", "spring.datasource.password"};
