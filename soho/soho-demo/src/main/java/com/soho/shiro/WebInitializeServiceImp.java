@@ -1,9 +1,7 @@
 package com.soho.shiro;
 
-import com.soho.aliyun.ggk.interceptor.KillRobotInterceptor;
 import com.soho.demo.SlaveDB;
 import com.soho.shiro.realm.WebLoginRealm;
-import com.soho.spring.model.DbConfig;
 import com.soho.spring.model.HikariDS;
 import com.soho.spring.mvc.interceptor.DSHolderInterceptor;
 import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
@@ -26,9 +24,6 @@ import java.util.*;
  */
 @Component
 public class WebInitializeServiceImp implements WebInitializeService {
-
-    @Autowired
-    private DbConfig dbConfig;
 
     @Autowired
     private SlaveDB slaveDB;
@@ -86,7 +81,7 @@ public class WebInitializeServiceImp implements WebInitializeService {
     public List<HandlerInterceptor> initWebMVCInterceptor() {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new DSHolderInterceptor());
-        interceptors.add(new KillRobotInterceptor());
+        // interceptors.add(new KillRobotInterceptor());
         interceptors.add(new FormTokenInterceptor());
         return interceptors;
     }

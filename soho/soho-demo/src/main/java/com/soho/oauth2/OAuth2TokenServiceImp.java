@@ -1,34 +1,14 @@
 package com.soho.oauth2;
 
-import com.soho.demo.dao.OauthClientDAO;
-import com.soho.demo.dao.OauthClientTokenDAO;
-import com.soho.demo.dao.OauthUserDAO;
-import com.soho.demo.domain.OauthClient;
-import com.soho.demo.domain.OauthClientToken;
-import com.soho.demo.domain.OauthUser;
-import com.soho.mybatis.exception.BizErrorEx;
-import com.soho.mybatis.exception.MybatisDAOEx;
-import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.oauth2.model.OAuth2Client;
-import com.soho.oauth2.model.OAuth2ErrorCode;
-import com.soho.oauth2.model.OAuth2Token;
-import com.soho.oauth2.service.imp.AbstractOAuth2TokenService;
-import com.soho.spring.model.OAuth2Config;
-import com.soho.spring.mvc.model.FastMap;
-import com.soho.spring.security.EncryptService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.util.Map;
 
 /**
  * Created by shadow on 2018/1/14.
  */
 @Service
-public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
+public class OAuth2TokenServiceImp  {
 
-    @Autowired
+    /*@Autowired
     private OAuth2Config oAuth2Config;
     @Autowired
     private EncryptService encryptService;
@@ -208,6 +188,6 @@ public class OAuth2TokenServiceImp extends AbstractOAuth2TokenService {
             return oAuth2Token;
         }
         return null;
-    }
+    }*/
 
 }

@@ -17,7 +17,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <dependencies>
@@ -37,16 +37,11 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>com.soho</groupId>
             <artifactId>soho-spring</artifactId>
@@ -54,15 +49,10 @@
         </dependency>
         <dependency>
             <groupId>com.soho</groupId>
-            <artifactId>soho-zookeeper</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.soho</groupId>
             <artifactId>soho-cache</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.soho</groupId>
             <artifactId>soho-oauth2</artifactId>
             <version>${project.parent.version}</version>
@@ -71,12 +61,18 @@
             <groupId>com.soho</groupId>
             <artifactId>soho-aliyun</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.2.1</version>
+            <version>4.5.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
