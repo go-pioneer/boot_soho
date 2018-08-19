@@ -1,7 +1,6 @@
 package com.soho.demo.controller;
 
 import com.soho.cache.redisson.lock.RDLock;
-import com.soho.cache.redisson.service.RedissonService;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
@@ -83,12 +82,9 @@ public class DogController {
         return dog;
     }
 
-    @Autowired
-    private RedissonService redissonService;
-
     int i = 0;
 
-    @RDLock(exkey = "test", user = true)
+    @RDLock
     @ResponseBody
     @RequestMapping("/findOne")
     public Object findOne() throws BizErrorEx {

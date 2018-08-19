@@ -26,6 +26,9 @@ public class SessionUtils {
     public static final String USER_ROLES = "_SESSION_USER_ROLES_";
     public static final String ONLINE = "_ONLIEN_SESSION_ID_";
 
+    private volatile static CacheManager cacheManager;
+    private volatile static SessionManager sessionManager;
+
     public static Subject getSubject() {
         return SecurityUtils.getSubject();
     }
@@ -71,11 +74,13 @@ public class SessionUtils {
     }
 
     public static void kickoutUser(final Object principal) {
-        SessionManager manager = SpringUtils.getBean(SessionManager.class);
+        if (sessionManager == null) {
+            sessionManager = SpringUtils.getBean(SessionManager.class);
+        }
         final Object sessionId = getOnlineSessionId(principal);
         if (sessionId != null) {
             try {
-                Session session = manager.getSession(new SessionKey() {
+                Session session = sessionManager.getSession(new SessionKey() {
                     @Override
                     public Serializable getSessionId() {
                         return sessionId.toString();
@@ -112,6 +117,9 @@ public class SessionUtils {
 
     public static void buidOnlineSessionId(Object principal, Object sessionId) {
         try {
+            if (cacheManager == null) {
+                cacheManager = SpringUtils.getBean(CacheManager.class);
+            }
             Cache cache = SpringUtils.getBean(CacheManager.class).getCache(null);
             if (cache != null) {
                 cache.put(ONLINE + principal, sessionId.toString());
@@ -123,7 +131,10 @@ public class SessionUtils {
 
     public static Object getOnlineSessionId(Object principal) {
         try {
-            Cache cache = SpringUtils.getBean(CacheManager.class).getCache(null);
+            if (cacheManager == null) {
+                cacheManager = SpringUtils.getBean(CacheManager.class);
+            }
+            Cache cache = cacheManager.getCache(null);
             if (cache != null) {
                 Object cacheValue = cache.get(ONLINE + principal);
                 if (cacheValue != null) {

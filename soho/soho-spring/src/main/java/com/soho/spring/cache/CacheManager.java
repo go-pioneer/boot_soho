@@ -7,10 +7,6 @@ package com.soho.spring.cache;
  */
 public interface CacheManager {
 
-    public static final String DEFAULT_CACHE = "_default_cache_";
-
-    public static final String SHIRO_DATA_CACHE = "_shiro_data_cache_";
-
     /**
      * 获取缓存堆
      *

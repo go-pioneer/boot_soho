@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 自定义分布式注解
+ * 分布式Redis锁注解实现
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,7 +24,7 @@ public @interface RDLock {
     TimeUnit unit() default TimeUnit.MILLISECONDS;
 
     // 锁关键字
-    String key() default "redisson_distributed_lock";
+    String key() default "redisson_distributed";
 
     // 是否锁单独用户
     boolean user() default false;

@@ -2,6 +2,7 @@ package com.soho.spring.extend;
 
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
+import com.soho.spring.cache.CacheType;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
 import com.soho.spring.mvc.model.FastMap;
@@ -27,7 +28,7 @@ public class JarServletInitializer extends SpringBootServletInitializer {
     public CacheManager initCacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCacheMap(new FastMap<Cache>()
-                .add(CacheManager.SHIRO_DATA_CACHE, new EhCache()).add(CacheManager.DEFAULT_CACHE, new EhCache())
+                .add(CacheType.SHIRO_DATA_CACHE, new EhCache()).add(CacheType.DEFAULT_DATA_CACHE, new EhCache())
                 .done());
         return simpleCacheManager;
     }

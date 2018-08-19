@@ -1,13 +1,13 @@
 package com.soho.cache.redisson.aop;
 
 import com.soho.cache.redisson.lock.RDLock;
-import com.soho.cache.redisson.service.RedissonService;
 import com.soho.spring.shiro.utils.SessionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 @Component
 public class RDLockAspect {
 
-    @Autowired
-    private RedissonService redissonService;
+    @Autowired(required = false)
+    private RedissonClient redissonClient;
 
     @Pointcut("@annotation(drLock)")
     public void serviceStatistics(RDLock drLock) {
@@ -35,9 +35,9 @@ public class RDLockAspect {
             Long userId = SessionUtils.getUserId();
             key = key + "_" + (userId == null ? 0 : userId);
         }
-        RLock lock = redissonService.getRLock(key);
+        RLock rLock = redissonClient.getLock(key);
         try {
-            if (lock.tryLock(rdLock.waitime(), rdLock.timeout(), rdLock.unit())) {
+            if (rLock.tryLock(rdLock.waitime(), rdLock.timeout(), rdLock.unit())) {
                 return joinPoint.proceed();
             } else {
                 Thread.sleep(rdLock.sleep());
@@ -45,7 +45,7 @@ public class RDLockAspect {
         } catch (Exception e) {
             throw e;
         } finally {
-            lock.unlock();
+            rLock.unlock();
         }
         return null;
     }
