@@ -35,7 +35,7 @@ public class Application extends JarServletInitializer {
     public CacheManager initCacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCacheMap(new FastMap<Cache>()
-                .add(CacheType.SHIRO_DATA_CACHE, EHCACHE()).add(CacheType.DEFAULT_DATA_CACHE, EHCACHE())
+                .add(CacheType.SHIRO_DATA_CACHE, REDISSONCACHE()).add(CacheType.DEFAULT_DATA_CACHE, EHCACHE())
                 .done());
         return simpleCacheManager;
     }

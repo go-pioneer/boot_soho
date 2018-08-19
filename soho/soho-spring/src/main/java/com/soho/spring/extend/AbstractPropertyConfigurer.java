@@ -1,6 +1,8 @@
 package com.soho.spring.extend;
 
 import com.soho.spring.utils.AESUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
@@ -9,7 +11,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Spring加载配置文件
@@ -18,12 +19,14 @@ import java.util.Set;
  */
 public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConfigurer {
 
+    protected final static Logger log = LoggerFactory.getLogger(AbstractPropertyConfigurer.class);
+
     private String[] decodeKeys;
 
     public AbstractPropertyConfigurer(String[] filePath, String[] decodeKeys) {
         this.decodeKeys = decodeKeys;
         if (filePath == null || filePath.length <= 0) {
-            System.err.println("没有找到项目启动配置文件");
+            log.error("没有找到项目启动配置文件");
             System.exit(-1);
         }
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -49,7 +52,7 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
         }
         String projectKey = properties.getProperty("default.projectKey");
         if (projectKey == null || StringUtils.isEmpty(projectKey.trim())) {
-            System.err.println("没有找到项目密钥配置");
+            log.error("没有找到项目密钥配置");
             System.exit(-1);
         }
         projectKey = AESUtils.decrypt(projectKey.trim());

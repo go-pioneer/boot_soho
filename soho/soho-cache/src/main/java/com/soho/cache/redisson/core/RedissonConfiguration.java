@@ -5,6 +5,8 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.ByteArrayCodec;
 import org.redisson.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,8 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 public class RedissonConfiguration {
+
+    private final static Logger log = LoggerFactory.getLogger(RedissonConfiguration.class);
 
     @Autowired(required = false)
     private RedissonConfig redissonConfig;
@@ -39,7 +43,7 @@ public class RedissonConfiguration {
             // config.useMasterSlaveServers().setMasterAddress("").setPassword("").addSlaveAddress(new String[]{"",""});
             return Redisson.create(config);
         } catch (Exception e) {
-            System.err.println("Redisson初始化失败: " + e.getMessage());
+            log.error("Redisson初始化失败: " + e.getMessage());
             return null;
         }
     }

@@ -8,6 +8,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -15,6 +17,8 @@ import org.springframework.util.StringUtils;
 @Aspect
 @Component
 public class RDLockAspect {
+
+    private final static Logger log = LoggerFactory.getLogger(RDLock.class);
 
     @Autowired(required = false)
     private RedissonClient redissonClient;
@@ -26,6 +30,10 @@ public class RDLockAspect {
 
     @Around("serviceStatistics(rdLock)")
     public Object invoke(ProceedingJoinPoint joinPoint, RDLock rdLock) throws Throwable {
+        if (redissonClient == null) {
+            log.error("Redisson分布式锁服务尚未初始化");
+            return joinPoint.proceed();
+        }
         String key = rdLock.key();
         String exkey = rdLock.exkey();
         if (!StringUtils.isEmpty(exkey)) {

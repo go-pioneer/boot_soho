@@ -92,6 +92,8 @@ public class DogController {
         if (dog == null) {
             dog = new Dog();
         }
+        System.out.println("-----11111111111");
+        System.out.println("122323");
         i++;
         System.out.println(i);
         return dog;
