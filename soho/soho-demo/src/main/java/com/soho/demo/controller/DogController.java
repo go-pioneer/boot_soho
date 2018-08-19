@@ -38,7 +38,8 @@ public class DogController {
         SecurityUtils.getSubject().login(token);
         Map<String, String> map = new HashMap<>();
         map.put("sessionId", SessionUtils.getSessionId());
-        System.out.println("doReadSession---" + (System.currentTimeMillis() - start));
+        SessionUtils.getSession();
+        System.out.println("login---" + (System.currentTimeMillis() - start));
         return map;
     }
 

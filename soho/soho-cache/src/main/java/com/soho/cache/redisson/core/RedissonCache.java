@@ -2,6 +2,7 @@ package com.soho.cache.redisson.core;
 
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.imp.AbstractCache;
+import org.apache.shiro.session.Session;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,11 @@ public class RedissonCache extends AbstractCache implements Cache {
         long l = System.currentTimeMillis();
         RBucket<byte[]> bucket = redissonClient.getBucket(key.toString());
         byte[] bytes = SerializationUtils.serialize(value);
-        if (exp == -100) {
+        if (value instanceof Session) {
+            Session session = (Session) value;
+            exp = (int) session.getTimeout() / 1000;
+        }
+        if (exp == -1) {
             bucket.set(bytes);
         } else {
             bucket.set(bytes, exp, TimeUnit.SECONDS);
@@ -43,7 +48,7 @@ public class RedissonCache extends AbstractCache implements Cache {
 
     @Override
     public <V> boolean doPut(Object key, V value) {
-        return doPut(key, value, -100);
+        return doPut(key, value, -1);
     }
 
     @Override

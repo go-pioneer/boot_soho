@@ -22,6 +22,8 @@ public class DeftConfig {
     private String[] apiPrefix;
     @Value("${default.projectKey}")
     private String projectKey;
+    @Value("${default.staticPrefix}")
+    private String staticPrefix;
 
     public String getDomain() {
         return domain;
@@ -69,6 +71,14 @@ public class DeftConfig {
 
     public void setProjectKey(String projectKey) {
         this.projectKey = projectKey;
+    }
+
+    public String getStaticPrefix() {
+        return staticPrefix;
+    }
+
+    public void setStaticPrefix(String staticPrefix) {
+        this.staticPrefix = staticPrefix;
     }
 
 }

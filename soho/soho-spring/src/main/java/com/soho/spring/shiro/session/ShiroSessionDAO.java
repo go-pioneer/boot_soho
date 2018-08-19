@@ -1,47 +1,45 @@
 package com.soho.spring.shiro.session;
 
 import com.soho.spring.utils.SpringUtils;
-import com.soho.spring.utils.WCCUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author shadow
  */
 public class ShiroSessionDAO extends EnterpriseCacheSessionDAO {
 
-    private List<String> anonUrls;
+    private String staticPrefix;
 
-    public ShiroSessionDAO() {
-
-    }
-
-    public ShiroSessionDAO(List<String> anonUrls) {
-        this.anonUrls = anonUrls;
+    public ShiroSessionDAO(String staticPrefix) {
+        this.staticPrefix = staticPrefix;
     }
 
     protected Session doReadSession(Serializable sessionId) {
-        return matchAnonRequest() ? null : super.doReadSession(sessionId);
+        return validStaticPrefix() ? null : super.doReadSession(sessionId);
     }
 
     protected void doUpdate(Session session) {
-        if (matchAnonRequest()) {
+        if (validStaticPrefix()) {
             return;
         }
         super.doUpdate(session);
     }
 
-    private boolean matchAnonRequest() {
-        if (anonUrls != null && !anonUrls.isEmpty()) {
-            String reqeust = SpringUtils.getRequest().getRequestURI();
-            for (String anonUrl : anonUrls) {
-                if (anonUrl.equals(reqeust) || WCCUtils.test(anonUrl, reqeust)) {
-                    return true;
-                }
-            }
+    protected void doDelete(Session session) {
+        if (validStaticPrefix()) {
+            return;
+        }
+        super.doDelete(session);
+    }
+
+    private boolean validStaticPrefix() {
+        String request = SpringUtils.getRequest().getRequestURI();
+        if (!StringUtils.isEmpty(staticPrefix) && !StringUtils.isEmpty(request) && request.startsWith(staticPrefix)) {
+            return true;
         }
         return false;
     }

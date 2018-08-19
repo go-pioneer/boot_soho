@@ -100,7 +100,8 @@ public class ShiroConfiguration {
         for (RuleChain ruleChain : ruleChains) {
             anonUrls.add(ruleChain.getUrl());
         }
-        defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(anonUrls));
+        defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(deftConfig.getStaticPrefix()));
+        // defaultWebSessionManager.setGlobalSessionTimeout(1800000);
         Cookie cookie = defaultWebSessionManager.getSessionIdCookie();
         cookie.setSecure(webInitializeService.isHttpsCookieSecure());
         securityManager.setSessionManager(defaultWebSessionManager);
