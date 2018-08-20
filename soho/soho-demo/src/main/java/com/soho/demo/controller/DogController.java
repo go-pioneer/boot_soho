@@ -1,5 +1,6 @@
 package com.soho.demo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.soho.cache.redisson.lock.RDLock;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
@@ -11,6 +12,7 @@ import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.FileUtils;
+import com.soho.spring.utils.MD5Utils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +85,10 @@ public class DogController {
         dog.setCtime(System.currentTimeMillis());
         dog.setState(1);
         dogService.insert(dog);
-        return dog;
+        long l = System.currentTimeMillis();
+        String s = MD5Utils.encrypt(JSON.toJSONString(dog), null);
+        System.out.println("------" + (System.currentTimeMillis() - l));
+        return new FastMap<>().add("md5", s).done();
     }
 
     @ResponseBody

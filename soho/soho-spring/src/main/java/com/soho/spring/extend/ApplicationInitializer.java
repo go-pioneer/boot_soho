@@ -2,7 +2,7 @@ package com.soho.spring.extend;
 
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
-import com.soho.spring.cache.CacheType;
+import com.soho.spring.cache.model.CacheType;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
 import com.soho.spring.mvc.model.FastMap;

@@ -1,4 +1,4 @@
-package com.soho.spring.cache;
+package com.soho.spring.cache.model;
 
 public interface CacheType {
 

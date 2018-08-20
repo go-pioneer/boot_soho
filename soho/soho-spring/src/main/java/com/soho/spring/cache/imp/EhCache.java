@@ -1,6 +1,7 @@
 package com.soho.spring.cache.imp;
 
 import com.soho.spring.cache.Cache;
+import com.soho.spring.cache.model.CacheObject;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.shiro.session.Session;
@@ -11,7 +12,7 @@ import org.springframework.util.StringUtils;
  */
 public class EhCache extends AbstractCache implements Cache {
 
-    private static CacheManager cacheManager = null;
+    private volatile static net.sf.ehcache.Cache cache = null;
     private String cacheName = "soho";
     private String xmlPath = "/ehcache.xml";
 
@@ -26,29 +27,32 @@ public class EhCache extends AbstractCache implements Cache {
         if (!StringUtils.isEmpty(xmlPath)) {
             this.xmlPath = xmlPath;
         }
-        cacheManager = CacheManager.create(getClass().getResource(this.xmlPath));
+        CacheManager manager = CacheManager.create(getClass().getResource(this.xmlPath));
+        cache = manager.getCache(this.cacheName);
     }
 
     @Override
     public <V> V doGet(Object key) {
-        Element element = getEhCache().get(key);
+        Element element = cache.get(key);
         if (element == null || element.getObjectValue() == null) {
             return null;
         }
-        return (V) element.getObjectValue();
+        return ((CacheObject<V>) element.getObjectValue()).getData();
     }
 
     @Override
     public <V> boolean doPut(Object key, V value, int exp) {
-        Element element = new Element(key, value);
-        getEhCache().put(element);
         if (value instanceof Session) {
             Session session = (Session) value;
             exp = (int) session.getTimeout() / 1000;
         }
+        CacheObject<V> object = new CacheObject<>(key, value, exp);
+        object.setLast(System.currentTimeMillis());
+        Element element = new Element(key, object);
         if (exp != -1) {
             element.setTimeToLive(exp);
         }
+        cache.put(element);
         return true;
     }
 
@@ -59,12 +63,8 @@ public class EhCache extends AbstractCache implements Cache {
 
     @Override
     public <V> boolean doRemove(Object key) {
-        getEhCache().remove(key);
+        cache.remove(key);
         return true;
-    }
-
-    private net.sf.ehcache.Cache getEhCache() {
-        return cacheManager.getCache(this.cacheName);
     }
 
 }

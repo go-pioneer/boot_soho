@@ -2,6 +2,7 @@ package com.soho.cache.redisson.core;
 
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.imp.AbstractCache;
+import com.soho.spring.cache.model.CacheObject;
 import org.apache.shiro.session.Session;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -23,20 +24,25 @@ public class RedissonCache extends AbstractCache implements Cache {
         // long l = System.currentTimeMillis();
         RBucket<byte[]> bucket = redissonClient.getBucket(key.toString());
         byte[] bytes = bucket.get();
-        V v = (V) SerializationUtils.deserialize(bytes);
+        if (bytes == null || bytes.length <= 0) {
+            return null;
+        }
+        CacheObject<V> object = (CacheObject<V>) SerializationUtils.deserialize(bytes);
         // System.out.println("read cache: " + (System.currentTimeMillis() - l));
-        return v;
+        return object.getData();
     }
 
     @Override
     public <V> boolean doPut(Object key, V value, int exp) {
         // long l = System.currentTimeMillis();
         RBucket<byte[]> bucket = redissonClient.getBucket(key.toString());
-        byte[] bytes = SerializationUtils.serialize(value);
         if (value instanceof Session) {
             Session session = (Session) value;
             exp = (int) session.getTimeout() / 1000;
         }
+        CacheObject<V> object = new CacheObject<>(key, value, exp);
+        object.setLast(System.currentTimeMillis());
+        byte[] bytes = SerializationUtils.serialize(object);
         if (exp == -1) {
             bucket.set(bytes);
         } else {

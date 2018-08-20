@@ -1,7 +1,7 @@
 package com.soho.spring.shiro.cache;
 
 import com.soho.spring.cache.CacheManager;
-import com.soho.spring.cache.CacheType;
+import com.soho.spring.cache.model.CacheType;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
