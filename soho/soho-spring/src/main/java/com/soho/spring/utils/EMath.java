@@ -8,7 +8,6 @@ import java.util.UUID;
  * 封装数学计算工具类
  * A-加法 S-减法 M-乘法 D-除法
  * LT-小于 LTE-小于等于 GT-大于 GTE-大于等于 EQ-等于
- * 计算结果小于0.000001会出现科学计数方式
  *
  * @Created by shadow on 2017/5/17.
  */
@@ -211,16 +210,16 @@ public class EMath {
     /**
      * 格式化数值
      *
-     * @param number 数值参数
+     * @param object 数值参数
      * @param scale  保留位数
      * @return 数值字符串
      */
-    public static String digit(Object number, int scale) {
+    public static String digit(Object object, int scale) {
         if (scale <= 0)
             scale = 0;
         String str1 = "";
         String str2 = "";
-        String number1 = number.toString();
+        String number1 = toBigDecimal(object).toPlainString();
         if (number1.indexOf(".") != -1) {
             String[] split_str = number1.split("\\.");
             str1 = split_str[0];
@@ -263,11 +262,11 @@ public class EMath {
     /**
      * 格式化数值
      *
-     * @param number 数值参数
+     * @param object 数值参数
      * @return 数值字符串
      */
-    public static String digit(Object number) {
-        return digit(number, DEFAULT_SCALE);
+    public static String digit(Object object) {
+        return digit(object, DEFAULT_SCALE);
     }
 
     /**
@@ -329,12 +328,12 @@ public class EMath {
         System.out.println(EMath.M("-0.057487", new BigDecimal(1.05458787), 15));
         System.out.println(EMath.M(0.057487, 1.05458787));
 
-        System.out.println(EMath.D(1.1, -3.2, 10));
+        System.out.println(EMath.S(0.0000000000000008, 0.00000000000000000000009, 50));
         System.out.println(EMath.D("0", new BigDecimal(3)));
         System.out.println(EMath.toBigDecimal(EMath.D(0, new BigDecimal(3))));
 
         System.out.println(EMath.digit(0.045787431, 8));
-        System.out.println(EMath.digit(0.045787431));
+        System.out.println(EMath.digit(new BigDecimal("0.0000000000000001"),50));
     }
 
 }
