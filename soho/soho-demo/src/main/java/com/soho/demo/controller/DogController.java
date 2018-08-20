@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +82,18 @@ public class DogController {
         dog.setState(1);
         dogService.insert(dog);
         return dog;
+    }
+
+    @ResponseBody
+    @RequestMapping("/webflux")
+    public Mono<Dog> webflux() throws BizErrorEx {
+        Dog dog = new Dog();
+        dog.setName("小狗");
+        dog.setAge(5);
+        dog.setSex(1);
+        dog.setCtime(System.currentTimeMillis());
+        dog.setState(1);
+        return Mono.just(dog);
     }
 
     int i = 0;
