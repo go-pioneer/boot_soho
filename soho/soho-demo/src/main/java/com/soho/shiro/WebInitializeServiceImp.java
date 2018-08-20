@@ -73,11 +73,6 @@ public class WebInitializeServiceImp implements WebInitializeService {
     }
 
     @Override
-    public boolean isHttpsCookieSecure() {
-        return false;
-    }
-
-    @Override
     public List<HandlerInterceptor> initWebMVCInterceptor() {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new DSHolderInterceptor());

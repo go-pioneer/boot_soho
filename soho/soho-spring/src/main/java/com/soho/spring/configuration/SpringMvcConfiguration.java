@@ -76,7 +76,7 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 默认错误页面拦截器处理
         InterceptorRegistration error = registry.addInterceptor(new ErrorPageInterceptor(deftConfig, errorPageConfig));
-        error.excludePathPatterns("/static/**"); // 排除配置
+        error.excludePathPatterns(deftConfig.getStaticPrefix()+"**"); // 排除配置
         error.addPathPatterns("/**"); // 拦截配置
         List<HandlerInterceptor> interceptors = webInitializeService.initWebMVCInterceptor();
         for (HandlerInterceptor interceptor : interceptors) {

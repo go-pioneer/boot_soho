@@ -22,54 +22,48 @@ public class ShiroDataCache<K, V> implements Cache<Object, V> {
     private CacheManager cacheManager;
 
     public void clear() throws CacheException {
-        getCache().clear();
+        defaultShiroDataCache().clear();
     }
 
     public V get(Object key) throws CacheException {
-        return getCache().get(getCacheKey() + key);
+        return defaultShiroDataCache().get(PROKey() + key);
     }
 
     public V put(Object key, V value) throws CacheException {
-        getCache().put(getCacheKey() + key, value);
+        defaultShiroDataCache().put(PROKey() + key, value);
         return value;
     }
 
     public V remove(Object key) throws CacheException {
-        V v = getCache().get(getCacheKey() + key);
-        getCache().remove(getCacheKey() + key);
+        V v = defaultShiroDataCache().get(PROKey() + key);
+        defaultShiroDataCache().remove(PROKey() + key);
         return v;
     }
 
     public Set<Object> keys() {
-        return getCache().keys();
+        return defaultShiroDataCache().keys();
     }
 
     public int size() {
-        return (int) getCache().size();
+        return (int) defaultShiroDataCache().size();
     }
 
     public Collection<V> values() {
-        return getCache().values();
+        return defaultShiroDataCache().values();
     }
 
-    private com.soho.spring.cache.Cache getCache() {
-        com.soho.spring.cache.Cache cache = cacheManager.getCache(CacheType.SHIRO_DATA_CACHE);
+    private static volatile com.soho.spring.cache.Cache cache;
+
+    private com.soho.spring.cache.Cache defaultShiroDataCache() {
         if (cache == null) {
-            System.out.println("cache is null");
+            cache = cacheManager.getCache(CacheType.SHIRO_DATA);
+            return cache;
         }
         return cache;
     }
 
-    private String getCacheKey() {
-        return CacheType.SHIRO_DATA_CACHE;
-    }
-
-    public CacheManager getCacheManager() {
-        return cacheManager;
-    }
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
+    private String PROKey() {
+        return CacheType.SHIRO_DATA;
     }
 
 }

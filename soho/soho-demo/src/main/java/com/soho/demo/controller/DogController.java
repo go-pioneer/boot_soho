@@ -36,11 +36,13 @@ public class DogController {
         // System.out.println(SessionUtils.getSessionId());
         long start = System.currentTimeMillis();
         UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
+        System.out.println("login0---" + (System.currentTimeMillis() - start));
         SecurityUtils.getSubject().login(token);
+        System.out.println("login1---" + (System.currentTimeMillis() - start));
         Map<String, String> map = new HashMap<>();
         map.put("sessionId", SessionUtils.getSessionId());
         SessionUtils.getSession();
-        System.out.println("login---" + (System.currentTimeMillis() - start));
+        System.out.println("login2---" + (System.currentTimeMillis() - start));
         return map;
     }
 
@@ -106,8 +108,6 @@ public class DogController {
         if (dog == null) {
             dog = new Dog();
         }
-        System.out.println("-----11111111111");
-        System.out.println("122323");
         i++;
         System.out.println(i);
         return dog;

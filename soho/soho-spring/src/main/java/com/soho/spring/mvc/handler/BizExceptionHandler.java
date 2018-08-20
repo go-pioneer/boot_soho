@@ -36,7 +36,7 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
                                          Exception ex) {
         String requestUri = request.getRequestURI();
         String queryString = StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString();
-        if (requestUri.startsWith("/static/")) { // 静态资源异常不处理
+        if (requestUri.startsWith(deftConfig.getStaticPrefix())) { // 静态资源异常不处理
             return null;
         }
         FormTokenUtils.keepFormToken(request, handler); // 保持FormToken有效性

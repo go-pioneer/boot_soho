@@ -35,13 +35,14 @@ import java.util.Map;
 public class ShiroConfiguration {
 
     @Autowired(required = false)
-    private CacheManager cacheManager;
-    @Autowired(required = false)
-    private WebInitializeService webInitializeService;
-    @Autowired(required = false)
     private DeftConfig deftConfig;
     @Autowired(required = false)
     private ErrorPageConfig errorPageConfig;
+    @Autowired(required = false)
+    private CacheManager cacheManager;
+
+    @Autowired(required = false)
+    private WebInitializeService webInitializeService;
 
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
@@ -92,18 +93,10 @@ public class ShiroConfiguration {
         securityManager.setRealms(realms);
         securityManager.setCacheManager(cacheManager);
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        List<RuleChain> ruleChains = webInitializeService.initAnonRuleChains();
-        if (ruleChains == null) {
-            ruleChains = new ArrayList<>();
-        }
-        List<String> anonUrls = new ArrayList<>(ruleChains.size());
-        for (RuleChain ruleChain : ruleChains) {
-            anonUrls.add(ruleChain.getUrl());
-        }
         defaultWebSessionManager.setSessionDAO(new ShiroSessionDAO(deftConfig.getStaticPrefix()));
-        // defaultWebSessionManager.setGlobalSessionTimeout(1800000);
+        defaultWebSessionManager.setGlobalSessionTimeout(deftConfig.getExpireSession());
         Cookie cookie = defaultWebSessionManager.getSessionIdCookie();
-        cookie.setSecure(webInitializeService.isHttpsCookieSecure());
+        cookie.setSecure(deftConfig.isHttps());
         securityManager.setSessionManager(defaultWebSessionManager);
         return securityManager;
     }

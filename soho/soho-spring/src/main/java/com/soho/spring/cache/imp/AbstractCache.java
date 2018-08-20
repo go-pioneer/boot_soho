@@ -14,11 +14,11 @@ import java.util.Set;
 public abstract class AbstractCache implements Cache {
 
     @Autowired(required = false)
-    private DeftConfig deftConfig;
+    private volatile DeftConfig deftConfig;
 
     public <V> V get(Object key) {
         try {
-            return doGet(getCacheKey(key));
+            return doGet(reBuildKey(key));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -27,7 +27,7 @@ public abstract class AbstractCache implements Cache {
 
     public <V> boolean put(Object key, V value, int exp) {
         try {
-            return doPut(getCacheKey(key), value, exp);
+            return doPut(reBuildKey(key), value, exp);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -36,7 +36,7 @@ public abstract class AbstractCache implements Cache {
 
     public <V> boolean put(Object key, V value) {
         try {
-            return doPut(getCacheKey(key), value);
+            return doPut(reBuildKey(key), value);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -45,7 +45,7 @@ public abstract class AbstractCache implements Cache {
 
     public boolean remove(Object key) {
         try {
-            return doRemove(getCacheKey(key));
+            return doRemove(reBuildKey(key));
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -88,7 +88,7 @@ public abstract class AbstractCache implements Cache {
         return null;
     }
 
-    private String getCacheKey(Object key) {
+    private String reBuildKey(Object key) {
         if (deftConfig == null) {
             deftConfig = SpringUtils.getBean(DeftConfig.class);
         }

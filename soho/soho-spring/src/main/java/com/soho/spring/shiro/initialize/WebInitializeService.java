@@ -32,9 +32,6 @@ public interface WebInitializeService {
     // 初始化认证拦截器
     public Map<String, Filter> initShiroFilters();
 
-    // 开启HTTPS Cookie数据安全
-    public boolean isHttpsCookieSecure();
-
     // 初始化web拦截器
     public List<HandlerInterceptor> initWebMVCInterceptor();
 

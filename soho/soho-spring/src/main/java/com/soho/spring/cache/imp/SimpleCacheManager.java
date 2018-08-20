@@ -14,6 +14,14 @@ public class SimpleCacheManager implements CacheManager {
 
     private Map<String, Cache> cacheMap;
 
+    public SimpleCacheManager() {
+
+    }
+
+    public SimpleCacheManager(Map<String, Cache> cacheMap) {
+        this.cacheMap = cacheMap;
+    }
+
     public Cache getCache(String cacheName) {
         return cacheMap.get(cacheName);
     }

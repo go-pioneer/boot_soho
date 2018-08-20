@@ -24,6 +24,10 @@ public class DeftConfig {
     private String projectKey;
     @Value("${default.staticPrefix}")
     private String staticPrefix;
+    @Value("${default.isHttps}")
+    private boolean isHttps;
+    @Value("${default.expireSession}")
+    private int expireSession;
 
     public String getDomain() {
         return domain;
@@ -79,6 +83,22 @@ public class DeftConfig {
 
     public void setStaticPrefix(String staticPrefix) {
         this.staticPrefix = staticPrefix;
+    }
+
+    public boolean isHttps() {
+        return isHttps;
+    }
+
+    public void setHttps(boolean https) {
+        isHttps = https;
+    }
+
+    public int getExpireSession() {
+        return expireSession;
+    }
+
+    public void setExpireSession(int expireSession) {
+        this.expireSession = expireSession;
     }
 
 }
