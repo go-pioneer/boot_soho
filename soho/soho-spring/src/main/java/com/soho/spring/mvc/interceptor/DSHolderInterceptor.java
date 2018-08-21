@@ -1,7 +1,7 @@
 package com.soho.spring.mvc.interceptor;
 
 import com.soho.spring.datasource.DSContextHolder;
-import com.soho.spring.mvc.annotation.DSHolder;
+import com.soho.spring.datasource.annotation.DSHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

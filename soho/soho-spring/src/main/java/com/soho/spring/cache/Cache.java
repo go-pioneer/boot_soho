@@ -11,6 +11,13 @@ import java.util.Set;
 public interface Cache {
 
     /**
+     * 获取缓存名称
+     *
+     * @return 缓存名称
+     */
+    public abstract String getCacheName();
+
+    /**
      * 获取缓存值
      *
      * @param key 缓存键
@@ -84,13 +91,13 @@ public interface Cache {
      *
      * @return Object
      */
-    public abstract Object getInstance();
+    public abstract <V> V getInstance();
 
     /**
      * 获取底层实例类型
      *
-     * @return Class<?>
+     * @return Class<V>
      */
-    public abstract Class<?> getInstanceClassType();
+    public abstract <V> Class<V> getInstanceClassType();
 
 }

@@ -16,6 +16,12 @@ public abstract class AbstractCache implements Cache {
     @Autowired(required = false)
     private volatile DeftConfig deftConfig;
 
+    private String cacheName;
+
+    public AbstractCache(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
     public <V> V get(Object key) {
         try {
             return doGet(reBuildKey(key));
@@ -79,12 +85,12 @@ public abstract class AbstractCache implements Cache {
     }
 
     @Override
-    public Object getInstance() {
+    public <V> V getInstance() {
         return null;
     }
 
     @Override
-    public Class<?> getInstanceClassType() {
+    public <V> Class<V> getInstanceClassType() {
         return null;
     }
 
@@ -92,7 +98,12 @@ public abstract class AbstractCache implements Cache {
         if (deftConfig == null) {
             deftConfig = SpringUtils.getBean(DeftConfig.class);
         }
-        return deftConfig.getProjectCode() + key;
+        return deftConfig.getProjectCode() + cacheName + key;
+    }
+
+    @Override
+    public String getCacheName() {
+        return cacheName;
     }
 
 }

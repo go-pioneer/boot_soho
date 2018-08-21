@@ -1,4 +1,4 @@
-package com.soho.spring.mvc.annotation;
+package com.soho.spring.datasource.annotation;
 
 import com.soho.spring.configuration.DataSourceConfiguration;
 

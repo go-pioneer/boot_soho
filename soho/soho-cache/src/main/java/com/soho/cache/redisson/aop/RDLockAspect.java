@@ -1,6 +1,6 @@
 package com.soho.cache.redisson.aop;
 
-import com.soho.cache.redisson.lock.RDLock;
+import com.soho.spring.cache.annotation.RDLock;
 import com.soho.spring.shiro.utils.SessionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,10 +11,12 @@ import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Aspect
+@Order(10)
 @Component
 public class RDLockAspect {
 
@@ -31,7 +33,7 @@ public class RDLockAspect {
     @Around("serviceStatistics(rdLock)")
     public Object invoke(ProceedingJoinPoint joinPoint, RDLock rdLock) throws Throwable {
         if (redissonClient == null) {
-            log.error("Redisson分布式锁服务尚未初始化");
+            log.error("Redisson服务尚未初始化");
             return joinPoint.proceed();
         }
         String key = rdLock.key();

@@ -1,4 +1,4 @@
-package com.soho.cache.redisson.lock;
+package com.soho.spring.cache.annotation;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 分布式Redis锁注解实现
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RDLock {

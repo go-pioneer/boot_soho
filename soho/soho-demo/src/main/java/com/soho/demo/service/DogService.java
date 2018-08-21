@@ -6,6 +6,6 @@ import com.soho.spring.model.ReqData;
 
 public interface DogService extends BaseService<Dog, Long> {
 
-    public void test(ReqData reqData);
+    public Object test(ReqData reqData);
 
 }

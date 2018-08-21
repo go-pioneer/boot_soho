@@ -28,6 +28,8 @@ public class DeftConfig {
     private boolean isHttps;
     @Value("${default.expireSession}")
     private int expireSession;
+    @Value("${spring.datasource.mgbXmlLocation}")
+    private String mgbXmlLocation;
 
     public String getDomain() {
         return domain;
@@ -99,6 +101,14 @@ public class DeftConfig {
 
     public void setExpireSession(int expireSession) {
         this.expireSession = expireSession;
+    }
+
+    public String getMgbXmlLocation() {
+        return mgbXmlLocation;
+    }
+
+    public void setMgbXmlLocation(String mgbXmlLocation) {
+        this.mgbXmlLocation = mgbXmlLocation;
     }
 
 }

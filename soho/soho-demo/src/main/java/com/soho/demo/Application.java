@@ -3,10 +3,11 @@ package com.soho.demo;
 import com.soho.cache.redisson.core.RedissonCache;
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
-import com.soho.spring.cache.model.CacheType;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.imp.SimpleCacheManager;
+import com.soho.spring.cache.model.CacheType;
 import com.soho.spring.extend.ApplicationInitializer;
+import com.soho.spring.mvc.model.FastList;
 import com.soho.spring.mvc.model.FastMap;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
@@ -35,20 +36,18 @@ public class Application extends ApplicationInitializer {
 
     @Bean
     public CacheManager initCacheManager() {
-        Map<String, Cache> cacheMap = new FastMap<Cache>()
-                .add(CacheType.SHIRO_DATA, REDISSONCACHE()).add(CacheType.DEFAULT_DATA, REDISSONCACHE())
-                .done();
-        return new SimpleCacheManager(cacheMap);
+        FastList<Cache> fastList = new FastList<>().add(new EhCache(CacheType.SHIRO_DATA)).add(REMOTE_CACHE()).add(LOCAL_CACHE());
+        return initCacheManager(fastList.done());
     }
 
     @Bean
-    public Cache REDISSONCACHE() {
-        return new RedissonCache();
+    public Cache REMOTE_CACHE() {
+        return new RedissonCache(CacheType.REMOTE_DATA);
     }
 
     @Bean
-    public Cache EHCACHE() {
-        return new EhCache();
+    public Cache LOCAL_CACHE() {
+        return new EhCache(CacheType.LOCAL_DATA);
     }
 
 }

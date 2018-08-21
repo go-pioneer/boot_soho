@@ -1,11 +1,12 @@
 package com.soho.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.soho.cache.redisson.lock.RDLock;
+import com.soho.spring.cache.annotation.RDLock;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
+import com.soho.spring.model.ReqData;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.KillRobot;
 import com.soho.spring.mvc.model.FastMap;
@@ -78,7 +79,16 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/save")
     public Object save() throws BizErrorEx {
-        Dog dog = new Dog();
+        try {
+            long l = System.currentTimeMillis();
+            Object object = dogService.test(new ReqData());
+            System.out.println("------" + (System.currentTimeMillis() - l));
+            return object;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+        /*Dog dog = new Dog();
         dog.setName("小狗");
         dog.setAge(5);
         dog.setSex(1);
@@ -88,7 +98,7 @@ public class DogController {
         long l = System.currentTimeMillis();
         String s = MD5Utils.encrypt(JSON.toJSONString(dog), null);
         System.out.println("------" + (System.currentTimeMillis() - l));
-        return new FastMap<>().add("md5", s).done();
+        return new FastMap<>().add("md5", s).done();*/
     }
 
     @ResponseBody

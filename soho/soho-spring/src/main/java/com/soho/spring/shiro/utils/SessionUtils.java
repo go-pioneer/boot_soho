@@ -26,7 +26,7 @@ public class SessionUtils {
     public static final String USER_ROLES = "_SESSION_USER_ROLES_";
     public static final String ONLINE = "_ONLIEN_SESSION_ID_";
 
-    private volatile static CacheManager cacheManager;
+    private volatile static Cache cache;
     private volatile static SessionManager sessionManager;
 
     public static Subject getSubject() {
@@ -117,13 +117,11 @@ public class SessionUtils {
 
     public static void buidOnlineSessionId(Object principal, Object sessionId) {
         try {
-            if (cacheManager == null) {
-                cacheManager = SpringUtils.getBean(CacheManager.class);
+            if (cache == null) {
+                CacheManager cacheManager = SpringUtils.getBean(CacheManager.class);
+                cache = cacheManager.getCache(null);
             }
-            Cache cache = SpringUtils.getBean(CacheManager.class).getCache(null);
-            if (cache != null) {
-                cache.put(ONLINE + principal, sessionId.toString());
-            }
+            cache.put(ONLINE + principal, sessionId.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,16 +129,12 @@ public class SessionUtils {
 
     public static Object getOnlineSessionId(Object principal) {
         try {
-            if (cacheManager == null) {
-                cacheManager = SpringUtils.getBean(CacheManager.class);
+            if (cache == null) {
+                CacheManager cacheManager = SpringUtils.getBean(CacheManager.class);
+                cache = cacheManager.getCache(null);
             }
-            Cache cache = cacheManager.getCache(null);
-            if (cache != null) {
-                Object cacheValue = cache.get(ONLINE + principal);
-                if (cacheValue != null) {
-                    return cacheValue;
-                }
-            }
+            Object cacheValue = cache.get(ONLINE + principal);
+            return cacheValue == null ? null : cacheValue;
         } catch (Exception e) {
             e.printStackTrace();
         }

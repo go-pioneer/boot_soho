@@ -5,6 +5,7 @@ import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
 import com.soho.spring.datasource.RoutingDataSource;
 import com.soho.spring.model.DbConfig;
+import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.HikariDS;
 import com.soho.spring.shiro.initialize.WebInitializeService;
 import org.apache.ibatis.plugin.Interceptor;
@@ -35,6 +36,8 @@ public class DataSourceConfiguration {
     @Autowired(required = false)
     private DbConfig dbConfig;
     @Autowired(required = false)
+    private DeftConfig deftConfig;
+    @Autowired(required = false)
     private WebInitializeService webInitializeService;
 
     @Bean(name = "dynamicDataSource")
@@ -60,7 +63,7 @@ public class DataSourceConfiguration {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
-        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(dbConfig.getMgbXmlLocation());
+        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(deftConfig.getMgbXmlLocation());
         Resource sql = new PathMatchingResourcePatternResolver().getResources("classpath*:/mybatis-sqlresolver.xml")[0];
         int len = mappers.length + 1;
         Resource[] resources = new Resource[len];

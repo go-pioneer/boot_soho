@@ -8,6 +8,7 @@ public class CacheObject<T> implements Serializable {
     private long begin;
     private long last;
     private int expire;
+    private int version;
     private T data;
 
     public CacheObject() {
@@ -24,6 +25,7 @@ public class CacheObject<T> implements Serializable {
         this.expire = expire;
         this.begin = System.currentTimeMillis();
         this.last = begin;
+        this.version = 0;
     }
 
     public Object getKey() {
@@ -71,6 +73,14 @@ public class CacheObject<T> implements Serializable {
             return true;
         }
         return (last + expire * 1000) <= System.currentTimeMillis();
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
 }

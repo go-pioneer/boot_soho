@@ -21,22 +21,24 @@ public class ShiroDataCache<K, V> implements Cache<Object, V> {
     @Autowired(required = false)
     private CacheManager cacheManager;
 
+    private static volatile com.soho.spring.cache.Cache cache;
+
     public void clear() throws CacheException {
         defaultShiroDataCache().clear();
     }
 
     public V get(Object key) throws CacheException {
-        return defaultShiroDataCache().get(PROKey() + key);
+        return defaultShiroDataCache().get(key);
     }
 
     public V put(Object key, V value) throws CacheException {
-        defaultShiroDataCache().put(PROKey() + key, value);
+        defaultShiroDataCache().put(key, value);
         return value;
     }
 
     public V remove(Object key) throws CacheException {
-        V v = defaultShiroDataCache().get(PROKey() + key);
-        defaultShiroDataCache().remove(PROKey() + key);
+        V v = defaultShiroDataCache().get(key);
+        defaultShiroDataCache().remove(key);
         return v;
     }
 
@@ -52,18 +54,12 @@ public class ShiroDataCache<K, V> implements Cache<Object, V> {
         return defaultShiroDataCache().values();
     }
 
-    private static volatile com.soho.spring.cache.Cache cache;
-
     private com.soho.spring.cache.Cache defaultShiroDataCache() {
         if (cache == null) {
             cache = cacheManager.getCache(CacheType.SHIRO_DATA);
             return cache;
         }
         return cache;
-    }
-
-    private String PROKey() {
-        return CacheType.SHIRO_DATA;
     }
 
 }

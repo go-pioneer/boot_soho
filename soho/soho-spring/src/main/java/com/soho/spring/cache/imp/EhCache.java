@@ -13,22 +13,23 @@ import org.springframework.util.StringUtils;
 public class EhCache extends AbstractCache implements Cache {
 
     private volatile static net.sf.ehcache.Cache cache = null;
-    private String cacheName = "soho";
+    private String localCacheName = "soho";
     private String xmlPath = "/ehcache.xml";
 
-    public EhCache() {
-        this(null, null);
+    public EhCache(String cacheName) {
+        this(cacheName, null, null);
     }
 
-    public EhCache(String xmlPath, String cacheName) {
-        if (!StringUtils.isEmpty(cacheName)) {
-            this.cacheName = cacheName;
+    public EhCache(String cacheName, String xmlPath, String localCacheName) {
+        super(cacheName);
+        if (!StringUtils.isEmpty(localCacheName)) {
+            this.localCacheName = localCacheName;
         }
         if (!StringUtils.isEmpty(xmlPath)) {
             this.xmlPath = xmlPath;
         }
         CacheManager manager = CacheManager.create(getClass().getResource(this.xmlPath));
-        cache = manager.getCache(this.cacheName);
+        cache = manager.getCache(this.localCacheName);
     }
 
     @Override
@@ -48,6 +49,7 @@ public class EhCache extends AbstractCache implements Cache {
         }
         CacheObject<V> object = new CacheObject<>(key, value, exp);
         object.setLast(System.currentTimeMillis());
+        object.setVersion(object.getVersion() + 1);
         Element element = new Element(key, object);
         if (exp != -1) {
             element.setTimeToLive(exp);
@@ -65,6 +67,16 @@ public class EhCache extends AbstractCache implements Cache {
     public <V> boolean doRemove(Object key) {
         cache.remove(key);
         return true;
+    }
+
+    @Override
+    public net.sf.ehcache.Cache getInstance() {
+        return cache;
+    }
+
+    @Override
+    public Class<net.sf.ehcache.Cache> getInstanceClassType() {
+        return net.sf.ehcache.Cache.class;
     }
 
 }

@@ -19,6 +19,11 @@ public class RedissonCache extends AbstractCache implements Cache {
     @Autowired(required = false)
     private RedissonClient redissonClient;
 
+
+    public RedissonCache(String cacheName) {
+        super(cacheName);
+    }
+
     @Override
     public <V> V doGet(Object key) {
         // long l = System.currentTimeMillis();
@@ -42,6 +47,7 @@ public class RedissonCache extends AbstractCache implements Cache {
         }
         CacheObject<V> object = new CacheObject<>(key, value, exp);
         object.setLast(System.currentTimeMillis());
+        object.setVersion(object.getVersion() + 1);
         byte[] bytes = SerializationUtils.serialize(object);
         if (exp == -1) {
             bucket.set(bytes);

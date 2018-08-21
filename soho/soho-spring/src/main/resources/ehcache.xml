@@ -13,7 +13,7 @@
     <!-- 每隔多长时间去开启一次线程清理数据 -->
     <!-- 淘汰策略    最近一段时间利用率低的会被优先清理掉 -->
     <defaultCache
-            maxElementsInMemory="10000"
+            maxElementsInMemory="1000000"
             eternal="false"
             timeToIdleSeconds="86400"
             timeToLiveSeconds="86400"
@@ -25,7 +25,7 @@
 
     <cache
             name="soho"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="1000000"
             eternal="false"
             timeToIdleSeconds="86400"
             timeToLiveSeconds="86400"
