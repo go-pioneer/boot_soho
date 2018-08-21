@@ -25,7 +25,7 @@ public class EMath {
      * @param scale 保留位数
      * @return String 计算结果
      */
-    public static String A(Object s1, Object s2, int scale) {
+    public static String add(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         BigDecimal decimal = b1.add(b2);
@@ -39,8 +39,8 @@ public class EMath {
      * @param s2 数值b
      * @return String 计算结果
      */
-    public static String A(Object s1, Object s2) {
-        return A(s1, s2, DEFAULT_SCALE);
+    public static String add(Object s1, Object s2) {
+        return add(s1, s2, DEFAULT_SCALE);
     }
 
     /**
@@ -318,8 +318,8 @@ public class EMath {
     }
 
     public static void main(String[] args) {
-        System.out.println(EMath.A(5.46578974654, 1, 5));
-        System.out.println(EMath.A("5.46578974654", 1));
+        System.out.println(EMath.add(5.46578974654, 1, 5));
+        System.out.println(EMath.add("5.46578974654", 1));
 
 
         System.out.println(EMath.subtract(1278.456878764654f, 8.46787d, 18));
