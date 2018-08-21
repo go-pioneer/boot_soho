@@ -1,6 +1,7 @@
 package com.soho.spring.shiro.utils;
 
 import com.soho.mybatis.crud.domain.IDEntity;
+import com.soho.spring.cache.model.CacheObject;
 import com.soho.spring.utils.SpringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -121,7 +122,8 @@ public class SessionUtils {
                 CacheManager cacheManager = SpringUtils.getBean(CacheManager.class);
                 cache = cacheManager.getCache(null);
             }
-            cache.put(ONLINE + principal, sessionId.toString());
+            String key = ONLINE + principal;
+            cache.put(key, new CacheObject<>(key, sessionId.toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,8 +135,8 @@ public class SessionUtils {
                 CacheManager cacheManager = SpringUtils.getBean(CacheManager.class);
                 cache = cacheManager.getCache(null);
             }
-            Object cacheValue = cache.get(ONLINE + principal);
-            return cacheValue == null ? null : cacheValue;
+            Object object = cache.get(ONLINE + principal);
+            return object == null ? null : ((CacheObject<Object>) object).getData();
         } catch (Exception e) {
             e.printStackTrace();
         }
