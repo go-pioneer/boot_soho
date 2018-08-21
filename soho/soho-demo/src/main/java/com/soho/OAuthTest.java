@@ -154,7 +154,6 @@ public class OAuthTest {
         // 1472a4c61c68561922fe2a5c6ca597fe---123456---10019a5e35b8ccc34a686479893016d8
 //        System.out.println(AESUtils.decrypt("1472a4c61c68561922fe2a5c6ca597fe"));
 //        testapi();
-        System.out.println(EMath.D(1, 1.23));
         // System.out.println(String.format("2.1", "%.2f"));
         // System.out.println(new java.text.DecimalFormat("#").format(new BigDecimal(3.101546578978)));
     }
