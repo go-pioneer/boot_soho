@@ -5,8 +5,8 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * 封装数学计算工具类
- * A-加法 S-减法 M-乘法 D-除法
+ * 封装数学计算工具类,统一规范舍位不进
+ * add-加法 subtract-减法 multiply-乘法 divide-除法
  * LT-小于 LTE-小于等于 GT-大于 GTE-大于等于 EQ-等于
  *
  * @Created by shadow on 2017/5/17.
@@ -51,7 +51,7 @@ public class EMath {
      * @param scale 保留位数
      * @return String 计算结果
      */
-    public static String S(Object s1, Object s2, int scale) {
+    public static String subtract(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         BigDecimal decimal = b1.subtract(b2);
@@ -65,8 +65,8 @@ public class EMath {
      * @param s2 数值b
      * @return String 计算结果
      */
-    public static String S(Object s1, Object s2) {
-        return S(s1, s2, DEFAULT_SCALE);
+    public static String subtract(Object s1, Object s2) {
+        return subtract(s1, s2, DEFAULT_SCALE);
     }
 
     /**
@@ -77,7 +77,7 @@ public class EMath {
      * @param scale 保留位数
      * @return String 计算结果
      */
-    public static String M(Object s1, Object s2, int scale) {
+    public static String multiply(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         if (b1.compareTo(BigDecimal.ZERO) == 0 || b2.compareTo(BigDecimal.ZERO) == 0) {
@@ -94,8 +94,8 @@ public class EMath {
      * @param s2 数值b
      * @return String 计算结果
      */
-    public static String M(Object s1, Object s2) {
-        return M(s1, s2, DEFAULT_SCALE);
+    public static String multiply(Object s1, Object s2) {
+        return multiply(s1, s2, DEFAULT_SCALE);
     }
 
     /**
@@ -106,12 +106,12 @@ public class EMath {
      * @param scale 保留位数
      * @return String 计算结果
      */
-    public static String D(Object s1, Object s2, int scale) {
+    public static String divide(Object s1, Object s2, int scale) {
         BigDecimal b1 = toBigDecimal(s1);
         BigDecimal b2 = toBigDecimal(s2);
         BigDecimal decimal = BigDecimal.ZERO;
         if (b1.compareTo(BigDecimal.ZERO) != 0 && b2.compareTo(BigDecimal.ZERO) != 0) {
-            decimal = b1.divide(b2, 20, BigDecimal.ROUND_DOWN);
+            decimal = b1.divide(b2, 32, BigDecimal.ROUND_DOWN);
         }
         return digit(decimal, scale);
     }
@@ -123,8 +123,8 @@ public class EMath {
      * @param s2 数值b
      * @return String 计算结果
      */
-    public static String D(Object s1, Object s2) {
-        return D(s1, s2, DEFAULT_SCALE);
+    public static String divide(Object s1, Object s2) {
+        return divide(s1, s2, DEFAULT_SCALE);
     }
 
     /**
@@ -322,18 +322,18 @@ public class EMath {
         System.out.println(EMath.A("5.46578974654", 1));
 
 
-        System.out.println(EMath.S(1278.456878764654f, 8.46787d, 18));
-        System.out.println(EMath.S(new BigDecimal(1278.456878764654), 8.46787));
+        System.out.println(EMath.subtract(1278.456878764654f, 8.46787d, 18));
+        System.out.println(EMath.subtract(new BigDecimal(1278.456878764654), 8.46787));
 
-        System.out.println(EMath.M("-0.057487", new BigDecimal(1.05458787), 15));
-        System.out.println(EMath.M(0.057487, 1.05458787));
+        System.out.println(EMath.multiply("-0.057487", new BigDecimal(1.05458787), 15));
+        System.out.println(EMath.multiply(0.057487, 1.05458787));
 
-        System.out.println(EMath.S(0.0000000000000008, 0.00000000000000000000009, 50));
-        System.out.println(EMath.D("0", new BigDecimal(3)));
-        System.out.println(EMath.toBigDecimal(EMath.D(0, new BigDecimal(3))));
+        System.out.println(EMath.subtract(0.0000000000000008, 0.00000000000000000000009, 50));
+        System.out.println(EMath.divide("0", new BigDecimal(3)));
+        System.out.println(EMath.toBigDecimal(EMath.divide(0, new BigDecimal(3))));
 
         System.out.println(EMath.digit(0.045787431, 8));
-        System.out.println(EMath.digit(new BigDecimal("0.0000000000000001"),50));
+        System.out.println(EMath.digit(new BigDecimal("0.0000000000000001"), 50));
     }
 
 }
