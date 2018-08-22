@@ -31,10 +31,10 @@ public class CacheAspect {
     @Autowired(required = false)
     private CacheManager manager;
 
+    private final static String BIZ_CACHE = "biz_cache_";
+
     private static volatile com.soho.spring.cache.Cache local_cache;
     private static volatile com.soho.spring.cache.Cache remote_cache;
-
-    private static volatile Object jvm_lock = new Object();
 
     @Pointcut("@annotation(cache)")
     public void serviceStatistics(Cache cache) {
@@ -43,6 +43,7 @@ public class CacheAspect {
 
     @Around("serviceStatistics(cache)")
     public Object invoke(ProceedingJoinPoint joinPoint, Cache cache) throws Throwable {
+        // long l = System.currentTimeMillis();
         if (local_cache == null) {
             local_cache = manager.getCache(CacheType.LOCAL_DATA);
         }
@@ -53,9 +54,6 @@ public class CacheAspect {
             log.error("本地缓存服务尚未初始化");
             return null;
         }
-        if (remote_cache == null) {
-            log.error("远程缓存服务尚未初始化");
-        }
         // 获取请求参数唯一标识,hash(类名+方法名+参数)
         String className = joinPoint.getThis().toString().split("@")[0];
         String methodName = joinPoint.getSignature().getName();
@@ -63,68 +61,73 @@ public class CacheAspect {
         StringBuffer buffer = new StringBuffer()
                 .append(classAndMethod).append("; ")
                 .append(joinPoint.getArgs() == null ? "" : JSON.toJSONString(joinPoint.getArgs())).append("; ");
-        String hashcode = MD5Utils.encrypt(buffer.toString(), null);
+        String hashcode = BIZ_CACHE + MD5Utils.encrypt(buffer.toString(), null);
+        // 获取注解配置参数
+        int local_exp = cache.local_exp();
+        int remote_exp = cache.remote_exp();
         CacheObject<Object> object = local_cache.get(hashcode);
-        if (object == null) { // 本地缓存不存在数据
-            object = pickRemoteCache(joinPoint, hashcode, cache.remote_exp());
-            System.out.println(111 + "---" + object);
-            synchronized (jvm_lock) { // JVM锁内存更新本地缓存
-                System.out.println(222);
-                if (local_cache.get(hashcode) == null) { // 如二次判断本地缓存为空则更新
-                    local_cache.put(hashcode, object, cache.local_exp());
-                    System.out.println("------更新了本地数据1111");
-                    System.out.println(333 + "---" + object);
+        // 本地缓存不存在数据
+        if (object == null) {
+            // JVM锁内存更新本地缓存
+            synchronized (local_cache) {
+                // 二次判断是否已有缓存结果
+                object = local_cache.get(hashcode);
+                if (object == null) {
+                    // 获取远程缓存数据
+                    object = pickRemoteCache(joinPoint, hashcode, remote_exp);
+                    // 最新远程缓存数据更新到本地
+                    local_cache.put(hashcode, object, local_exp);
                 }
             }
         } else {
             if (remote_cache != null) {
-                System.out.println(444);
+                // 获取远程缓存的最后更新时间
                 Long last = remote_cache.get(hashcode + "_");
-                System.out.println(last + "----" + object.getLast());
+                // 判断远程缓存时间 > 本地缓存时间
                 if (last == null || last <= 0 || last > object.getLast()) {
-                    System.out.println(555);
-                    object = pickRemoteCache(joinPoint, hashcode, cache.remote_exp());
-                    synchronized (jvm_lock) {
-                        System.out.println(666);
-                        CacheObject<Object> object2 = local_cache.get(hashcode);
-                        if (object2 == null || object2.getLast() <= last) {
-                            local_cache.put(hashcode, object, cache.local_exp());
-                            System.out.println("------更新了本地数据2222");
-                            System.out.println(777);
+                    // JVM锁内存更新本地缓存
+                    synchronized (local_cache) {
+                        // 二次判断是否已有缓存结果
+                        object = local_cache.get(hashcode);
+                        // 判断远程缓存时间 > 本地缓存时间
+                        if (last == null || last <= 0 || last > object.getLast()) {
+                            object = pickRemoteCache(joinPoint, hashcode, remote_exp);
+                            // 最新远程缓存数据更新到本地
+                            local_cache.put(hashcode, object, local_exp);
                         }
                     }
                 }
             }
         }
-        if (object == null) {
-            object = local_cache.get(hashcode);
-        }
-        System.out.println(object + "----888");
+        // System.out.println("----最终测试---" + (System.currentTimeMillis() - l));
         return object.getData();
     }
 
     // 读取远程缓存,远程缓存不存在,则更新远程缓存
-    private CacheObject<Object> pickRemoteCache(ProceedingJoinPoint joinPoint, String hashcode, int expire) throws Throwable {
+    private CacheObject<Object> pickRemoteCache(ProceedingJoinPoint joinPoint, String hashcode, int remote_exp) throws Throwable {
         if (remote_cache == null) {
+            // log.warn("远程缓存服务尚未初始化");
             Object data = joinPoint.proceed();
-            return new CacheObject<>(hashcode, data, expire);
+            return new CacheObject<>(hashcode, data, remote_exp);
         }
         CacheObject<Object> object = remote_cache.get(hashcode);
+        // 远程缓存没有数据
         if (object == null) {
             RedissonClient client = remote_cache.getInstance();
             RLock rLock = client.getLock(hashcode);
             try {
-                if (rLock.tryLock(0, 5, TimeUnit.SECONDS)) {
-                    object = remote_cache.get("lock4cache_" + hashcode); // 二次判断是否已经有人进行缓存处理
+                // 进行排队更新远程缓存
+                if (rLock.tryLock(5000, 5000, TimeUnit.MILLISECONDS)) {
+                    // 二次判断是否已有缓存结果
+                    object = remote_cache.get(hashcode);
                     if (object == null) {
                         Object data = joinPoint.proceed();
-                        object = new CacheObject<>(hashcode, data, expire);
+                        object = new CacheObject<>(hashcode, data, remote_exp);
                         remote_cache.put(hashcode, object, object.getExpire());
                         remote_cache.put(hashcode + "_", object.getLast(), object.getExpire());
                     }
-                    return object;
                 } else {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

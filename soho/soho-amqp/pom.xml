@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.soho</groupId>
+        <artifactId>soho</artifactId>
+        <version>3.1.7</version>
+    </parent>
+    <groupId>com.soho</groupId>
+    <artifactId>soho-amqp</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <redission.version>3.7.5</redission.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-spring</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- Spring Boot RabbitMQ 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

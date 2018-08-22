@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author shadow
  */
 @Component
-public class DbConfig {
+public class DBConfig {
 
     @Value("${spring.datasource.database}")
     private String database;

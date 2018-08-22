@@ -4,7 +4,7 @@ import com.soho.mybatis.database.selector.DBSelector;
 import com.soho.mybatis.database.selector.imp.SimpleDBSelector;
 import com.soho.mybatis.interceptor.imp.PageableInterceptor;
 import com.soho.spring.datasource.RoutingDataSource;
-import com.soho.spring.model.DbConfig;
+import com.soho.spring.model.DBConfig;
 import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.HikariDS;
 import com.soho.spring.shiro.initialize.WebInitializeService;
@@ -34,7 +34,7 @@ public class DataSourceConfiguration {
     public final static String MARSTER_DB = "MARSTER_DB";
 
     @Autowired(required = false)
-    private DbConfig dbConfig;
+    private DBConfig dbConfig;
     @Autowired(required = false)
     private DeftConfig deftConfig;
     @Autowired(required = false)

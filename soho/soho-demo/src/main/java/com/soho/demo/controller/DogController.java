@@ -1,11 +1,12 @@
 package com.soho.demo.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.soho.spring.cache.annotation.RDLock;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
+import com.soho.rabbitmq.core.MQProducter;
+import com.soho.rabbitmq.model.MQConstant;
+import com.soho.spring.cache.annotation.RDLock;
 import com.soho.spring.model.ReqData;
 import com.soho.spring.mvc.annotation.FormToken;
 import com.soho.spring.mvc.annotation.KillRobot;
@@ -13,7 +14,6 @@ import com.soho.spring.mvc.model.FastMap;
 import com.soho.spring.mvc.model.FastView;
 import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.FileUtils;
-import com.soho.spring.utils.MD5Utils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +36,22 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/login")
     public Object login(String username, String password) throws BizErrorEx {
-        // System.out.println(SessionUtils.getSessionId());
-        long start = System.currentTimeMillis();
-        UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
-        System.out.println("login0---" + (System.currentTimeMillis() - start));
-        SecurityUtils.getSubject().login(token);
-        System.out.println("login1---" + (System.currentTimeMillis() - start));
-        Map<String, String> map = new HashMap<>();
-        map.put("sessionId", SessionUtils.getSessionId());
-        SessionUtils.getSession();
-        System.out.println("login2---" + (System.currentTimeMillis() - start));
-        return map;
+        try {
+            // System.out.println(SessionUtils.getSessionId());
+            long start = System.currentTimeMillis();
+            UsernamePasswordToken token = new UsernamePasswordToken("zhangsan", "123456");
+            System.out.println("login0---" + (System.currentTimeMillis() - start));
+            SecurityUtils.getSubject().login(token);
+            System.out.println("login1---" + (System.currentTimeMillis() - start));
+            Map<String, String> map = new HashMap<>();
+            map.put("sessionId", SessionUtils.getSessionId());
+            SessionUtils.getSession();
+            System.out.println("login2---" + (System.currentTimeMillis() - start));
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new HashMap<>();
     }
 
     @ResponseBody
@@ -83,6 +88,13 @@ public class DogController {
             long l = System.currentTimeMillis();
             Object object = dogService.test(new ReqData());
             System.out.println("------" + (System.currentTimeMillis() - l));
+            Dog dog = new Dog();
+            dog.setName("小狗");
+            dog.setAge(5);
+            dog.setSex(1);
+            dog.setCtime(System.currentTimeMillis());
+            dog.setState(1);
+            MQProducter.send(MQConstant.TEST_QUEUE, dog, 60000);
             return object;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.soho.spring.rabbitmq.annotation;
+package com.soho.rabbitmq.annotation;
 
 
 import java.lang.annotation.*;

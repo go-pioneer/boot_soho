@@ -52,12 +52,12 @@
             <artifactId>soho-cache</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>com.soho</groupId>
-            <artifactId>soho-oauth2</artifactId>
+            <artifactId>soho-amqp</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.soho</groupId>
             <artifactId>soho-aliyun</artifactId>
             <version>${project.parent.version}</version>

@@ -30,14 +30,19 @@ public class Application extends ApplicationInitializer {
 
     @Bean
     public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer() {
-        String[] filePath = new String[]{"classpath:application.properties", "classpath:database.properties"};
+        String[] filePath = new String[]{"classpath:application.properties", "classpath:database.properties", "classpath:rabbitmq.properties"};
         return super.initPropertyPlaceholderConfigurer(filePath, new String[]{}); // 本地启动方式
     }
 
     @Bean
     public CacheManager initCacheManager() {
-        FastList<Cache> fastList = new FastList<>().add(new EhCache(CacheType.SHIRO_DATA)).add(REMOTE_CACHE()).add(LOCAL_CACHE());
+        FastList<Cache> fastList = new FastList<>().add(SHIRO_CACHE()).add(REMOTE_CACHE()).add(LOCAL_CACHE());
         return initCacheManager(fastList.done());
+    }
+
+    @Bean
+    public Cache SHIRO_CACHE() {
+        return new RedissonCache(CacheType.SHIRO_DATA);
     }
 
     @Bean

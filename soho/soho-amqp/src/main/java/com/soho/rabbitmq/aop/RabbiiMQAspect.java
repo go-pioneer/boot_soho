@@ -1,6 +1,6 @@
-package com.soho.spring.rabbitmq.aop;
+package com.soho.rabbitmq.aop;
 
-import com.soho.spring.rabbitmq.annotation.RabbiiMQ;
+import com.soho.rabbitmq.annotation.RabbiiMQ;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
