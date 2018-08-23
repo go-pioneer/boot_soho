@@ -30,6 +30,7 @@
         <module>soho-spring</module>
         <module>soho-oauth2</module>
         <module>soho-cache</module>
+		<module>soho-zookeeper</module>
     </modules>
 
     <build>

@@ -1,11 +1,10 @@
 package com.soho.demo.controller;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.rabbitmq.core.MQProducter;
-import com.soho.rabbitmq.model.MQConstant;
 import com.soho.spring.cache.annotation.RDLock;
 import com.soho.spring.model.ReqData;
 import com.soho.spring.mvc.annotation.FormToken;
@@ -57,7 +56,8 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/test")
     public Object test(DogVO dogVO) throws BizErrorEx {
-        return dogVO;
+        System.out.println("----");
+        return dogService.test(dogVO);
     }
 
     @ResponseBody
@@ -94,7 +94,6 @@ public class DogController {
             dog.setSex(1);
             dog.setCtime(System.currentTimeMillis());
             dog.setState(1);
-            MQProducter.send(MQConstant.TEST_QUEUE, dog, 60000);
             return object;
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,28 +4,25 @@ import com.soho.cache.redisson.core.RedissonCache;
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.EhCache;
-import com.soho.spring.cache.imp.SimpleCacheManager;
 import com.soho.spring.cache.model.CacheType;
 import com.soho.spring.extend.ApplicationInitializer;
 import com.soho.spring.mvc.model.FastList;
-import com.soho.spring.mvc.model.FastMap;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Map;
+import org.springframework.context.annotation.ImportResource;
 
 /**
  * @author shadow
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.soho"})
+@ComponentScan(basePackages = {"com.dubbo.demo", "com.soho"})
 public class Application extends ApplicationInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
@@ -42,7 +39,7 @@ public class Application extends ApplicationInitializer {
 
     @Bean
     public Cache SHIRO_CACHE() {
-        return new RedissonCache(CacheType.SHIRO_DATA);
+        return new EhCache(CacheType.SHIRO_DATA);
     }
 
     @Bean

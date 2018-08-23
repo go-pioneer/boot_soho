@@ -8,14 +8,12 @@ import com.soho.mybatis.crud.service.imp.BaseServiceImp;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.exception.MybatisDAOEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.spring.cache.annotation.Cache;
 import com.soho.spring.model.ReqData;
 import com.soho.spring.mvc.model.FastMap;
-import com.soho.rabbitmq.annotation.RabbiiMQ;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class DogServiceImp extends BaseServiceImp<Dog, Long> implements DogService {
     @Autowired
     private DogDAO dogDAO;
@@ -32,8 +30,6 @@ public class DogServiceImp extends BaseServiceImp<Dog, Long> implements DogServi
         }
     }
 
-    @Cache(local_exp = 30, remote_exp = 60)
-    @RabbiiMQ(channel = "SAVE_TO_MG", key = "dog")
     @Override
     public Object test(ReqData reqData) {
         Dog dog = new Dog();

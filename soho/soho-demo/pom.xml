@@ -57,6 +57,11 @@
             <artifactId>soho-amqp</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-zookeeper</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!--<dependency>
             <groupId>com.soho</groupId>
             <artifactId>soho-aliyun</artifactId>
