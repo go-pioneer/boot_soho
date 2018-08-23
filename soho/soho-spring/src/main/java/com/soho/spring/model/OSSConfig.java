@@ -1,7 +1,6 @@
 package com.soho.spring.model;
 
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,23 +9,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class OSSConfig {
 
-    @Value("${alioss.appId}")
+    // @Value("${alioss.appId}")
     private String appId;
-    @Value("${alioss.appKey}")
+    // @Value("${alioss.appKey}")
     private String appKey;
-    @Value("${alioss.domain}")
+    // @Value("${alioss.domain}")
     private String domain;
-    @Value("${alioss.endpoint}")
+    // @Value("${alioss.endpoint}")
     private String endpoint;
-    @Value("${alioss.bucketName}")
+    // @Value("${alioss.bucketName}")
     private String bucketName;
-    @Value("${alioss.savePath}")
+    // @Value("${alioss.savePath}")
     private String savePath;
-    @Value("${alioss.maxFileSize}")
-    private String maxFileSize;
-    @Value("${alioss.maxRequestSize}")
-    private String maxRequestSize;
-    @Value("${alioss.ggkPath}")
+    // @Value("${alioss.ggkPath}")
     private String ggkPath;
 
     public String getAppId() {
@@ -75,22 +70,6 @@ public class OSSConfig {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
-    }
-
-    public String getMaxFileSize() {
-        return maxFileSize;
-    }
-
-    public void setMaxFileSize(String maxFileSize) {
-        this.maxFileSize = maxFileSize;
-    }
-
-    public String getMaxRequestSize() {
-        return maxRequestSize;
-    }
-
-    public void setMaxRequestSize(String maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
     }
 
     public String getGgkPath() {

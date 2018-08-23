@@ -34,8 +34,6 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     @Autowired(required = false)
     private DeftConfig deftConfig;
     @Autowired(required = false)
-    private OSSConfig ossConfig;
-    @Autowired(required = false)
     private ErrorPageConfig errorPageConfig;
     @Autowired(required = false)
     private WebInitializeService webInitializeService;
@@ -43,8 +41,8 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(ossConfig.getMaxFileSize()); // 设置单个文件大小
-        factory.setMaxRequestSize(ossConfig.getMaxRequestSize()); // 设置总上传数据总大小
+        factory.setMaxFileSize(deftConfig.getMaxFileSize()); // 设置单个文件大小
+        factory.setMaxRequestSize(deftConfig.getMaxRequestSize()); // 设置总上传数据总大小
         return factory.createMultipartConfig();
     }
 
@@ -76,7 +74,7 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 默认错误页面拦截器处理
         InterceptorRegistration error = registry.addInterceptor(new ErrorPageInterceptor(deftConfig, errorPageConfig));
-        error.excludePathPatterns(deftConfig.getStaticPrefix()+"**"); // 排除配置
+        error.excludePathPatterns(deftConfig.getStaticPrefix() + "**"); // 排除配置
         error.addPathPatterns("/**"); // 拦截配置
         List<HandlerInterceptor> interceptors = webInitializeService.initWebMVCInterceptor();
         for (HandlerInterceptor interceptor : interceptors) {

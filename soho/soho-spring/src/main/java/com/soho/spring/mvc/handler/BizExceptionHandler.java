@@ -58,7 +58,7 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
                 retData = new RetData<>(errorEx.getErrorCode(), msg, callmap, httpStatus);
             }
         } else if (ex instanceof MaxUploadSizeExceededException) {
-            retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + ossConfig.getMaxFileSize() + "】,多文件【" + ossConfig.getMaxRequestSize() + "】", callmap);
+            retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + deftConfig.getMaxFileSize() + "】,多文件【" + deftConfig.getMaxRequestSize() + "】", callmap);
         } else {
             retData = new RetData<>(RetCode.UNKNOWN_STATUS, RetCode.UNKNOWN_MESSAGE, callmap);
         }

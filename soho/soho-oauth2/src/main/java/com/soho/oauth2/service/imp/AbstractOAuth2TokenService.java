@@ -2,11 +2,11 @@ package com.soho.oauth2.service.imp;
 
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.oauth2.model.OAuth2Client;
+import com.soho.oauth2.model.OAuth2Config;
 import com.soho.oauth2.model.OAuth2ErrorCode;
 import com.soho.oauth2.model.OAuth2Token;
 import com.soho.oauth2.service.OAuth2TokenService;
 import com.soho.spring.model.DeftConfig;
-import com.soho.spring.model.OAuth2Config;
 import com.soho.spring.security.EncryptService;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;

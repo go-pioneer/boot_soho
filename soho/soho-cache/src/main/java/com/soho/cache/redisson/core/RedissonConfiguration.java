@@ -1,6 +1,5 @@
 package com.soho.cache.redisson.core;
 
-import com.soho.spring.model.RedissonConfig;
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;

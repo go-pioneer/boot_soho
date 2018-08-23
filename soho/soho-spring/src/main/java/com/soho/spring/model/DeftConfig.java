@@ -28,8 +28,13 @@ public class DeftConfig {
     private boolean isHttps;
     @Value("${default.expireSession}")
     private int expireSession;
-    @Value("${spring.datasource.mgbXmlLocation}")
+    @Value("${default.mgbXmlLocation}")
     private String mgbXmlLocation;
+    @Value("${default.maxFileSize}")
+    private String maxFileSize;
+    @Value("${default.maxRequestSize}")
+    private String maxRequestSize;
+
 
     public String getDomain() {
         return domain;
@@ -111,4 +116,19 @@ public class DeftConfig {
         this.mgbXmlLocation = mgbXmlLocation;
     }
 
+    public String getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public void setMaxFileSize(String maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public String getMaxRequestSize() {
+        return maxRequestSize;
+    }
+
+    public void setMaxRequestSize(String maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
+    }
 }
