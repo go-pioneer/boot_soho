@@ -26,6 +26,7 @@
         <module>soho-aliyun</module>
         <module>soho-amqp</module>
         <module>soho-demo</module>
+		<module>soho-mongo</module>
         <module>soho-mybatis</module>
         <module>soho-spring</module>
         <module>soho-oauth2</module>
@@ -108,6 +109,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <!-- Spring Boot MongoDB需要的依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <!-- Spring Boot Mybatis 依赖 -->
         <dependency>

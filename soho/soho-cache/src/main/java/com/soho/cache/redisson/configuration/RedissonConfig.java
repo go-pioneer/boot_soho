@@ -1,4 +1,4 @@
-package com.soho.cache.redisson.core;
+package com.soho.cache.redisson.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

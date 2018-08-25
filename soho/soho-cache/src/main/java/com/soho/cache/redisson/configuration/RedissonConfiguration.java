@@ -1,4 +1,4 @@
-package com.soho.cache.redisson.core;
+package com.soho.cache.redisson.configuration;
 
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
