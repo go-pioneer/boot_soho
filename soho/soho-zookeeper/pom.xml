@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.soho</groupId>
         <artifactId>soho</artifactId>
-        <version>3.1.9</version>
+        <version>3.2.0</version>
     </parent>
     <groupId>com.soho</groupId>
     <artifactId>soho-zookeeper</artifactId>
@@ -27,6 +27,12 @@
             <groupId>io.dubbo.springboot</groupId>
             <artifactId>spring-boot-starter-dubbo</artifactId>
             <version>${io.dubbo.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>

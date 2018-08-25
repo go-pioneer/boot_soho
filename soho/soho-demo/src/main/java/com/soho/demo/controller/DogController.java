@@ -1,6 +1,7 @@
 package com.soho.demo.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.dubbo.demo.service.DemoService;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mybatis.exception.BizErrorEx;
@@ -56,7 +57,6 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/test")
     public Object test(DogVO dogVO) throws BizErrorEx {
-        System.out.println("----");
         return dogService.test(dogVO);
     }
 

@@ -6,6 +6,7 @@ import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.EhCache;
 import com.soho.spring.cache.model.CacheType;
 import com.soho.spring.extend.ApplicationInitializer;
+import com.soho.spring.extend.DefaultPropertyConfigurer;
 import com.soho.spring.mvc.model.FastList;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
@@ -28,7 +29,7 @@ public class Application extends ApplicationInitializer {
     @Bean
     public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer() {
         String[] filePath = new String[]{"classpath:application.properties", "classpath:database.properties", "classpath:rabbitmq.properties"};
-        return super.initPropertyPlaceholderConfigurer(filePath, new String[]{}); // 本地启动方式
+        return new DefaultPropertyConfigurer(filePath, new String[]{}); // 本地启动方式
     }
 
     @Bean

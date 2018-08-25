@@ -7,6 +7,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import java.util.Properties;
 
 /**
+ *
+ *
  * Spring加载配置文件,以及ZooKeeper中心配置信息
  *
  * @author shadow
