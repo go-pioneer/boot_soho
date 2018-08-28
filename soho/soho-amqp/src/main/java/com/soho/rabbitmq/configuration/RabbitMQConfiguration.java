@@ -30,7 +30,7 @@ public class RabbitMQConfiguration {
         connectionFactory.setUsername(config.getUsername());
         connectionFactory.setPassword(config.getPassword());
         connectionFactory.setVirtualHost(config.getVirtualHost());
-        connectionFactory.setPublisherConfirms(true);
+        connectionFactory.setPublisherConfirms(config.getPublisherConfirms());
         return connectionFactory;
     }
 
@@ -67,47 +67,45 @@ public class RabbitMQConfiguration {
     /*********************    延时队列    *****************/
     @Bean
     public DirectExchange directExchange() {
-        return new DirectExchange(MQConstant.SOHO_EXCHANGE, true, false);
+        return new DirectExchange(MQConstant.DELAY_EXCHANGE, true, false);
     }
 
 
     @Bean
     public Queue repeatTradeQueue() {
-        Queue queue = new Queue(MQConstant.SOHO_REPEAT_TRADE_QUEUE, true, false, false);
+        Queue queue = new Queue(MQConstant.DELAY_REPEAT_TRADE_QUEUE, true, false, false);
         return queue;
     }
 
     @Bean
     public Binding drepeatTradeBinding() {
-        return BindingBuilder.bind(repeatTradeQueue()).to(directExchange()).with(MQConstant.SOHO_REPEAT_TRADE_QUEUE);
+        return BindingBuilder.bind(repeatTradeQueue()).to(directExchange()).with(MQConstant.DELAY_REPEAT_TRADE_QUEUE);
     }
 
     @Bean
     public Queue deadLetterQueue() {
         Map<String, Object> arguments = new HashMap<>();
-        arguments.put("x-dead-letter-exchange", MQConstant.SOHO_EXCHANGE);
-        arguments.put("x-dead-letter-routing-key", MQConstant.SOHO_REPEAT_TRADE_QUEUE);
-        Queue queue = new Queue(MQConstant.SOHO_DEAD_LETTER_QUEUE, true, false, false, arguments);
+        arguments.put("x-dead-letter-exchange", MQConstant.DELAY_EXCHANGE);
+        arguments.put("x-dead-letter-routing-key", MQConstant.DELAY_REPEAT_TRADE_QUEUE);
+        Queue queue = new Queue(MQConstant.DELAY_DEAD_LETTER_QUEUE, true, false, false, arguments);
         return queue;
     }
 
     @Bean
     public Binding deadLetterBinding() {
-        return BindingBuilder.bind(deadLetterQueue()).to(directExchange()).with(MQConstant.SOHO_DEAD_LETTER_QUEUE);
+        return BindingBuilder.bind(deadLetterQueue()).to(directExchange()).with(MQConstant.DELAY_DEAD_LETTER_QUEUE);
     }
 
 
     /*********************    测试队列    *****************/
     @Bean
     public Queue queue() {
-        Queue queue = new Queue(MQConstant.TEST_QUEUE, true);
-        return queue;
+        return new Queue(MQConstant.TEST_QUEUE, true);
     }
 
     @Bean
     public Binding binding() {
         return BindingBuilder.bind(queue()).to(directExchange()).with(MQConstant.TEST_QUEUE);
     }
-
 
 }

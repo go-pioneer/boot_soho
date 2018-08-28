@@ -23,10 +23,10 @@ public class RabbiiMQAspect {
     @Around("serviceStatistics(rabbiiMQ)")
     public Object invoke(ProceedingJoinPoint joinPoint, RabbiiMQ rabbiiMQ) throws Throwable {
         try {
-            String channel = rabbiiMQ.channel();
+            String queue = rabbiiMQ.queue();
             String key = rabbiiMQ.key();
             boolean remove = rabbiiMQ.remove();
-            if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(key)) {
+            if (StringUtils.isEmpty(queue) || StringUtils.isEmpty(key)) {
                 return joinPoint.proceed();
             }
             Object object = joinPoint.proceed();

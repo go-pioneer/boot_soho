@@ -89,7 +89,7 @@ public class BizErrorEx extends Exception {
         this.httpStatus = httpStatus;
     }
 
-    public static BizErrorEx transform(Exception e) throws BizErrorEx {
+    public static <T> T transform(Exception e) throws BizErrorEx {
         if (log.isDebugEnabled()) {
             log.error(e.getMessage(), e);
         }

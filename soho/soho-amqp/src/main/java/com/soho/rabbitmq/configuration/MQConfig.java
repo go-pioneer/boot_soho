@@ -19,6 +19,8 @@ public class MQConfig {
     private String username;
     @Value("${mq.rabbit.password}")
     private String password;
+    @Value("${mq.rabbit.publisherConfirms}")
+    private Boolean publisherConfirms;
 
     public String getHost() {
         return host;
@@ -58,6 +60,14 @@ public class MQConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getPublisherConfirms() {
+        return publisherConfirms;
+    }
+
+    public void setPublisherConfirms(Boolean publisherConfirms) {
+        this.publisherConfirms = publisherConfirms;
     }
 
 }

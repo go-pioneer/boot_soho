@@ -58,7 +58,7 @@ public class MongoConfiguration {
         // System.out.println("serverAddresses:" + serverAddresses.toString());​// 连接认证
         MongoClient mongoClient = null;
         if (!StringUtils.isEmpty(properties.getUsername()) && !StringUtils.isEmpty(properties.getPassword())) {
-            MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(properties.getUsername(), properties.getAuthenticationDatabase() != null ? properties.getAuthenticationDatabase() : properties.getDatabase(), properties.getPassword().toCharArray());
+            MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(properties.getUsername(), properties.getDatabase(), properties.getPassword().toCharArray());
             mongoClient = new MongoClient(serverAddresses, mongoCredential, builder.build());
         } else {
             mongoClient = new MongoClient(serverAddresses, builder.build());

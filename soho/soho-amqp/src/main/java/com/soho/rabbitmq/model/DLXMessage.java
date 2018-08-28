@@ -16,6 +16,8 @@ public class DLXMessage implements Serializable {
 
     private long delay;
 
+    private int retries = 0;
+
     public DLXMessage(String queue, Object content, long delay) {
         super();
         this.queue = queue;
@@ -63,4 +65,11 @@ public class DLXMessage implements Serializable {
         this.delay = delay;
     }
 
+    public int getRetries() {
+        return retries;
+    }
+
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
 }

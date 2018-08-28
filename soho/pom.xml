@@ -4,7 +4,7 @@
 
     <groupId>com.soho</groupId>
     <artifactId>soho</artifactId>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -25,7 +25,7 @@
     <modules>
         <module>soho-aliyun</module>
         <module>soho-amqp</module>
-        <module>soho-demo</module>
+        <!--<module>soho-demo</module>-->
 		<module>soho-mongo</module>
         <module>soho-mybatis</module>
         <module>soho-spring</module>

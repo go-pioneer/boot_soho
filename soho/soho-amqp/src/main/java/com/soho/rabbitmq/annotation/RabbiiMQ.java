@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 public @interface RabbiiMQ {
 
     // MQ通道名称
-    String channel() default "rabbitmq";
+    String queue() default "rabbitmq";
 
     // MAP回传参数读取字段
     String key() default "rabbitmq";
