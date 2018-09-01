@@ -1,49 +1,59 @@
 package com.soho.rabbitmq.handler;
 
-import com.rabbitmq.client.Channel;
+import com.alibaba.fastjson.JSON;
 import com.soho.rabbitmq.core.MQProducter;
 import com.soho.rabbitmq.model.DLXMessage;
 import com.soho.rabbitmq.model.MQConstant;
 import com.soho.spring.mvc.model.FastMap;
-import com.soho.spring.utils.SpringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RabbitListener(queues = MQConstant.DELAY_REPEAT_TRADE_QUEUE)
-public class DLXMessageHandler extends DefaultHandler {
+public class DLXMessageHandler {
 
     @Autowired
     private MQProducter producter;
 
+    @Autowired(required = false)
+    private MongoTemplate mongoTemplate;
+
     @RabbitHandler
-    public void process(byte[] body, long tag, Channel channel) {
-        super.process(body, tag, channel);
-    }
-
-    @Override
-    protected void doProcess(Object object) {
-        DLXMessage message = (DLXMessage) object;
-        producter.send(message.getQueue(), message.getContent());
-    }
-
-    @Override
-    protected void doException(Object object, Exception e) {
-        DLXMessage message = (DLXMessage) object;
-        if (message.getRetries() < 5) {
-            producter.send(message.getQueue(), message.getContent(), message.getDelay() * message.getRetries(), message.getRetries());
-        } else {
-            MongoTemplate template = SpringUtils.getBean(MongoTemplate.class);
-            if (template != null) {
-                FastMap map = new FastMap();
-                map.add("title", "信道转发功能");
-                map.add("message", message);
-                map.add("exception", e.getMessage());
-                template.save(map.done(), "mq_exlog");
+    public void process(String body) {
+        DLXMessage dlxMessage = null;
+        try {
+            dlxMessage = StringUtils.isEmpty(body) ? null : JSON.parseObject(body, DLXMessage.class);
+            if (dlxMessage != null) {
+                producter.send(dlxMessage.getExchange(), dlxMessage.getQueue(), dlxMessage.getContent());
             }
+        } catch (Exception e) {
+            if (dlxMessage == null) {
+                if (mongoTemplate != null) {
+                    FastMap map = new FastMap();
+                    map.add("title", "信道转发功能");
+                    map.add("message", body);
+                    map.add("exception", "参数转换为空");
+                    mongoTemplate.save(map.done(), "mq_exlog");
+                }
+            } else {
+                int retries = dlxMessage.getRetries();
+                if (retries < 5) {
+                    producter.send(dlxMessage.getQueue(), dlxMessage.getContent(), dlxMessage.getDelay() * (retries + 1), retries);
+                } else {
+                    if (mongoTemplate != null) {
+                        FastMap map = new FastMap();
+                        map.add("title", "信道转发功能");
+                        map.add("message", body);
+                        map.add("exception", e.getMessage());
+                        mongoTemplate.save(map.done(), "mq_exlog");
+                    }
+                }
+            }
+            e.printStackTrace();
         }
     }
 

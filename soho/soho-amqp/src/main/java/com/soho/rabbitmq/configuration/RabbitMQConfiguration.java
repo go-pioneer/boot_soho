@@ -1,85 +1,72 @@
 package com.soho.rabbitmq.configuration;
 
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.soho.rabbitmq.handler.QueueMessageListener;
 import com.soho.rabbitmq.model.MQConstant;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
+import com.soho.spring.extend.ConfigUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
- * @author shadow
+ * RabbitMQ配置
  */
 @Configuration
 public class RabbitMQConfiguration {
 
+    private final static Logger log = LoggerFactory.getLogger(RabbitMQConfiguration.class);
+
     @Autowired(required = false)
-    private MQConfig config;
+    private MQConfig mqConfig;
+    @Autowired(required = false)
+    private QueueMessageListener queueMessageListener;
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(config.getHost(), config.getPort());
-        connectionFactory.setUsername(config.getUsername());
-        connectionFactory.setPassword(config.getPassword());
-        connectionFactory.setVirtualHost(config.getVirtualHost());
-        connectionFactory.setPublisherConfirms(config.getPublisherConfirms());
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(mqConfig.getHost(), mqConfig.getPort());
+        connectionFactory.setUsername(mqConfig.getUsername());
+        connectionFactory.setPassword(mqConfig.getPassword());
+        connectionFactory.setVirtualHost(mqConfig.getVirtualHost());
+        connectionFactory.setPublisherConfirms(mqConfig.getPublisherConfirms());
+        log.info("Create ConnectionFactory bean ..");
         return connectionFactory;
     }
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
-        return new RabbitTemplate(connectionFactory());
+        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        template.setExchange(MQConstant.DEFAULT_EXCHANGE);
+        return template;
     }
 
-    /*@Bean
-    public SimpleMessageListenerContainer messageContainer() {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory());
-        container.setQueues(new Queue(QUENUE));
-        container.setExposeListenerChannel(true);
-        container.setMaxConcurrentConsumers(1);
-        container.setConcurrentConsumers(1);
-        container.setRetryDeclarationInterval(3);
-        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-        container.setMessageListener(new ChannelAwareMessageListener() {
-            public void onMessage(Message message, com.rabbitmq.client.Channel channel) throws Exception {
-                try {
-                    byte[] body = message.getBody();
-                    Object object = SerializationUtils.deserialize(body);
-                    System.out.println("消费端接收到消息 : " + JSON.toJSONString(object));
-                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
-                }
-            }
-        });
-        return container;
-    }*/
-
-    /*********************    延时队列    *****************/
+    /*********************    延时发送队列配置    *****************/
     @Bean
-    public DirectExchange directExchange() {
+    public DirectExchange delayExchange() {
         return new DirectExchange(MQConstant.DELAY_EXCHANGE, true, false);
     }
 
 
     @Bean
     public Queue repeatTradeQueue() {
-        Queue queue = new Queue(MQConstant.DELAY_REPEAT_TRADE_QUEUE, true, false, false);
-        return queue;
+        return new Queue(MQConstant.DELAY_REPEAT_TRADE_QUEUE, true, false, false);
     }
 
     @Bean
     public Binding drepeatTradeBinding() {
-        return BindingBuilder.bind(repeatTradeQueue()).to(directExchange()).with(MQConstant.DELAY_REPEAT_TRADE_QUEUE);
+        return BindingBuilder.bind(repeatTradeQueue()).to(delayExchange()).with(MQConstant.DELAY_REPEAT_TRADE_QUEUE);
     }
 
     @Bean
@@ -88,24 +75,72 @@ public class RabbitMQConfiguration {
         arguments.put("x-dead-letter-exchange", MQConstant.DELAY_EXCHANGE);
         arguments.put("x-dead-letter-routing-key", MQConstant.DELAY_REPEAT_TRADE_QUEUE);
         Queue queue = new Queue(MQConstant.DELAY_DEAD_LETTER_QUEUE, true, false, false, arguments);
+        log.debug("arguments :" + queue.getArguments());
         return queue;
     }
 
     @Bean
     public Binding deadLetterBinding() {
-        return BindingBuilder.bind(deadLetterQueue()).to(directExchange()).with(MQConstant.DELAY_DEAD_LETTER_QUEUE);
+        return BindingBuilder.bind(deadLetterQueue()).to(delayExchange()).with(MQConstant.DELAY_DEAD_LETTER_QUEUE);
     }
 
 
-    /*********************    测试队列    *****************/
+    /*********************    动态绑定发送队列,监听队列    *****************/
     @Bean
-    public Queue queue() {
-        return new Queue(MQConstant.TEST_QUEUE, true);
+    public List<String> queues() throws AmqpException, IOException {
+        String exchange = mqConfig.getExchange();
+        if (exchange == null || StringUtils.isEmpty(exchange.replaceAll(" ", ""))) {
+            exchange = MQConstant.DEFAULT_EXCHANGE;
+        }
+        List<String> sendQueues = new ArrayList<>();
+        List<String> listenerQueues = new ArrayList<>();
+        for (Map.Entry entry : ConfigUtils.properties.entrySet()) {
+            String key = entry.getKey().toString();
+            String value = entry.getValue().toString();
+            if (key.startsWith("queue.send.")) {
+                sendQueues.add(value.trim());
+            }
+            if (key.startsWith("queue.listener.")) {
+                listenerQueues.add(value.trim());
+            }
+        }
+        if (sendQueues.isEmpty()) {
+            log.error("发送队列配置为空,请检测...");
+        }
+        if (listenerQueues.isEmpty()) {
+            log.error("监听队列配置为空,请检测...");
+        }
+        Set<String> queueSet = new HashSet<>();
+        queueSet.addAll(sendQueues);
+        queueSet.addAll(listenerQueues);
+        if (!queueSet.isEmpty()) {
+            connectionFactory().createConnection().createChannel(false).exchangeDeclare(exchange, BuiltinExchangeType.DIRECT, true, false, null);
+            for (String queueName : queueSet) {
+                connectionFactory().createConnection().createChannel(false).queueDeclare(queueName, true, false, false, null);
+                connectionFactory().createConnection().createChannel(false).queueBind(queueName, exchange, queueName);
+            }
+        }
+        return listenerQueues;
     }
 
+    // 创建监听器，监听队列
     @Bean
-    public Binding binding() {
-        return BindingBuilder.bind(queue()).to(directExchange()).with(MQConstant.TEST_QUEUE);
+    public SimpleMessageListenerContainer mqMessageContainer() throws AmqpException, IOException {
+        if (queueMessageListener == null) {
+            return null;
+        }
+        String[] listenerQueues = queues().toArray(new String[]{});
+        if (listenerQueues.length > 0) {
+            SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory());
+            container.setQueueNames(listenerQueues);
+            container.setExposeListenerChannel(true);
+            container.setConcurrentConsumers(mqConfig.getConcurrentConsumers());// 并发消费者个数
+            container.setMaxConcurrentConsumers(mqConfig.getMaxConcurrentConsumers()); // 最大并发消费者个数
+            container.setAcknowledgeMode(AcknowledgeMode.MANUAL);//设置确认模式为手工确认
+            container.setMessageListener(queueMessageListener); // 监听处理类
+            return container;
+        }
+        return null;
     }
 
 }

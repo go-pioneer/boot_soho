@@ -3,6 +3,8 @@ package com.soho.rabbitmq.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @author shadow
  */
@@ -21,6 +23,16 @@ public class MQConfig {
     private String password;
     @Value("${mq.rabbit.publisherConfirms}")
     private Boolean publisherConfirms;
+    @Value("${mq.rabbit.exchange}")
+    private String exchange; // 发送信道交换机名称
+    @Value("${mq.rabbit.sendQueues}")
+    private String sendQueues; // 发送队列名称列表
+    @Value("${mq.rabbit.listenerQueues}")
+    private String listenerQueues; // 监听队列名称列表
+    @Value("${mq.rabbit.concurrentConsumers}")
+    private Integer concurrentConsumers; // 消费者并发数量
+    @Value("${mq.rabbit.maxConcurrentConsumers}")
+    private Integer maxConcurrentConsumers; // 最大消费者并发数量
 
     public String getHost() {
         return host;
@@ -68,6 +80,46 @@ public class MQConfig {
 
     public void setPublisherConfirms(Boolean publisherConfirms) {
         this.publisherConfirms = publisherConfirms;
+    }
+
+    public String getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
+    }
+
+    public String getSendQueues() {
+        return sendQueues;
+    }
+
+    public void setSendQueues(String sendQueues) {
+        this.sendQueues = sendQueues;
+    }
+
+    public String getListenerQueues() {
+        return listenerQueues;
+    }
+
+    public void setListenerQueues(String listenerQueues) {
+        this.listenerQueues = listenerQueues;
+    }
+
+    public Integer getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getMaxConcurrentConsumers() {
+        return maxConcurrentConsumers;
+    }
+
+    public void setMaxConcurrentConsumers(Integer maxConcurrentConsumers) {
+        this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 
 }

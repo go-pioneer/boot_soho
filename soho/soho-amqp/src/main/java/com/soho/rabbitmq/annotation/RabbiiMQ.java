@@ -1,6 +1,8 @@
 package com.soho.rabbitmq.annotation;
 
 
+import com.soho.rabbitmq.model.MQConstant;
+
 import java.lang.annotation.*;
 
 /**
@@ -12,14 +14,19 @@ import java.lang.annotation.*;
 @Documented
 public @interface RabbiiMQ {
 
+    // MQ信道名称
+    String exchange() default MQConstant.DEFAULT_EXCHANGE;
+
     // MQ通道名称
-    String queue() default "rabbitmq";
+    String queue() default "";
 
-    // MAP回传参数读取字段
-    String key() default "rabbitmq";
+    // 指定map参数key
+    String[] mapkey() default {};
 
-    // 是否移除回传参数字段值
+    // MQ延时发送时间,单位毫秒
+    long delay() default 0;
+
+    // 是否删除mapkey对应数值,true.删除 false.保留
     boolean remove() default false;
-
 
 }

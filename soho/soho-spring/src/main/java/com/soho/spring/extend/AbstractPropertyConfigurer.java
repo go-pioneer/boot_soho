@@ -46,6 +46,15 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
     }
 
     public Properties decodeProperties(Properties properties) {
+        // 遍历保存数据,丢弃敏感数据
+        for (Map.Entry entry : properties.entrySet()) {
+            String key = entry.getKey().toString();
+            Object value = entry.getValue();
+            if ((key.endsWith("username") || key.endsWith("password"))) {
+                continue;
+            }
+            ConfigUtils.properties.put(key, value);
+        }
         String encrypt = properties.getProperty("default.encrypt");
         if (StringUtils.isEmpty(encrypt) || !Boolean.valueOf(encrypt.trim())) {
             return properties;
