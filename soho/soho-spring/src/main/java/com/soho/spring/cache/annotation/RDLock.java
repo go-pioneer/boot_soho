@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 public @interface RDLock {
 
     // 等待时间
-    int waitime() default 3000;
+    int waitime() default 5000;
 
     // 超时时间
-    int timeout() default 3000;
+    int timeout() default 5000;
 
     // 睡眠时间
     int sleep() default 100;
@@ -23,13 +23,13 @@ public @interface RDLock {
     // 时间单位
     TimeUnit unit() default TimeUnit.MILLISECONDS;
 
-    // 锁关键字
-    String key() default "redisson_distributed";
+    // 前缀关键字
+    String prefix() default "redisson_distributed";
 
     // 是否锁单独用户
     boolean user() default false;
 
-    // 扩展关键字
-    String exkey() default "";
+    // spel获取参数值
+    String spel() default "";
 
 }

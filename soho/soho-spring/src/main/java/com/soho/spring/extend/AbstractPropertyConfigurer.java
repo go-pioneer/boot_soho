@@ -60,22 +60,23 @@ public abstract class AbstractPropertyConfigurer extends PropertyPlaceholderConf
             return properties;
         }
         String projectKey = properties.getProperty("default.projectKey");
-        if (projectKey == null || StringUtils.isEmpty(projectKey.trim())) {
-            log.error("没有找到项目密钥配置");
+        String projectCode = properties.getProperty("default.projectCode");
+        if (StringUtils.isEmpty(projectCode) || StringUtils.isEmpty(projectKey)) {
+            log.error("没有找到项目编码,密钥配置");
             System.exit(-1);
         }
-        projectKey = AESUtils.decrypt(projectKey.trim());
+        String aes_key = AESUtils.decrypt(projectKey.trim());
         for (String key : decodeKeys) {
             String data = properties.getProperty(key);
             if (!StringUtils.isEmpty(data)) {
-                properties.put(key, AESUtils.decrypt(data.trim(), projectKey));
+                properties.put(key, AESUtils.decrypt(data.trim(), aes_key));
             }
         }
         for (Map.Entry entry : properties.entrySet()) {
             String key = entry.getKey().toString();
             Object value = entry.getValue();
             if ((key.endsWith("datasource.username") || key.endsWith("datasource.password")) && !StringUtils.isEmpty(value)) {
-                properties.put(key, AESUtils.decrypt(entry.getValue().toString().trim(), projectKey));
+                properties.put(key, AESUtils.decrypt(entry.getValue().toString().trim(), aes_key));
             }
         }
         return properties;

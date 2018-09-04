@@ -1,5 +1,6 @@
 package com.soho.cache.redisson.aop;
 
+import com.soho.spring.aspect.DefaultAspect;
 import com.soho.spring.cache.annotation.RDLock;
 import com.soho.spring.shiro.utils.SessionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,7 +19,7 @@ import org.springframework.util.StringUtils;
 @Aspect
 @Order(10)
 @Component
-public class RDLockAspect {
+public class RDLockAspect extends DefaultAspect {
 
     private final static Logger log = LoggerFactory.getLogger(RDLock.class);
 
@@ -36,16 +37,17 @@ public class RDLockAspect {
             log.error("Redisson服务尚未初始化");
             return joinPoint.proceed();
         }
-        String key = rdLock.key();
-        String exkey = rdLock.exkey();
-        if (!StringUtils.isEmpty(exkey)) {
-            key = key + "_" + exkey;
+        String prefix = rdLock.prefix();
+        String spel = rdLock.spel();
+        if (!StringUtils.isEmpty(spel)) {
+            String value = getSpelValue(spel, joinPoint);
+            prefix = prefix + "_" + value;
         }
         if (rdLock.user()) {
             Long userId = SessionUtils.getUserId();
-            key = key + "_" + (userId == null ? 0 : userId);
+            prefix = prefix + "_" + (userId == null ? 0 : userId);
         }
-        RLock rLock = redissonClient.getLock(key);
+        RLock rLock = redissonClient.getLock(prefix);
         try {
             if (rLock.tryLock(rdLock.waitime(), rdLock.timeout(), rdLock.unit())) {
                 return joinPoint.proceed();
