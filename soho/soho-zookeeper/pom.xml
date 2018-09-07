@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <io.dubbo.version>1.0.0</io.dubbo.version>
+        <io.dubbo.version>0.2.0</io.dubbo.version>
         <guava.version>18.0</guava.version>
         <curator.version>2.5.0</curator.version>
     </properties>
@@ -24,8 +24,8 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.dubbo.springboot/spring-boot-starter-dubbo -->
         <dependency>
-            <groupId>io.dubbo.springboot</groupId>
-            <artifactId>spring-boot-starter-dubbo</artifactId>
+            <groupId>com.alibaba.boot</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
             <version>${io.dubbo.version}</version>
             <exclusions>
                 <exclusion>
