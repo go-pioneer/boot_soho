@@ -3,7 +3,6 @@ package com.soho.cache.redisson.core;
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.imp.AbstractCache;
 import com.soho.spring.cache.model.CacheObject;
-import org.apache.shiro.session.Session;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,6 @@ public class RedissonCache extends AbstractCache implements Cache {
     public <V> boolean doPut(Object key, V value, int exp) {
         // long l = System.currentTimeMillis();
         RBucket<byte[]> bucket = redissonClient.getBucket(key.toString());
-        if (value instanceof Session) {
-            Session session = (Session) value;
-            exp = (int) session.getTimeout() / 1000;
-        }
         CacheObject<V> object = new CacheObject<>(key, value, exp);
         object.setLast(System.currentTimeMillis());
         object.setVersion(object.getVersion() + 1);

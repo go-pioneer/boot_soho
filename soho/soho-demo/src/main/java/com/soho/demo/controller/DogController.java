@@ -2,33 +2,15 @@ package com.soho.demo.controller;
 
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
-import com.soho.mongo.UserEntity;
-import com.soho.mongo.UserInfo;
-import com.soho.mvc.annotation.FormToken;
-import com.soho.mvc.annotation.KillRobot;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
-import com.soho.shiro.utils.SessionUtils;
 import com.soho.spring.cache.annotation.RDLock;
-import com.soho.spring.extend.collection.FastMap;
-import com.soho.spring.extend.collection.FastView;
 import com.soho.spring.model.ReqData;
-import com.soho.spring.utils.FileUtils;
-import com.soho.spring.utils.MD5Utils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/dog")
@@ -37,10 +19,7 @@ public class DogController {
     @Autowired
     private DogService dogService;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("/login")
     public Object login(String username, String password) throws BizErrorEx {
         try {
@@ -64,22 +43,6 @@ public class DogController {
     @ResponseBody
     @RequestMapping("/test")
     public Object test(DogVO dogVO) throws BizErrorEx {
-        try {
-            UserEntity entity = mongoTemplate.findOne(Query.query(Criteria.where("id").is(1089l)), UserEntity.class);
-            if (entity == null) {
-                entity = new UserEntity();
-                entity.setId(1089l);
-                entity.setUsername("test1111");
-                entity.setPassword(MD5Utils.encrypt(entity.getUsername()));
-                UserInfo userInfo = new UserInfo();
-                userInfo.setUsername("my2222");
-                userInfo.setPassword("my3333");
-                entity.setChild(userInfo);
-                mongoTemplate.save(entity);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return dogService.test(dogVO);
     }
 
@@ -102,7 +65,7 @@ public class DogController {
     @RequestMapping("/upload")
     public Object upload(String username, MultipartFile file) throws BizErrorEx {
         return FileUtils.uploadImageByReSize(file, 500, 500, "1", true);
-    }
+    }*/
 
     @ResponseBody
     @RequestMapping("/save")

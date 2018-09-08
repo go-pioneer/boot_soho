@@ -27,7 +27,7 @@ public class Application extends ApplicationInitializer {
 
     @Bean
     public PropertyPlaceholderConfigurer initPropertyPlaceholderConfigurer() {
-        String[] filePath = new String[]{"classpath:application.properties", "classpath:database.properties", "classpath:rabbitmq.properties", "classpath:mongo.properties"};
+        String[] filePath = new String[]{"classpath:application.properties", "classpath:database.properties"};
         return new DefaultPropertyConfigurer(filePath, new String[]{}); // 本地启动方式
     }
 

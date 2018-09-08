@@ -4,7 +4,6 @@ import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.model.CacheObject;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.shiro.session.Session;
 import org.springframework.util.StringUtils;
 
 /**
@@ -43,10 +42,6 @@ public class EhCache extends AbstractCache implements Cache {
 
     @Override
     public <V> boolean doPut(Object key, V value, int exp) {
-        if (value instanceof Session) {
-            Session session = (Session) value;
-            exp = (int) session.getTimeout() / 1000;
-        }
         CacheObject<V> object = new CacheObject<>(key, value, exp);
         object.setLast(System.currentTimeMillis());
         object.setVersion(object.getVersion() + 1);

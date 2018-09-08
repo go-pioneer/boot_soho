@@ -14,7 +14,6 @@
         <mysql.version>5.1.46</mysql.version>
         <fastjson.version>1.2.46</fastjson.version>
         <log4j.version>1.2.17</log4j.version>
-        <shiro.spring.version>1.4.0</shiro.spring.version>
         <servlet.version>3.1.0</servlet.version>
         <jsoup.version>1.8.3</jsoup.version>
         <commons.io.version>2.4</commons.io.version>
@@ -27,12 +26,12 @@
         <module>soho-amqp</module>
         <module>soho-demo</module>
         <module>soho-shiro</module>
-		<module>soho-mongo</module>
+        <module>soho-mongo</module>
         <module>soho-mybatis</module>
         <module>soho-spring</module>
         <module>soho-oauth2</module>
         <module>soho-cache</module>
-		<module>soho-zookeeper</module>
+        <module>soho-zookeeper</module>
     </modules>
 
     <build>
@@ -91,15 +90,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Spring Boot WebFlux依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
         <!-- Spring Boot Aop 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <!-- Spring Boot Freemarker 依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
         <!-- Spring Boot Ehcache需要的依赖-->
         <dependency>
@@ -110,11 +109,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
-        <!-- Spring Boot MongoDB需要的依赖-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <!-- Spring Boot Mybatis 依赖 -->
         <dependency>
@@ -139,38 +133,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-spring -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>${shiro.spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-lang</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-crypto-hash</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-crypto-cipher</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-config-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-config-ogdl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.shiro</groupId>
-                    <artifactId>shiro-event</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>

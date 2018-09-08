@@ -20,6 +20,11 @@
             <artifactId>soho-spring</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-mongo</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- Spring Boot RabbitMQ 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

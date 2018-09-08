@@ -1,31 +1,14 @@
 package com.soho.shiro;
 
-import com.soho.demo.SlaveDB;
-import com.soho.mvc.interceptor.DSHolderInterceptor;
-import com.soho.mvc.interceptor.FormTokenInterceptor;
-import com.soho.shiro.initialize.InitDefinition;
-import com.soho.shiro.initialize.RuleChain;
-import com.soho.shiro.initialize.WebInitializeService;
-import com.soho.shiro.realm.WebLoginRealm;
-import com.soho.shiro.utils.WCCUtils;
-import com.soho.spring.extend.collection.FastList;
-import com.soho.spring.model.HikariDS;
-import freemarker.template.TemplateDirectiveModel;
-import org.apache.shiro.realm.Realm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.Filter;
-import java.util.*;
 
 /**
  * @author shadow
  */
 @Component
-public class WebInitializeServiceImp implements WebInitializeService {
+public class WebInitializeServiceImp  {
 
-    @Autowired
+    /*@Autowired
     private SlaveDB slaveDB;
 
     @Override
@@ -90,6 +73,6 @@ public class WebInitializeServiceImp implements WebInitializeService {
     public List<HikariDS> initOtherDataSource() {
         HikariDS hikariDS = new HikariDS(slaveDB.getDsName(), slaveDB.getDriverClassName(), slaveDB.getUrl(), slaveDB.getUsername(), slaveDB.getPassword());
         return new FastList<>().add(hikariDS).done();
-    }
+    }*/
 
 }
