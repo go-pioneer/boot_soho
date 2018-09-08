@@ -1,15 +1,15 @@
 package com.soho.shiro;
 
 import com.soho.demo.SlaveDB;
+import com.soho.mvc.interceptor.DSHolderInterceptor;
+import com.soho.mvc.interceptor.FormTokenInterceptor;
+import com.soho.shiro.initialize.InitDefinition;
+import com.soho.shiro.initialize.RuleChain;
+import com.soho.shiro.initialize.WebInitializeService;
 import com.soho.shiro.realm.WebLoginRealm;
+import com.soho.shiro.utils.WCCUtils;
+import com.soho.spring.extend.collection.FastList;
 import com.soho.spring.model.HikariDS;
-import com.soho.spring.mvc.interceptor.DSHolderInterceptor;
-import com.soho.spring.mvc.interceptor.FormTokenInterceptor;
-import com.soho.spring.mvc.model.FastList;
-import com.soho.spring.shiro.initialize.InitDefinition;
-import com.soho.spring.shiro.initialize.RuleChain;
-import com.soho.spring.shiro.initialize.WebInitializeService;
-import com.soho.spring.utils.WCCUtils;
 import freemarker.template.TemplateDirectiveModel;
 import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Autowired;

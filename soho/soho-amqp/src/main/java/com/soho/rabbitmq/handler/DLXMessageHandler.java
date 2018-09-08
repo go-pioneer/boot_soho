@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.soho.rabbitmq.core.MQProducter;
 import com.soho.rabbitmq.model.DLXMessage;
 import com.soho.rabbitmq.model.MQConstant;
-import com.soho.spring.mvc.model.FastMap;
+import com.soho.spring.extend.collection.FastMap;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

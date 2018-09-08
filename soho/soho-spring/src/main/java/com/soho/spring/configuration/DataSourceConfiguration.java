@@ -7,7 +7,6 @@ import com.soho.spring.datasource.RoutingDataSource;
 import com.soho.spring.model.DBConfig;
 import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.HikariDS;
-import com.soho.spring.shiro.initialize.WebInitializeService;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -22,7 +21,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,15 +35,13 @@ public class DataSourceConfiguration {
     private DBConfig dbConfig;
     @Autowired(required = false)
     private DeftConfig deftConfig;
-    @Autowired(required = false)
-    private WebInitializeService webInitializeService;
 
     @Bean(name = "dynamicDataSource")
     public DataSource initDynamicDataSource() {
         RoutingDataSource dynamicDataSource = new RoutingDataSource();
         Map<Object, Object> dataSourceMap = new HashMap<>(4);
         dataSourceMap.put(MARSTER_DB, new HikariDS(MARSTER_DB, dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword()).done());
-        List<HikariDS> hikariDSList = webInitializeService.initOtherDataSource();
+        /*List<HikariDS> hikariDSList = webInitializeService.initOtherDataSource();
         if (hikariDSList != null && !hikariDSList.isEmpty()) {
             for (HikariDS ds : hikariDSList) {
                 if (MARSTER_DB.equals(ds.getDsName())) {
@@ -53,7 +49,7 @@ public class DataSourceConfiguration {
                 }
                 dataSourceMap.put(ds.getDsName(), ds.done());
             }
-        }
+        }*/
         dynamicDataSource.setTargetDataSources(dataSourceMap);
         dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(MARSTER_DB));
         return dynamicDataSource;

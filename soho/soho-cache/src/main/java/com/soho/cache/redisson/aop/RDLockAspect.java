@@ -2,7 +2,6 @@ package com.soho.cache.redisson.aop;
 
 import com.soho.spring.aspect.DefaultAspect;
 import com.soho.spring.cache.annotation.RDLock;
-import com.soho.spring.shiro.utils.SessionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -42,10 +41,6 @@ public class RDLockAspect extends DefaultAspect {
         if (!StringUtils.isEmpty(spel)) {
             String value = getSpelValue(spel, joinPoint);
             prefix = prefix + "_" + value;
-        }
-        if (rdLock.user()) {
-            Long userId = SessionUtils.getUserId();
-            prefix = prefix + "_" + (userId == null ? 0 : userId);
         }
         RLock rLock = redissonClient.getLock(prefix);
         try {

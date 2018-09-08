@@ -3,7 +3,7 @@ package com.soho.spring.extend;
 import com.soho.spring.cache.Cache;
 import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.imp.SimpleCacheManager;
-import com.soho.spring.mvc.model.FastMap;
+import com.soho.spring.extend.collection.FastMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

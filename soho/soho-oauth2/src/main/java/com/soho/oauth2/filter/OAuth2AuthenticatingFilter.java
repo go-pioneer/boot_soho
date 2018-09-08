@@ -1,7 +1,7 @@
 package com.soho.oauth2.filter;
 
 import com.soho.oauth2.token.OAuth2LoginToken;
-import com.soho.spring.shiro.utils.SessionUtils;
+import com.soho.shiro.utils.SessionUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;

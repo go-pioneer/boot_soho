@@ -1,20 +1,18 @@
 package com.soho.demo.controller;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.dubbo.demo.service.DemoService;
 import com.soho.demo.domain.Dog;
 import com.soho.demo.service.DogService;
 import com.soho.mongo.UserEntity;
 import com.soho.mongo.UserInfo;
+import com.soho.mvc.annotation.FormToken;
+import com.soho.mvc.annotation.KillRobot;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
+import com.soho.shiro.utils.SessionUtils;
 import com.soho.spring.cache.annotation.RDLock;
+import com.soho.spring.extend.collection.FastMap;
+import com.soho.spring.extend.collection.FastView;
 import com.soho.spring.model.ReqData;
-import com.soho.spring.mvc.annotation.FormToken;
-import com.soho.spring.mvc.annotation.KillRobot;
-import com.soho.spring.mvc.model.FastMap;
-import com.soho.spring.mvc.model.FastView;
-import com.soho.spring.shiro.utils.SessionUtils;
 import com.soho.spring.utils.FileUtils;
 import com.soho.spring.utils.MD5Utils;
 import org.apache.shiro.SecurityUtils;

@@ -20,6 +20,11 @@
             <artifactId>soho-spring</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
+            <artifactId>soho-shiro</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- oauth2 -->
         <dependency>
             <groupId>org.apache.oltu.oauth2</groupId>

@@ -1,6 +1,6 @@
 package com.soho.shiro.realm;
 
-import com.soho.spring.shiro.utils.SessionUtils;
+import com.soho.shiro.utils.SessionUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

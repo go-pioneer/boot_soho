@@ -49,6 +49,11 @@
         </dependency>
         <dependency>
             <groupId>com.soho</groupId>
+            <artifactId>soho-shiro</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.soho</groupId>
             <artifactId>soho-cache</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

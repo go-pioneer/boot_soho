@@ -1,6 +1,6 @@
 package com.soho.aspect;
 
-import com.soho.spring.aspect.imp.UserSessionAspect;
+import com.soho.session.UserSessionAspect;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

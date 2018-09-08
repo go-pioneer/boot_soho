@@ -9,7 +9,7 @@ import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.mybatis.exception.MybatisDAOEx;
 import com.soho.mybatis.sqlcode.condition.imp.SQLCnd;
 import com.soho.spring.model.ReqData;
-import com.soho.spring.mvc.model.FastMap;
+import com.soho.spring.extend.collection.FastMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

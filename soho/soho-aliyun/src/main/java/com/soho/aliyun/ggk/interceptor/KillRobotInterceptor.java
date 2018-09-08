@@ -1,12 +1,11 @@
 package com.soho.aliyun.ggk.interceptor;
 
+import com.soho.mvc.annotation.KillRobot;
 import com.soho.mybatis.exception.BizErrorEx;
+import com.soho.shiro.utils.KillRobotUtils;
 import com.soho.spring.model.RetCode;
-import com.soho.spring.mvc.annotation.KillRobot;
-import com.soho.spring.shiro.utils.KillRobotUtils;
 import com.soho.spring.utils.HttpUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 

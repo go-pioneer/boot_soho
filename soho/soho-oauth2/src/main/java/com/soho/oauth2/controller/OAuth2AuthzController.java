@@ -1,8 +1,8 @@
 package com.soho.oauth2.controller;
 
+import com.soho.mvc.annotation.FormToken;
 import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.oauth2.service.OAuth2AuthzService;
-import com.soho.spring.mvc.annotation.FormToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
