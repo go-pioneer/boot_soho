@@ -1,6 +1,6 @@
 package com.soho.shiro.configuration;
 
-import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
+import com.soho.spring.extend.fastjson.FastJsonHttpUTF8MessageConverter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

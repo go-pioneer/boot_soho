@@ -3,7 +3,7 @@
 // (powered by Fernflower decompiler)
 //
 
-package com.soho.spring.extend;
+package com.soho.spring.extend.fastjson;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;

@@ -1,9 +1,9 @@
 package com.soho.shiro.configuration;
 
+import com.soho.spring.extend.fastjson.FastJsonHttpUTF8MessageConverter;
 import com.soho.mvc.filter.SafetyFilter;
 import com.soho.mvc.interceptor.ErrorPageInterceptor;
 import com.soho.shiro.initialize.WebInitializeService;
-import com.soho.spring.extend.FastJsonHttpUTF8MessageConverter;
 import com.soho.spring.model.DeftConfig;
 import com.soho.spring.model.ErrorPageConfig;
 import org.springframework.beans.factory.annotation.Autowired;
