@@ -10,7 +10,6 @@ import com.soho.spring.model.RetCode;
 import com.soho.spring.model.RetData;
 import com.soho.spring.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -52,11 +51,10 @@ public class BizExceptionHandler implements HandlerExceptionResolver {
                 msg = errorEx.getMessage();
             }
             Object errorObject = ((BizErrorEx) ex).getErrorObject();
-            HttpStatus httpStatus = ((BizErrorEx) ex).getHttpStatus();
             if (errorObject != null) {
-                retData = new RetData<>(errorEx.getErrorCode(), msg, errorObject, httpStatus);
+                retData = new RetData<>(errorEx.getErrorCode(), msg, errorObject);
             } else {
-                retData = new RetData<>(errorEx.getErrorCode(), msg, callmap, httpStatus);
+                retData = new RetData<>(errorEx.getErrorCode(), msg, callmap);
             }
         } else if (ex instanceof MaxUploadSizeExceededException) {
             retData = new RetData<>(RetCode.UPLOAD_ERROR_STATUS, "上传失败,文件大小超出范围;单文件【" + deftConfig.getMaxFileSize() + "】,多文件【" + deftConfig.getMaxRequestSize() + "】", callmap);

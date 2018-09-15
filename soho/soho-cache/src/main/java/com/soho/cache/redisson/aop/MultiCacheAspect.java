@@ -1,5 +1,6 @@
 package com.soho.cache.redisson.aop;
 
+import com.soho.mybatis.exception.BizErrorEx;
 import com.soho.spring.aspect.DefaultAspect;
 import com.soho.spring.cache.CacheManager;
 import com.soho.spring.cache.annotation.MultiCache;
@@ -116,7 +117,7 @@ public class MultiCacheAspect extends DefaultAspect {
                     Thread.sleep(100);
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                throw e;
             } finally {
                 rLock.unlock();
             }
@@ -190,7 +191,7 @@ public class MultiCacheAspect extends DefaultAspect {
                     Thread.sleep(100);
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                throw e;
             } finally {
                 rLock.unlock();
             }

@@ -41,6 +41,10 @@ public class BizErrorEx extends Exception {
         this(null, errorCode, msg, null, httpStatus);
     }
 
+    public BizErrorEx(String errorCode, String msg, Object errorObject) {
+        this(null, errorCode, msg, errorObject, HttpStatus.OK);
+    }
+
     public BizErrorEx(String errorCode, String msg, Object errorObject, HttpStatus httpStatus) {
         this(null, errorCode, msg, errorObject, httpStatus);
     }

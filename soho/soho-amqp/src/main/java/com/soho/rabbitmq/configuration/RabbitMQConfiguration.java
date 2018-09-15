@@ -1,25 +1,21 @@
 package com.soho.rabbitmq.configuration;
 
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.soho.rabbitmq.handler.QueueMessageListener;
 import com.soho.rabbitmq.model.MQConstant;
-import com.soho.spring.extend.ConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RabbitMQ配置
@@ -31,8 +27,6 @@ public class RabbitMQConfiguration {
 
     @Autowired(required = false)
     private MQConfig mqConfig;
-    @Autowired(required = false)
-    private QueueMessageListener queueMessageListener;
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -86,7 +80,7 @@ public class RabbitMQConfiguration {
 
 
     /*********************    动态绑定发送队列,监听队列    *****************/
-    @Bean
+    /*@Bean
     public List<String> queues() throws AmqpException, IOException {
         String exchange = mqConfig.getExchange();
         if (exchange == null || StringUtils.isEmpty(exchange.replaceAll(" ", ""))) {
@@ -141,6 +135,6 @@ public class RabbitMQConfiguration {
             return container;
         }
         return null;
-    }
+    }*/
 
 }
