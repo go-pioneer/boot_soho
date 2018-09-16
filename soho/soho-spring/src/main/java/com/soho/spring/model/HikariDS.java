@@ -28,6 +28,10 @@ public class HikariDS {
 
     }
 
+    public HikariDS(String driverClassName, String url, String username, String password) {
+        this(null, driverClassName, url, username, password);
+    }
+
     public HikariDS(String dsName, String driverClassName, String url, String username, String password) {
         this.dsName = dsName;
         this.driverClassName = driverClassName;

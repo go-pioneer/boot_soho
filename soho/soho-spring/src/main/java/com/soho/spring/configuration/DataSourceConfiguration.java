@@ -11,8 +11,6 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -21,7 +19,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author shadow
@@ -29,37 +26,20 @@ import java.util.Map;
 @Configuration
 public class DataSourceConfiguration {
 
-    public final static String MARSTER_DB = "MARSTER_DB";
-
-    @Autowired(required = false)
-    private DBConfig dbConfig;
-    @Autowired(required = false)
-    private DeftConfig deftConfig;
-
-    @Bean(name = "dynamicDataSource")
-    public DataSource initDynamicDataSource() {
-        RoutingDataSource dynamicDataSource = new RoutingDataSource();
-        Map<Object, Object> dataSourceMap = new HashMap<>(4);
-        dataSourceMap.put(MARSTER_DB, new HikariDS(MARSTER_DB, dbConfig.getDriverClassName(), dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword()).done());
-        /*List<HikariDS> hikariDSList = webInitializeService.initOtherDataSource();
-        if (hikariDSList != null && !hikariDSList.isEmpty()) {
-            for (HikariDS ds : hikariDSList) {
-                if (MARSTER_DB.equals(ds.getDsName())) {
-                    continue;
-                }
-                dataSourceMap.put(ds.getDsName(), ds.done());
-            }
-        }*/
-        dynamicDataSource.setTargetDataSources(dataSourceMap);
-        dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(MARSTER_DB));
-        return dynamicDataSource;
+    @Bean
+    public RoutingDataSource routingDataSource(DBConfig config) {
+        RoutingDataSource routingDataSource = new RoutingDataSource();
+        DataSource hikariDS = new HikariDS(config.getDriverClassName(), config.getUrl(), config.getUsername(), config.getPassword()).done();
+        routingDataSource.setDefaultTargetDataSource(hikariDS);
+        routingDataSource.setTargetDataSources(new HashMap<>());
+        return routingDataSource;
     }
 
-    @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DataSource dataSource, @Qualifier("dbSelector") DBSelector dbSelector) throws Exception {
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(RoutingDataSource dataSource, DBSelector dbSelector, DeftConfig config) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
-        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(deftConfig.getMgbXmlLocation());
+        Resource[] mappers = new PathMatchingResourcePatternResolver().getResources(config.getMgbXmlLocation());
         Resource sql = new PathMatchingResourcePatternResolver().getResources("classpath*:/mybatis-sqlresolver.xml")[0];
         int len = mappers.length + 1;
         Resource[] resources = new Resource[len];
@@ -75,18 +55,18 @@ public class DataSourceConfiguration {
         return bean.getObject();
     }
 
-    @Bean(name = "dbSelector")
-    public DBSelector dbSelector() {
-        return new SimpleDBSelector(dbConfig.getDatabase());
+    @Bean
+    public DBSelector dbSelector(DBConfig config) {
+        return new SimpleDBSelector(config.getDatabase());
     }
 
-    @Bean(name = "transactionManager")
-    public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager(RoutingDataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    @Bean(name = "sqlSessionTemplate")
-    public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
