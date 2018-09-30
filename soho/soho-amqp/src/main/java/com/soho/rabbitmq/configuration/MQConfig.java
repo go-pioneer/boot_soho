@@ -3,8 +3,6 @@ package com.soho.rabbitmq.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * @author shadow
  */
@@ -25,10 +23,6 @@ public class MQConfig {
     private Boolean publisherConfirms;
     @Value("${mq.rabbit.exchange}")
     private String exchange; // 发送信道交换机名称
-    @Value("${mq.rabbit.sendQueues}")
-    private String sendQueues; // 发送队列名称列表
-    @Value("${mq.rabbit.listenerQueues}")
-    private String listenerQueues; // 监听队列名称列表
     @Value("${mq.rabbit.concurrentConsumers}")
     private Integer concurrentConsumers; // 消费者并发数量
     @Value("${mq.rabbit.maxConcurrentConsumers}")
@@ -88,22 +82,6 @@ public class MQConfig {
 
     public void setExchange(String exchange) {
         this.exchange = exchange;
-    }
-
-    public String getSendQueues() {
-        return sendQueues;
-    }
-
-    public void setSendQueues(String sendQueues) {
-        this.sendQueues = sendQueues;
-    }
-
-    public String getListenerQueues() {
-        return listenerQueues;
-    }
-
-    public void setListenerQueues(String listenerQueues) {
-        this.listenerQueues = listenerQueues;
     }
 
     public Integer getConcurrentConsumers() {

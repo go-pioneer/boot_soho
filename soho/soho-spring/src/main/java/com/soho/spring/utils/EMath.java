@@ -144,6 +144,33 @@ public class EMath {
     }
 
     /**
+     * |a|=?
+     *
+     * @param s1    数值a
+     * @param scale 保留位数
+     * @return String 计算结果
+     */
+    public static String abs(Object s1, int scale) {
+        BigDecimal b1 = toBigDecimal(s1);
+        String r = digit(b1, scale);
+        if (GTE(r, 0)) {
+            return r;
+        } else {
+            return r.substring(1);
+        }
+    }
+
+    /**
+     * |a|=?
+     *
+     * @param s1 数值a
+     * @return String 计算结果
+     */
+    public static String abs(Object s1) {
+        return abs(s1, DEFAULT_SCALE);
+    }
+
+    /**
      * a > b = true or false
      *
      * @param s1 数值a

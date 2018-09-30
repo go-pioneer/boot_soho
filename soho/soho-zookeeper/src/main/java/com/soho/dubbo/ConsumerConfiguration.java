@@ -19,7 +19,6 @@ public class ConsumerConfiguration {
         ConsumerConfig config = new ConsumerConfig();
         config.setCheck(dubboConfig.getCheck());
         config.setTimeout(dubboConfig.getTimeout());
-        config.setVersion(dubboConfig.getVersion());
         config.setRetries(dubboConfig.getRetries());
         return config;
     }
