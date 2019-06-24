@@ -2,6 +2,7 @@ package com.soho.mvc.interceptor;
 
 import com.soho.spring.datasource.DSContextHolder;
 import com.soho.spring.datasource.annotation.DSHolder;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -37,6 +38,28 @@ public class DSHolderInterceptor implements HandlerInterceptor {
             }
         }
         return true;
+    }
+
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+        String dsName = request.getParameter("dsName");
+        if (!StringUtils.isEmpty(dsName)) {
+            DSContextHolder.clear();
+            return;
+        }
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            if (method.getAnnotation(DSHolder.class) != null) {
+                DSHolder annotation = method.getAnnotation(DSHolder.class);
+                if (annotation != null) {
+                    dsName = annotation.name();
+                    if (!StringUtils.isEmpty(dsName)) {
+                        DSContextHolder.clear();
+                        return;
+                    }
+                }
+            }
+        }
     }
 
 }
